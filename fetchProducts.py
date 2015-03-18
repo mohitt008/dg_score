@@ -46,7 +46,6 @@ def genRandom(productsAvail,userLimit):
 
 def getProducts(delCategory,n,channel_cat):
 
-	start = datetime.now()
 	vendorCategoryList,productCount = getCategories(delCategory)
 	
 	if n > productCount:
@@ -77,8 +76,7 @@ def getProducts(delCategory,n,channel_cat):
 
 	# print json_results
 	print json.dumps(json_results, default=json_util.default, indent = 4)	
-	end = datetime.now()
-	print (end-start).seconds
+
 
 if __name__ == '__main__':
 	delhivery_category = int(sys.argv[1])
