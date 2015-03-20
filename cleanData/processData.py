@@ -5,10 +5,19 @@ import removeTags
 import re
 import sys
 
-class preProcess:
+class Sentence:
 	
-	def __init__(self):
+	def __init__(self,sentence):
+		self.sentence = sentence
 		self.nouns = []
+		self.stemmed = PorterStemmer()
+		self.processedHTML = str()
+		self.processedSplChars = str()
+		self.tokens = []
+		self.tagged = []
+		self.unprocessedNouns = []
+		self.tagDist = []
+		self.stemmedNouns = []
 
 	def removeHTMLTags(self,paragraph):
 		## remove HTML tags like <b> </b>
@@ -21,31 +30,31 @@ class preProcess:
 
 	def stemmer(self,unprocessedNouns):
 		## perform stemming on words
-		stemmed = PorterStemmer()
-		for word in unprocessedNouns:
-			self.nouns.append(stemmed.stem(word))
+		for word in self.unprocessedNouns:
+			self.nouns.append(self.stemmed.stem(word))
 		return self.nouns
 
-	def getNouns(self,sentence):
+	def getNouns(self):
 		##	extract noun from sentences and caculate the frequency
-
 		# remove HTML tags if any from paragraph
-		processedSentence1 = self.removeHTMLTags(sentence)
+		self.processedHTML = self.removeHTMLTags(self.sentence)
 		# remove special characters from paragraph
-		processedSentence2 = self.removeSplChars(processedSentence1)
+		self.processedSplChars = self.removeSplChars(self.processedHTML)
 		# tokenize sentences into words
-		tokens = word_tokenize(processedSentence2)
+		self.tokens = word_tokenize(self.processedSplChars)
 		# postag words
-		tagged = pos_tag(tokens)
+		self.tagged = pos_tag(self.tokens)
 		# select and convert words to lower case: NN for singular common nouns, NNS for plural common nouns, NNP for singular proper nouns, NNPS for plural proper noun
-		unprocessedNouns = [word.lower() for word,pos in tagged \
+		self.unprocessedNouns = [word.lower() for word,pos in self.tagged \
 				if (pos == 'NN' or pos == 'NNP' or pos == 'NNS' or pos == 'NNPS')]
 		# apply stemming on nouns
-		processedNouns  = self.stemmer(unprocessedNouns)
+		self.stemmedNouns  = self.stemmer(self.unprocessedNouns)
 		# count frequency of each word
-		tag_fd = FreqDist(word for word in processedNouns)
-		print tag_fd.most_common()
+		self.tagDist = FreqDist(word for word in self.stemmedNouns)
+		print self.tagDist.most_common()
 
 if __name__ == '__main__':
-	tokenize = preProcess()
-	tokenize.getNouns(sys.argv[1])
+	tokenize = Sentence(sys.argv[1])
+	tokenize.getNouns()
+	# tokenize2 = Sentence("iPhone6 is really good.")
+	# tokenize2.getNouns()
