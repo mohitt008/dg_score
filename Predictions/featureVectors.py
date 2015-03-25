@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from nltk import word_tokenize,pos_tag,FreqDist
 from nltk.stem.porter import PorterStemmer
-import removeTags 
+import utilities 
 import re
 import sys
 import random
