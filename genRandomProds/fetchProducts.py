@@ -27,7 +27,7 @@ catMapping = db[dbInfo.channelCategoryTable]
 def getCategories(delhiveryCategory):
 
 	"""
-	Input: delhiveryCategory ID
+	Input: delhiveryCategory ID (int)
 	Process: Fetch child categories for delhiveryCategory if present. For all those categories,
 	get associated vendor category ID.
 	Output: List of vendor category IDs
@@ -57,8 +57,8 @@ def getCategories(delhiveryCategory):
 def genRandom(productsAvail,userLimit):
 
 	"""
-	Input: Products available for the delhivery category in Database(productsAvail),
-		   Number of products requested by user(userLimit)
+	Input: Products available for the delhivery category in Database(productsAvail) (int),
+		   Number of products requested by user(userLimit) (int)
 	Process: Generate random numbers in the range 1 to number of products available 
 	for the category. If number requested by user is less/equal to half of available products 
 	then generate (userLimit) number of random numbers between 1 to productsAvail. Otherwise 
@@ -76,7 +76,7 @@ def genRandom(productsAvail,userLimit):
 def getProducts(delCategory,n):
 	
 	"""
-	Input: Delhivery Category ID(delCategory), count of products(n)
+	Input: Delhivery Category ID(int), count of products(int)
 	Process: Invoke functions getCategories to obtain list of Vendor Category ID associated
 	with the delhivery category ID and genRandom to generate n random numbers. getProducts 
 	fetches the product details based on the sequence number generated from genRandom function

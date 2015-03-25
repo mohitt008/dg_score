@@ -701,6 +701,12 @@ snapdealCategories=[{
 }]
 
 def createChannelCategoryMapping(channelCategoryMappingTable):
+
+    """
+    Input: Channel-Category-Mapping-Table Name (String)
+    Process: Loops around snapdealCategories to fetch snapdeal_id and delhivery category ID
+    and inserts into the table 
+    """
     channelCategory = db[channelCategoryMappingTable]
     for category in snapdealCategories[0]:
         # print category
@@ -710,6 +716,13 @@ def createChannelCategoryMapping(channelCategoryMappingTable):
             channelCategory.insert({"Channel_Id":1,"Channel_Category_Id":snapdeal_id,"Category_Id":delhivery_id})
 
 def updateProductCount(ProductsTable,channelCategoryMappingTable):
+
+    """
+    Input: Product Table Name (String), Channel-Category-Mapping-Table Name (String)
+    Process: Groups product table based on product_category_id and counts 
+    the sum of each category. Update Channel-Category-Mapping-Table to 
+    include a new field "count", calculated from above. 
+    """
     products = db[ProductsTable]
     channelCategory = db[channelCategoryMappingTable]
     countProducts = products.aggregate([{"$group":{"_id":"$product_category_id","count":{"$sum":1}}}])
@@ -720,6 +733,12 @@ def updateProductCount(ProductsTable,channelCategoryMappingTable):
     channelCategory.update({"count":{"$exists":False}},{"$set":{"count":0}},multi=True)
 
 def updateSequenceProdTable(ProductsTable):
+
+    """
+    Input: Product Table Name (String)
+    Process: Update product table to include a new field "seq" to have
+    sequence number in eah category. 
+    """
     products = db[ProductsTable]
     categories = products.distinct("product_category_id")
 
@@ -730,11 +749,21 @@ def updateSequenceProdTable(ProductsTable):
             count = count + 1
 
 def getParent(categoryName):
+
+    """
+    Input: Category Name (String)
+    Return parent of the category from delhiveryCategories declared above.
+    """
   for key,value in delhiveryCategories.iteritems():
     if delhiveryCategories[key]['category'] == categoryName and 'sub_category' not in delhiveryCategories[key]:
       return key
 
 def createCategoryTable(categoryTable):
+
+    """
+    Input: category Table Name (String)
+    Process: Computes ID for each delhivery category defined above and it's parent.
+    """
     catTable = db[categoryTable]
     category_table = {}
     for key,value in delhiveryCategories.iteritems():
@@ -749,10 +778,10 @@ def createCategoryTable(categoryTable):
 
 if __name__ == '__main__':
     createChannelCategoryMapping(channelCategoryTable)
-    print "created ChannelCategoryMapping"
+    # print "created ChannelCategoryMapping"
     createCategoryTable(categoryTable)
-    print "created categoryTable"
+    # print "created categoryTable"
     updateProductCount(productTable,channelCategoryTable)
-    print "updated Channel Category Table"
+    # print "updated Channel Category Table"
     updateSequenceProdTable(productTable)
-    print "updated ProductsTable"
+    # print "updated ProductsTable"
