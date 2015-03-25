@@ -15,7 +15,13 @@ catMapping = db[dbInfo.channelCategoryTable]
 
 def getCategories(delhiveryCategory):
 
-	## Get delhivery categories with the given user category as parent
+	"""
+	Get delhivery categories with the given user category as parent
+	"""
+	if products.find({"delhivery_cat_id":delhiveryCategory}).count() == 0:
+		print "Category {} does not exist".format(delhiveryCategory)
+		sys.exit(0)
+
 	categoryList = []
 	categoryList.append(delhiveryCategory)
 	childCategories = categories.find({"Category_Parent":delhiveryCategory})
@@ -37,6 +43,10 @@ def getCategories(delhiveryCategory):
 
 def genRandom(productsAvail,userLimit):
 
+	"""
+	Generate random numbers in the range 1 to number of products 
+	available for the category.
+	"""
 	if userLimit <= productsAvail/2:
 		randomDocuments = random.sample(range(1,productsAvail+1),userLimit)
 	else:
@@ -45,11 +55,16 @@ def genRandom(productsAvail,userLimit):
 	return randomDocuments
 
 def getProducts(delCategory,n,channel_cat):
-
+	
+	"""
+	invoke functions getCategories and genRandom and
+	fetch product details based on the sequence number
+	generated from genRandom function
+	"""
 	vendorCategoryList,productCount = getCategories(delCategory)
 	
 	if n > productCount:
-		print "Limit exceeded count of products available"
+		## Limit exceeded count of products available
 		n = productCount
 
 	documentList  = genRandom(productCount,n)
