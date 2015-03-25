@@ -8,9 +8,20 @@ from datetime import datetime
 from database import dbInfo
 
 client = MongoClient()
+if dbInfo.database not in client.database_names():
+	raise Exception("Database does not exists")
 db = client[dbInfo.database]
+
+if dbInfo.productTable not in db.collection_names():
+	raise Exception("Collection {} does not exists".format(dbInfo.productTable))
 products = db[dbInfo.productTable]
+
+if dbInfo.categoryTable not in db.collection_names():
+	raise Exception("Collection {} does not exists".format(dbInfo.productTable))
 categories = db[dbInfo.categoryTable]
+
+if dbInfo.channelCategoryTable not in db.collection_names():
+	raise Exception("Collection {} does not exists".format(dbInfo.productTable))
 catMapping = db[dbInfo.channelCategoryTable]
 
 def getCategories(delhiveryCategory):
@@ -19,8 +30,7 @@ def getCategories(delhiveryCategory):
 	Get delhivery categories with the given user category as parent
 	"""
 	if products.find({"delhivery_cat_id":delhiveryCategory}).count() == 0:
-		print "Category {} does not exist".format(delhiveryCategory)
-		sys.exit(0)
+		raise Exception("Category does not exist")
 
 	categoryList = []
 	categoryList.append(delhiveryCategory)
@@ -82,15 +92,13 @@ def getProducts(delCategory,n,channel_cat):
 				temp = temp - value
 
 	json_results = []
-	print finalList
 	for key in finalList:
 		values = list(finalList[key])
 		docs = products.find({"product_category_id":key,"seq":{"$in":values}})
 		for doc in docs:
 			json_results.append(doc)
 
-	# print json_results
-	print json.dumps(json_results, default=json_util.default, indent = 4)	
+	return json.dumps(json_results, default=json_util.default, indent = 4)	
 
 
 if __name__ == '__main__':
@@ -99,4 +107,4 @@ if __name__ == '__main__':
 	vendor_category = -1
 	if(len(sys.argv) == 4):
 		vendor_category = int(sys.argv[3])
-	getProducts(delhivery_category,count,vendor_category)
+	productInfo = getProducts(delhivery_category,count,vendor_category)

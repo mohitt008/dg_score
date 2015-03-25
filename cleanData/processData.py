@@ -7,9 +7,17 @@ import sys
 import random
 from pymongo import MongoClient
 
+database = "snapdeal"
+collection = "products"
 client = MongoClient()
-db = client['snapdeal']
-products = db['products']
+
+if database not in client.database_names():
+		raise Exception("Database does not exists")
+db = client[database]
+
+if collection not in db.collection_names():
+		raise Exception("Collection does not exists")
+products = db[collection]
 
 class Sentence:
 	
@@ -64,24 +72,21 @@ class Sentence:
 		# count frequency of each word
 		CommontagDist = FreqDist(word for word in stemmedCommonNouns)
 	
-		print "Common Noun:",CommontagDist.most_common()
-		print "============================================================================="
+		return CommontagDist.most_common()
 
 
 if __name__ == '__main__':
 
 	delID = int(sys.argv[1])
 	if products.find({"delhivery_cat_id":delID}).count() == 0:
-		print "Category {} does not exist".format(delID)
-		sys.exit(0)
+		raise Exception("Category does not exist")
+
 	items = products.find({"delhivery_cat_id":delID},{"name":1,'yahoo_result.bossresponse.web.results.abstract':1})
 	for item in items:
 		paragraph = []
-		print item['name']
 		if 'results' in item['yahoo_result']['bossresponse']['web']:
 			for abstract in item['yahoo_result']['bossresponse']['web']['results']:
 				paragraph.append(abstract['abstract'])
 			para =  '. '.join(paragraph)
-			print '------------------------'
 			tokenize = Sentence(para)
-			tokenize.getNouns()
+			nounFreq = tokenize.getNouns()
