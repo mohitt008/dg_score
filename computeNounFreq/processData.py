@@ -28,14 +28,14 @@ class Sentence:
 	def removeHTMLTags(self,paragraph):
 
 		"""
-		remove HTML tags like <b> </b>
+		Given a paragarpah remove HTML tags like <b> </b>
 		"""
 		return removeTags.strip_tags(paragraph)
 
 	def removeSplChars(self,data):
 
 		"""
-		remove special characters like >> ?
+		From HTML-free paragraph, remove special characters like >> ?
 		"""
 		pattern=re.compile("[^\w']")
 		return pattern.sub(' ',data)
@@ -43,7 +43,7 @@ class Sentence:
 	def stemmer(self,unprocessedNouns):
 
 		"""
-		perform stemming on words
+		perform stemming on tokens(unprocessedNouns)
 		"""
 		nouns = []
 		for word in unprocessedNouns:
