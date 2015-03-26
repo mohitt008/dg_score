@@ -17,11 +17,11 @@ if dbInfo.productTable not in db.collection_names():
 products = db[dbInfo.productTable]
 
 if dbInfo.categoryTable not in db.collection_names():
-	raise Exception("Collection {} does not exists".format(dbInfo.productTable))
+	raise Exception("Collection {} does not exists".format(dbInfo.categoryTable))
 categories = db[dbInfo.categoryTable]
 
 if dbInfo.channelCategoryTable not in db.collection_names():
-	raise Exception("Collection {} does not exists".format(dbInfo.productTable))
+	raise Exception("Collection {} does not exists".format(dbInfo.channelCategoryTable))
 catMapping = db[dbInfo.channelCategoryTable]
 
 def getCategories(delhiveryCategory):
