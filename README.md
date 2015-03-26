@@ -14,11 +14,25 @@ Or
 Create an object of class Sentence with input as a string and call the function getNouns on it.
 
 #### Example Usage:
-tokenize = Sentence("Moto G 2nd Generation, a brilliant display, stereo sound.......")
+1. From command line:
+python processData.py 454
+
+delhivery_category_id: INTEGER
+
+2. Create an instance of class Sentence and invoke getNouns()
+tokenize = Sentence(“Moto G 2nd Generation, a brilliant display, stereo sound.......”)
 tokenize.getNouns()
 
 ### Products
 The function getProducts takes input as delhivery category ID(INTEGER) and count of products required (INTEGER)
+
+1. From command line:
+python fetchProducts delhivery_category_id count
+
+delhivery_category_id  - INTEGER
+count – INTEGER
+
+2. Import function getProducts with parameters delhivery_category_id and count.
 
 #### Example Usage:
 getProducts(20,10)
