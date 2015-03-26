@@ -35,5 +35,7 @@ Run Products/database/InitialiseDB.py to perform following operations:
 ### Database
 ----------------------------
 To change or add database details, go to database folder under Products/ and modify dbInfo.py:
+
 1. Database
+
 2. Collections
