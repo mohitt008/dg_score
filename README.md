@@ -1,7 +1,7 @@
--> ### Cataloguing <-
+## Cataloguing 
 -------------------------
 
-What it Cataloguing?
+What is Cataloguing?
 The objective of Cataloguing is to maintain a universal product catalogue for the various items that we receive in order to make better decisions in the future. Example: Whether the product is dangerous with respect to shipment in the air. 
 This would help to compare actual/client given/manifest weights versus predicted weights.
 
