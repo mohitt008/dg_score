@@ -2,6 +2,11 @@
 
 from HTMLParser import HTMLParser
 
+db = Trie()
+fp =  open("colorList.txt","rb")
+for line in fp:
+    db.insert(line.strip())
+
 class MLStripper(HTMLParser):
     def __init__(self):
         self.reset()
@@ -13,6 +18,9 @@ class MLStripper(HTMLParser):
 
 
 class Node( object ):
+    """
+    Class Node serves as a struture to trie.
+    """
     def __init__( self, end_node = False ):
         self.end_node = end_node
         self.children = {}
@@ -20,7 +28,28 @@ class Node( object ):
 class Trie( object ):
     
     """
-    Create a trie to store list of strings with a word as a key.
+    Create a trie to store list of strings with a word as a key and 
+    with the root having end_node as False and children empty
+    Example: colors = ["chocolate brown","brown"]
+    During insert, chocolate brown splits into chocolate becomes child 
+    to root, it's end_node as False and brown becomes and child to chocolate
+    with end_node as True. Next element brown becomes a child to root with 
+    end_node as False and children empty 
+
+                        --------------
+                         root | False
+                        --------------
+                        /            \
+                       /              \
+            ------------------    ------------------
+            chocolate | False        brown | True
+            ------------------    ------------------
+                   /
+                  /
+        ------------------
+           brown | True
+        ------------------     
+
     """
     def __init__( self ):
         self.root = Node()
@@ -55,25 +84,15 @@ def strip_tags(html):
     s.feed(html)
     return s.get_data()
 
-"""
-The function removes colors from a sentence using trie class
-which stores prefixes of colours.
-Input: List of colors and sentence
-Output: Sentence after removing colours
-"""
-
-colors = ['brown', 'maroon', 'multicolored', 'violet', 'navy', 'tan', 'light blue', 'cream', 'blue', 'peach', 'dark blue', 'purple', 'yellow', 'transparent', 'off white', 'black', 'orange', 'offwhite', 'red', 'pink', 'turquoise', 'khaki', 'off-white', 'white', 'multi', 'gunmetal', 'grey', 'multicolor', 'green', 'beige', 'light green', 'dark green','chocolate brown']
 
 def searchPrefix(sentence):
     """
-    Creates a trie from list of colors.
-    Uses this trie to remove color names from sentence
+    The function removes colors from a sentence using trie class which stores prefixes of colours.
+    Input: Sentence as a list of tokens
+    Output: List after removing colours
     """
-    db = Trie()
-    for color in colors:
-        db.insert(color)
-
-    stringIndexed = sentence.lower().split()
+    
+    stringIndexed = sentence
     index = 0
     while index < len(stringIndexed)-1:
         # print stringIndexed[index],index,stringIndexed[index+1]
@@ -96,10 +115,7 @@ def searchPrefix(sentence):
         else:
             index = index + 1
 
-    return ' '.join(stringIndexed)
-
-# def main():
-#     # string = "The jeans is light chocolate brown in color and has brown pockets"
-#     string = sys.argv[1]
-#     filteredString = searchPrefix(string.lower())
-#     print filteredString
+    if stringIndexed: 
+        return stringIndexed
+    else:
+        return ['']
