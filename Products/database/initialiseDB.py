@@ -1,5 +1,6 @@
 from pymongo import MongoClient,ASCENDING
-from dbInfo import *
+from dbInfo import database,productTable,categoryTable,channelCategoryTable
+from datetime import datetime
 
 client = MongoClient()
 db = client[database]
@@ -713,7 +714,7 @@ def createChannelCategoryMapping(channelCategoryMappingTable):
         for snapdeal_ids in snapdealCategories[0][category]:
             snapdeal_id =  snapdealCategories[0][category][snapdeal_ids][0]
             delhivery_id = snapdealCategories[0][category][snapdeal_ids][1]
-            channelCategory.insert({"Channel_Id":1,"Channel_Category_Id":snapdeal_id,"Category_Id":delhivery_id})
+            channelCategory.update({"Channel_Id":1,"Channel_Category_Id":snapdeal_id},{"Channel_Id":1,"Channel_Category_Id":snapdeal_id,"Category_Id":delhivery_id},upsert=True)
 
 def updateProductCount(ProductsTable,channelCategoryMappingTable):
 
@@ -728,7 +729,7 @@ def updateProductCount(ProductsTable,channelCategoryMappingTable):
     countProducts = products.aggregate([{"$group":{"_id":"$product_category_id","count":{"$sum":1}}}])
 
     for categories in countProducts['result']:
-        channelCategory.update({"Channel_Category_Id":categories["_id"]},{"$set":{"count":categories["count"]}})
+        channelCategory.update({"Channel_Category_Id":categories["_id"]},{"$set":{"count":categories["count"]}},upsert=True)
 
     channelCategory.update({"count":{"$exists":False}},{"$set":{"count":0}},multi=True)
 
@@ -741,12 +742,20 @@ def updateSequenceProdTable(ProductsTable):
     """
     products = db[ProductsTable]
     categories = products.distinct("product_category_id")
+    bulk = products.initialize_unordered_bulk_op()
 
-    for category in categories:
-        count  = 1
-        for product in products.find({"product_category_id":category}):
-            products.update({"_id":product["_id"]},{"$set":{"seq":count}})
-            count = count + 1
+    if products.find({'seq':{'$exists':True}}).count() < products.count():
+        for category in categories:
+            count  = 1
+            for product in products.find({"product_category_id":category}):
+                bulk.find({"_id":product["_id"]}).update({"$set":{"seq":count}})
+                count = count + 1
+        result = bulk.execute()
+        print result
+    else:
+        print "Product table already updated"
+    # except BulkWriteError as bwe:
+    #     pprint(bwe.details)
 
 def getParent(categoryName):
 
@@ -754,9 +763,9 @@ def getParent(categoryName):
     Input: Category Name (String)
     Return parent of the category from delhiveryCategories declared above.
     """
-  for key,value in delhiveryCategories.iteritems():
-    if delhiveryCategories[key]['category'] == categoryName and 'sub_category' not in delhiveryCategories[key]:
-      return key
+    for key,value in delhiveryCategories.iteritems():
+        if delhiveryCategories[key]['category'] == categoryName and 'sub_category' not in delhiveryCategories[key]:
+            return key
 
 def createCategoryTable(categoryTable):
 
@@ -773,7 +782,7 @@ def createCategoryTable(categoryTable):
         category_table[delhiveryCategories[key]['category']] = {"Category_Id":key,"Category_Parent":-1}
       
     for key in category_table:
-      catTable.insert({"Category_Id":category_table[key]['Category_Id'],"Category_Name":key,"Category_Parent":category_table[key]["Category_Parent"]})
+      catTable.update({"Category_Id":category_table[key]['Category_Id'],"Category_Name":key},{"Category_Id":category_table[key]['Category_Id'],"Category_Name":key,"Category_Parent":category_table[key]["Category_Parent"]},upsert=True)
 
 
 if __name__ == '__main__':
@@ -783,5 +792,8 @@ if __name__ == '__main__':
     # print "created categoryTable"
     updateProductCount(productTable,channelCategoryTable)
     # print "updated Channel Category Table"
+    # start = datetime.now()
     updateSequenceProdTable(productTable)
     # print "updated ProductsTable"
+    # end = datetime.now()
+    # print (end-start).seconds
