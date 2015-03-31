@@ -110,10 +110,12 @@ def getProducts(delCategory,n):
 		for doc in docs:
 			json_results.append(doc)
 
-	return json.dumps(json_results, default=json_util.default, indent = 4)	
+	return finalList,json.dumps(json_results, default=json_util.default, indent = 4)	
 
 
 if __name__ == '__main__':
 	delhivery_category = int(sys.argv[1])
 	count = int(sys.argv[2])
-	productInfo = getProducts(delhivery_category,count)
+	docList,productInfo = getProducts(delhivery_category,count)
+	# print docList
+	# print productInfo
