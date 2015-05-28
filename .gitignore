@@ -1,3 +1,8 @@
 *.pyc
 *.ipynb
 *.json
+Load_Data/snapdeal.json
+Load_Data/local_data_extraction.py
+Models/*.npy
+Models/SubModels/*.npy
+

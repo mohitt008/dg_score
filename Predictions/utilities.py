@@ -2,10 +2,6 @@
 
 from HTMLParser import HTMLParser
 
-db = Trie()
-fp =  open("colorList.txt","rb")
-for line in fp:
-    db.insert(line.strip())
 
 class MLStripper(HTMLParser):
     def __init__(self):
@@ -26,15 +22,15 @@ class Node( object ):
         self.children = {}
 
 class Trie( object ):
-    
+
     """
-    Create a trie to store list of strings with a word as a key and 
+    Create a trie to store list of strings with a word as a key and
     with the root having end_node as False and children empty
     Example: colors = ["chocolate brown","brown"]
-    During insert, chocolate brown splits into chocolate becomes child 
+    During insert, chocolate brown splits into chocolate becomes child
     to root, it's end_node as False and brown becomes and child to chocolate
-    with end_node as True. Next element brown becomes a child to root with 
-    end_node as False and children empty 
+    with end_node as True. Next element brown becomes a child to root with
+    end_node as False and children empty
 
                         --------------
                          root | False
@@ -48,16 +44,16 @@ class Trie( object ):
                   /
         ------------------
            brown | True
-        ------------------     
+        ------------------
 
     """
     def __init__( self ):
         self.root = Node()
-    
+
     def insert( self, key ):
         """
         Split a string and store the prefix as the child of
-        the root. 
+        the root.
         """
         current = self.root
         for k in key.split():
@@ -66,14 +62,14 @@ class Trie( object ):
                 current.children[k] = Node()
             current = current.children[k]
         current.end_node = True
-    
+
     def search( self, key ):
         """
-        Search a word as a child of the root and return 
+        Search a word as a child of the root and return
         pointer to the node.
         """
         current = self.root
-        
+
         if key not in current.children:
             return False
         else:
@@ -85,14 +81,14 @@ def strip_tags(html):
     return s.get_data()
 
 
-def searchPrefix(sentence):
+def searchPrefix(sentence,db):
     """
     The function removes colors from a sentence using trie class which stores prefixes of colours.
     Input: Sentence as a list of tokens
     Output: List after removing colours
     """
-    
-    stringIndexed = sentence
+    print db.root.children
+    stringIndexed = sentence.lower().split()
     index = 0
     while index < len(stringIndexed)-1:
         # print stringIndexed[index],index,stringIndexed[index+1]
@@ -115,7 +111,15 @@ def searchPrefix(sentence):
         else:
             index = index + 1
 
-    if stringIndexed: 
+    if stringIndexed:
         return stringIndexed
     else:
         return ['']
+
+db = Trie()
+fp =  open("colorList.txt","rb")
+for line in fp:
+    db.insert(line.strip())
+
+
+
