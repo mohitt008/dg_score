@@ -2,6 +2,8 @@ __author__ = 'delhivery'
 
 import httplib
 import json
+import sys
+import traceback
 
 from zato.server.service import Service
 
@@ -60,20 +62,31 @@ class CategoryService(Service):
             data.append(data_)
             extra.append(record)
 
-        outgoing = self.outgoing.plain_http.get('ProductCategory') #TODO
-        headers = {'Content-type': 'application/json'}
-        segments = outgoing.conn.post(
-            self.cid,
-            data=json.dumps(data),
-            headers=headers)
-        segments = json.loads(segments.text)
-        response = []
+        try:
 
-        for record, extra_ in zip(segments, extra):
-            record.update(**extra_)
-            response.append(record)
+            outgoing = self.outgoing.plain_http.get('ProductCategory')
+            headers = {'Content-type': 'application/json'}
+            segments = outgoing.conn.post(
+                self.cid,
+                data=json.dumps(data),
+                headers=headers)
+            segments = json.loads(segments.text)
+            response = []
 
-        self.response.payload = json.dumps(response)
+            for record, extra_ in zip(segments, extra):
+                record.update(**extra_)
+                response.append(record)
+
+            self.response.payload = json.dumps(response)
+
+        except Exception as err:
+            self.logger.error(
+                'Exception {} occurred against payload: {}'.format(
+                    err, payload))
+            self.logger.error(
+                'Traceback: {}'.format(traceback.format_exc()))
+            self.logger.error(
+                'Exec Info: {}'.format(sys.exc_info())[0])
 
 
 class AsyncCategoryService(Service):
@@ -84,7 +97,7 @@ class AsyncCategoryService(Service):
     @apiVersion 0.1.2
     @apiName RequestProductCategory
     @apiGroup Category
-    @apiDescription This API allows a user to segment an address and tag the segments into locality based groups, such as locality, area, city, state etc.
+    @apiDescription This API allows a user to get the category and sub-category of a product based on the product name.
 
     @apiHeader  {String}    Authorization   Authorization Credentials
     @apiHeader  {String}    content-type    application/json
@@ -140,25 +153,37 @@ class AsyncCategoryService(Service):
         return 'async_category'
 
     def handle(self):
-        payload = self.request.payload
-        cid = self.cid
-        status_code = httplib.OK
-        valid, response = is_valid_product_payload(payload)
-        if not valid:
-            status_code = httplib.BAD_REQUEST
-        else:
-            msg = {
-                'service': CategoryService.get_name(),
-                'payload': payload,
-                'cid': cid
-            }
+        try:
+            payload = self.request.payload
+            cid = self.cid
+            status_code = httplib.OK
 
-            self.invoke_async(
-                'async_store', msg, to_json_string=True)
+            valid, response = is_valid_product_payload(payload)
+            if not valid:
+                status_code = httplib.BAD_REQUEST
+            else:
+                msg = {
+                    'service': CategoryService.get_name(),
+                    'payload': payload,
+                    'cid': cid
+                }
 
-            response = {
-                'cid': cid
-            }
-            self.kvdb.conn.set(cid, QUEUED)
-        self.response.status_code = status_code
-        self.response.payload = json.dumps(response)
+                self.invoke_async(
+                    'async_store', msg, to_json_string=True)
+
+                response = {
+                    'cid': cid
+                }
+                self.kvdb.conn.set(cid, QUEUED)
+            self.response.status_code = status_code
+            self.response.payload = json.dumps(response)
+
+        except Exception as err:
+            self.logger.error(
+                'Exception {} occurred against payload: {}'.format(
+                    err, payload))
+            self.logger.error(
+                'Traceback: {}'.format(traceback.format_exc()))
+            self.logger.error(
+                'Exec Info: {}'.format(sys.exc_info())[0])
+
