@@ -120,9 +120,9 @@ def get_category():
         output_list=[]
         app.logger.info("Request Received {}".format (str(list_product_names)))
 
-        for product_name in list_product_names:
+        for product_name_dict in list_product_names:
             result = dict()
-            result['category'], result['sub_category'] = predict_category(product_name)
+            result['category'], result['sub_category'] = predict_category(product_name_dict.get('product_name',"")
             output_list.append(result)
 
         return Response(json.dumps(output_list),  mimetype='application/json')
