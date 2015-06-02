@@ -92,9 +92,9 @@ class CategoryService(Service):
 class AsyncCategoryService(Service):
     """
     Service to get categories for a product synchronously
-    @api {POST} /product/category Request to get categories for a product
+    @api {POST} /category/predict/ Request to get categories for a product
     @apiSampleRequest off
-    @apiVersion 0.1.2
+    @apiVersion 0.1.0
     @apiName RequestProductCategory
     @apiGroup Category
     @apiDescription This API allows a user to get the category and sub-category of a product based on the product name.
@@ -120,7 +120,7 @@ class AsyncCategoryService(Service):
 
         headers = {'Content-type': 'application/json'}
 
-        url = 'http://api.delhivery.io/product/category'
+        url = 'http://api.delhivery.io/category/predict/'
 
         r = requests.post(url, data=json.dumps(payload), headers=headers)
 
@@ -145,7 +145,6 @@ class AsyncCategoryService(Service):
             'product_name': ''
         }]
 
-    # noqa
     """
 
     @staticmethod
@@ -187,3 +186,64 @@ class AsyncCategoryService(Service):
             self.logger.error(
                 'Exec Info: {}'.format(sys.exc_info())[0])
 
+def dummy_function():
+    pass
+    """
+    Service to fetch response against asynchronous requests
+    @api {POST} /category/results Fetch queued request response
+    @apiSampleRequest off
+    @apiVersion 0.1.0
+    @apiName FetchAddFixSegment
+    @apiGroup Category
+
+    @apiHeader  {String}        Authorization               Authorization Credentials
+    @apiHeader  {String}        content-type                application/json
+    @apiParam   {String}        cid                         CID against a RequestAddFixSegment request
+
+    @apiSuccess {Object[]}      List of product             List of address objects
+    @apiSuccess {String}        product.category            Locality determined against address
+    @apiSuccess {String}        product.subcategory         Locality Additional Info determined against address
+
+    @apiExample Example Usage:
+        import json, requests
+        payload = {
+            "cid":"K001006186845405187400962847840262893088",
+        }
+
+        headers = {'Content-type': 'application/json'}
+
+        url = 'http://api.delhivery.io/category/results'
+
+        r = requests.post(url, data=json.dumps(payload), headers=headers)
+
+    @apiSuccessExample Success-Response:
+        HTTP/1.1 200 OK
+        [{
+        u'category': u'Mobile Phone, Tablets and Accesories',
+        u'sub_category': u'Mobile Phone, Tablets and Accesories->Mobile Accessories'
+        },
+        {
+        u'category': u'Electronics and Appliances',
+        u'sub_category': u'Electronics and Appliances->Headphones and Earphones'
+        },
+        {
+        u'category': u'Computers and Laptops',
+        u'sub_category': u'Computers and Laptops->Laptop',
+        u'wbn': u'1231212'
+        }]
+
+
+    @apiError (404 Not Found)   InvalidCID  No request with CID found
+    @apiError (202 Processing)  InProcess   Request CID is still being processed
+
+    @apiErrorExample Error-Response:
+        HTTP/1.1 404 Not Found
+        {
+            'error': 'InvalidCID'
+        }
+
+        HTTP/1.1 202 Processing
+        {
+            'error': 'InProcess'
+        }
+        """
