@@ -198,11 +198,11 @@ def dummy_function():
 
     @apiHeader  {String}        Authorization               Authorization Credentials
     @apiHeader  {String}        content-type                application/json
-    @apiParam   {String}        cid                         CID against a RequestAddFixSegment request
+    @apiParam   {String}        cid                         CID against a get_category request
 
-    @apiSuccess {Object[]}      List of product             List of address objects
-    @apiSuccess {String}        product.category            Locality determined against address
-    @apiSuccess {String}        product.subcategory         Locality Additional Info determined against address
+    @apiSuccess {Object[]}      List of product             List of product objects
+    @apiSuccess {String}        product.category            Category determined for the product
+    @apiSuccess {String}        product.subcategory         Subcategory within the Category Determined Earlier
 
     @apiExample Example Usage:
         import json, requests

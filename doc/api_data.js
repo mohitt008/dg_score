@@ -34,7 +34,7 @@ define({ api: [
             "type": "String",
             "field": "cid",
             "optional": false,
-            "description": "<p>CID against a RequestAddFixSegment request</p>"
+            "description": "<p>CID against a get_category request</p>"
           }
         ]
       }
@@ -47,21 +47,21 @@ define({ api: [
             "type": "Object[]",
             "field": "List",
             "optional": false,
-            "description": "<p>of product             List of address objects</p>"
+            "description": "<p>of product             List of product objects</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "field": "product.category",
             "optional": false,
-            "description": "<p>Locality determined against address</p>"
+            "description": "<p>Category determined for the product</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "field": "product.subcategory",
             "optional": false,
-            "description": "<p>Locality Additional Info determined against address</p>"
+            "description": "<p>Subcategory within the Category Determined Earlier</p>"
           }
         ]
       },
