@@ -111,7 +111,7 @@
   },
   {
     "type": "POST",
-    "url": "/category/predict/",
+    "url": "/category/predict",
     "title": "Request to get categories for a product",
     "version": "0.1.0",
     "name": "RequestProductCategory",
@@ -187,7 +187,7 @@
     "examples": [
       {
         "title": "Example Usage:",
-        "content": "Example Usage:\n      import json, requests\n      payload = [{\n          \"product_name\":\"Samsung Galaxy s3 i9300\"\n          }, {\n          \"product_name\":\"Red SkullCandy Earphones\"\n          }, {\n          \"product_name\":\"Toshiba z4-a Ultrabook Laptop\",\n          'wbn':'1231212'\n          }]\n       headers = {'Content-type': 'application/json'}\n       url = 'http://api.delhivery.io/category/predict/'\n       r = requests.post(url, data=json.dumps(payload), headers=headers)\n",
+        "content": "Example Usage:\n      import json, requests\n      payload = [{\n          \"product_name\":\"Samsung Galaxy s3 i9300\"\n          }, {\n          \"product_name\":\"Red SkullCandy Earphones\"\n          }, {\n          \"product_name\":\"Toshiba z4-a Ultrabook Laptop\",\n          'wbn':'1231212'\n          }]\n       headers = {'Content-type': 'application/json'}\n       url = 'http://api.delhivery.io/category/predict'\n       r = requests.post(url, data=json.dumps(payload), headers=headers)\n",
         "type": "json"
       }
     ],

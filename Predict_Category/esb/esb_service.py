@@ -92,7 +92,7 @@ class CategoryService(Service):
 class AsyncCategoryService(Service):
     """
     Service to get categories for a product synchronously
-    @api {POST} /category/predict/ Request to get categories for a product
+    @api {POST} /category/predict Request to get categories for a product
     @apiSampleRequest off
     @apiVersion 0.1.0
     @apiName RequestProductCategory
@@ -120,7 +120,7 @@ class AsyncCategoryService(Service):
 
         headers = {'Content-type': 'application/json'}
 
-        url = 'http://api.delhivery.io/category/predict/'
+        url = 'http://api.delhivery.io/category/predict'
 
         r = requests.post(url, data=json.dumps(payload), headers=headers)
 
