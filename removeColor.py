@@ -59,7 +59,7 @@ def removeColor(sentence):
 
     stringIndexed = sentence.split()
     index = 0
-    while index < len(stringIndexed) - 1:
+    while index <= len(stringIndexed) - 1:
         # print stringIndexed[index],index,stringIndexed[index+1]
         j = index
         # print index
