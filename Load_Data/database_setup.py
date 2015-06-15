@@ -278,12 +278,15 @@ def mapper(v_cat_id, d_id, map_child):
                 descendants.append(child['_id'])
                 stack.append(child)
 
+    print(descendants)
     check_vendor_cat_list_exists = vendor_category_mapping_table.find(
         {
         "$and":
             [
                 {"vendor_cat_id_list":
                      {"$exists": True}
+                },
+                {"vendor_id":v_cat_id.split('_')[0]
                 },
                 {"delhivery_cat_id": d_id}
             ]
@@ -292,7 +295,7 @@ def mapper(v_cat_id, d_id, map_child):
     if check_vendor_cat_list_exists.count() == 0:
         # print('does not exists')
         vendor_category_mapping_table.update(
-            {'vendor_id': 1, 'delhivery_cat_id': d_id},
+            {'vendor_id': v_cat_id.split('_')[0], 'delhivery_cat_id': d_id},
             {
             "$set":
                 {"vendor_cat_id_list": descendants}
@@ -301,7 +304,7 @@ def mapper(v_cat_id, d_id, map_child):
         )
     else:
         vendor_category_mapping_table.update(
-            {'vendor_id': 1, 'delhivery_cat_id': d_id},
+            {'vendor_id': v_cat_id.split('_')[0], 'delhivery_cat_id': d_id},
             {
             "$addToSet":
                 {
