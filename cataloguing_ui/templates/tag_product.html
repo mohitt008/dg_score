@@ -1,0 +1,48 @@
+<div id="tag-products" style="display:none">
+  <h4>Original Product Name</h4>
+  <div id='org_prod_name'></div>
+  Category Identified : <span id='category'></span><br>
+  Sub-Category Identified : <span id='sub-category'></span><br><br>
+  or choose category:
+  <select id="update-category">
+      <option value='-1'>----------- Select Category -----------</option>
+      {% for cat in available_cats %}
+        <option value='{{cat._id}}'>{{cat.category_name}}</option>
+      {% endfor %}
+  </select>
+  <select id="update-subcategory" disabled></select>
+  <input type="submit" class="btn btn-primary" value="Update Category" id="update-button">
+
+  <div id="msg"></div>
+  <div id='tag_template' style="display:none">
+  <div class='tag_list'>
+      <table>
+          <tr>
+          <td class="tag_holder">
+            <a href='#' tagtype = "B" tabindex='100'><span class="tag_text">Brand</span></a>
+            <a href='#' tagtype = "M" tabindex='101'><span class="tag_text">Model No</span></a>
+            <a href='#' tagtype = "C" tabindex='102'><span class="tag_text">Color</span></a>
+            <a href='#' tagtype = "W" tabindex='103'><span class="tag_text">Weight</span></a>
+            <a href='#' tagtype = "V" tabindex='104'><span class="tag_text">Volume</span></a>
+            <a href='#' tagtype = "D" tabindex='105'><span class="tag_text">Dimensions</span></a>
+          </td>
+          <td class="tag_holder">
+            <a href='#' tagtype = "P" tabindex='106'><span class="tag_text">Price</span></a>
+            <a href='#' tagtype = "T" tabindex='107'><span class="tag_text">Type</span></a>
+            <!--<a href='#' tagtype = "M2" tabindex='108'><span class="tag_text">Memory</span></a>-->
+            <!--<a href='#' tagtype = "D2" tabindex='109'><span class="tag_text">Display Size</span></a>-->
+          </td>
+          </tr>
+      </table>
+  </div>
+  </div>
+  <span class="address" id="selectable"></span><br>
+  <input type="checkbox" id="dangerous-goods" value="dangerous_goods">Dangerous Goods?
+  <input type="checkbox" id="x-ray" value="x_ray">X-Ray?
+  <input type="checkbox" id="dirty-name" value="dirty_name">Dirty Product Name?
+  <div class="buttons">
+    <input type="submit" class="btn btn-primary" value="Submit" id="submit-button">
+    <input type="submit" class="btn btn-primary" value="Clear" id="clear-button">
+    <input type="submit" class="btn btn-primary" value="Skip this product" id="skip-button">
+  </div>
+  </div>

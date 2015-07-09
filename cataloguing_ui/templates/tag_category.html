@@ -1,0 +1,14 @@
+{% extends "base_tagging.html" %}
+
+{% block content %}
+  {{username}}
+  <span id="tag-count">{{tag_count}}</span><br/><br/>
+  <select id="select-category">
+      <option value='-1'>----------- Select Category -----------</option>
+      {% for cat in available_cats %}
+        <option value='{{cat._id}}'>{{cat.category_name}}</option>
+      {% endfor %}
+  </select>
+  <input type="submit" class="btn btn-primary" value="Get Products" id="category-button">
+  {% include 'tag_product.html' %}
+{% endblock %}
