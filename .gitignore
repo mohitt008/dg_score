@@ -7,3 +7,4 @@ Models/*.npy
 Models/SubModels/*.npy
 Models/*
 cataloguing_ui/__pycache__/*
+cataloguing_ui/.idea/*
