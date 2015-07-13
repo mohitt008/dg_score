@@ -1,14 +1,7 @@
-{% extends "base_tagging.html" %}
-
-{% block content %}
-  {{username}}
-  <span id="tag-count">{{tag_count}}</span><br/><br/>
-  <select id="select-vendor">
-      <option value="-1">------- Select Vendor -------</option>
-      {% for vendor in vendors %}
-        <option value={{vendor}}>{{vendor}}</option>
-      {% endfor %}
-  </select>
-  <input type="submit" class="btn btn-primary" value="Get Products" id="vendor-button">
-  {% include 'tag_product.html' %}
-{% endblock %}
+<select id="select-vendor">
+  <option value="-1">------- Select Vendor -------</option>
+  {% for vendor in vendors %}
+    <option value={{vendor}}>{{vendor}}</option>
+  {% endfor %}
+</select>
+<input type="submit" class="btn btn-primary" value="Get Products" id="vendor-button">

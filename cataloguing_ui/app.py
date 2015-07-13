@@ -90,12 +90,13 @@ def tag_it_vendor():
     if 'user' in session:
         user_id = session['user']['id']
         tag_count = get_tag_count(user_id)
-        return render_template("tag_vendor.html",
+        return render_template("tag_product.html",
                                vendors=get_vendors(),
                                available_cats=get_categories(),
                                username=session['user']['name'],
                                user_id=user_id,
                                tag_count=tag_count,
+                               tag_by='vendor',
                                autoescape=False)
     else:
         return redirect(url_for('login'))
@@ -114,11 +115,13 @@ def tag_it_category():
     if 'user' in session:
         user_id = session['user']['id']
         tag_count = get_tag_count(user_id)
-        return render_template("tag_category.html",
+        return render_template("tag_product.html",
                                available_cats=get_categories(),
+                               available_cats1=get_categories(),
                                username=session['user']['name'],
                                user_id=user_id,
                                tag_count=tag_count,
+                               tag_by='category',
                                autoescape=False)
     else:
         return redirect(url_for('login'))

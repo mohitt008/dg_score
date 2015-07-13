@@ -1,9 +1,23 @@
+{% extends "base_tagging.html" %}
+
+{% block content %}
+  {{username}}
+  <span id="tag-count">{{tag_count}}</span><br/><br/>
+
+  {% if tag_by == 'vendor' %}
+        {% include 'tag_vendor.html' %}
+  {% endif %}
+  {% if tag_by == 'category' %}
+        {% include 'tag_category.html' %}
+  {% endif %}
+
 <div id="tag-products" style="display:none">
   <h4>Original Product Name</h4>
   <div id='org_prod_name'></div>
   Category Identified : <span id='category'></span><br>
   Sub-Category Identified : <span id='sub-category'></span><br><br>
   or choose category:
+
   <select id="update-category">
       <option value='-1'>----------- Select Category -----------</option>
       {% for cat in available_cats %}
@@ -46,3 +60,4 @@
     <input type="submit" class="btn btn-primary" value="Skip this product" id="skip-button">
   </div>
   </div>
+{% endblock %}

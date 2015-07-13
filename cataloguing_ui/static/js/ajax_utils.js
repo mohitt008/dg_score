@@ -117,8 +117,9 @@ $(document).ready(function () {
                         $("#category").html(data['prod_cat']);
                         $("#sub-category").html(data['prod_subcat']);
                         var prod_seg = JSON.parse(data['prod_seg']);
-                        var data_obj = {'category': data['prod_cat']}
-                        $('.address').taggify(data['id'], prod_seg, data_obj);
+                        var data_obj = {'category': data['prod_cat']};
+                        id=data['id'];
+                        $('.address').taggify(id, prod_seg, data_obj);
                     }
                 }
             });

@@ -12,8 +12,8 @@
     };
     
     function showTag(x, y) {
-      $('.tag_list').css("left",x-15);
-      $('.tag_list').css("top",y+25);
+      $('.tag_list').css("left",x-200);
+      $('.tag_list').css("top",y-20);
       $('.tag_list').focus();
     }
 
@@ -36,13 +36,13 @@
 
     function setUpAddress(content_list) {
       var span_text = "<span class='address_element' tabindex='{0}'><abc>{1}</abc></span>";
-      total_string = ""
+      total_string = "";
       for (i = 0; i < content_list.length; i++) {
           total_string += span_text.f(i+1,content_list[i])
       }
-      var tags = $('#tag_template').html()
-      jq_name_obj.html(total_string)
-      $(tags).insertAfter(jq_name_obj)
+      var tags = $('#tag_template').html();
+      jq_name_obj.html(total_string);
+      $(tags).insertAfter(jq_name_obj);
       $("<div class='tooltip'>Tooltip Box</div>").insertAfter('.address_element')
     }
 
@@ -61,15 +61,16 @@
       var tag_type = $(obj).attr('tagtype');
       $('.ui-selected').attr('tag',tag_type);
       $( "span[tag]").addClass('tagged');
-      $.each($('.ui-selected'), function(){
+      $.each($('.ui-selected'), function() {
         var addr_elem = $(this);
         var tooltip_obj = $(this).next();
         tooltip_obj.text(addr_elem.attr('tag'));
+          console.log(addr_elem.offset().top, addr_elem.outerHeight(false), addr_elem.offset().top + addr_elem.outerHeight(false));
         tooltip_obj.css({
           'position':'absolute',
           'display': 'block',
-          'left' : addr_elem.offset().left + addr_elem.outerWidth( false )/2 - tooltip_obj.outerWidth( false )/2,
-          'top' : addr_elem.offset().top + addr_elem.outerHeight(false)
+          'left' : addr_elem.offset().left + addr_elem.outerWidth( false )/2 - tooltip_obj.outerWidth( false )/2 - 215,
+          'top' : addr_elem.offset().top - 10
         });
       })
       // ---------------Coloring logic-------------------
