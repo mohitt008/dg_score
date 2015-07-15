@@ -65,7 +65,6 @@
         var addr_elem = $(this);
         var tooltip_obj = $(this).next();
         tooltip_obj.text(addr_elem.attr('tag'));
-          console.log(addr_elem.offset().top, addr_elem.outerHeight(false), addr_elem.offset().top + addr_elem.outerHeight(false));
         tooltip_obj.css({
           'position':'absolute',
           'display': 'block',
@@ -129,6 +128,7 @@
             $('#category').html(data.prod_cat);
             $('#sub-category').html(data.prod_subcat);
             $('#tag-count').html(data.tag_count);
+
             var segs = JSON.parse(data.prod_seg);
             setUpAddress(segs)
         }
