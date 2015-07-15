@@ -8,3 +8,4 @@ Models/SubModels/*.npy
 Models/*
 cataloguing_ui/__pycache__/*
 cataloguing_ui/.idea/*
+cataloguing_ui/config.py
