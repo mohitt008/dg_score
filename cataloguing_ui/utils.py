@@ -57,21 +57,32 @@ def get_vendors():
     return db.products.distinct('vendor')
 
 
+def get_taglist(cat_name):
+    cat_obj = db.categories.find_one({"category_name": cat_name})
+    print(cat_obj)
+    if cat_obj is not None and 'tags' in cat_obj:
+        return cat_obj['tags']
+    else:
+        return {}
+
+
 def get_product_tagging_details(query):
     product = get_random_product(query)
     if product is not None:
         prod_seg = segment_product(product['product_name'])
         print(prod_seg)
-        tag_info = []
-        tag_info.append({
-            'id': str(product['_id']),
-            'prod_name': product['product_name'],
-            'prod_cat': product['category'],
-            'prod_subcat': product['sub_category'],
-            'prod_seg': json.dumps(prod_seg)
-        })
-        print(tag_info)
-        return tag_info[0]
+        tag_list = get_taglist(product['category'])
+        tag_list.update(get_taglist(product['sub_category']))
+
+        tag_info = {}
+        tag_info['id'] = str(product['_id'])
+        tag_info['prod_name'] = product['product_name']
+        tag_info['vendor'] = product['vendor']
+        tag_info['prod_cat'] = product['category']
+        tag_info['prod_subcat'] = product['sub_category']
+        tag_info['taglist'] = tag_list
+        tag_info['prod_seg'] = json.dumps(prod_seg)
+        return tag_info
     else:
         return json.dumps({'error': 'No untagged products for this vendor.'})
 
@@ -87,7 +98,7 @@ def update_category(id, cat, subcat):
 
 
 def get_random_product(query):
-    query['tag'] = {'$exists': False}
+    query['tags'] = {'$exists': False}
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)

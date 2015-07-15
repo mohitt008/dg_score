@@ -25,13 +25,21 @@ $(document).ready(function () {
                         else {
                             $("#tag-products").css("display", "block");
                             $("#org_prod_name").html(data['prod_name']);
+                            $("#vendor_name").html(data['vendor']);
                             $("#selectable").html(data['prod_name']);
                             $("#category").html(data['prod_cat']);
                             $("#sub-category").html(data['prod_subcat']);
                             var prod_seg = JSON.parse(data['prod_seg']);
                             id = data['id'];
-                            var data_obj = {'vendor': vendor}
-                            $('.address').taggify(id, prod_seg, data_obj)
+                            var data_obj = {'vendor': vendor};
+                            $('.address').taggify(id, prod_seg, data_obj);
+                            var attrs="";
+                            if (!jQuery.isEmptyObject(data['taglist'])) {
+                                $.each(data['taglist'], function (attr, code) {
+                                    attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">"' + attr + '"</span></a>';
+                                });
+                                $("#extra-attrs").html(attrs);
+                            }
                         }
                     }
                 })
@@ -100,29 +108,35 @@ $(document).ready(function () {
     $(function() {
         $( "#category-button" ).click(function() {
             var cat = $("#select-category").find(":selected").text();
-            $.ajax({
-                url: '/get-category-products',
-                dataType: 'json',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({"category": cat}),
-                success: function (data) {
-                    console.log(data);
-                    if (data['error'])
-                        alert(data['error']);
-                    else {
-                        $("#tag-products").css("display", "block");
-                        $("#org_prod_name").html(data['prod_name']);
-                        $("#selectable").html(data['prod_name']);
-                        $("#category").html(data['prod_cat']);
-                        $("#sub-category").html(data['prod_subcat']);
-                        var prod_seg = JSON.parse(data['prod_seg']);
-                        var data_obj = {'category': data['prod_cat']};
-                        id=data['id'];
-                        $('.address').taggify(id, prod_seg, data_obj);
+            var cat_id = $("#select-category").find(":selected").val();
+            if(cat_id=='-1')
+                alert('Please select a category first.');
+            else {
+                $.ajax({
+                    url: '/get-category-products',
+                    dataType: 'json',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({"category": cat}),
+                    success: function (data) {
+                        console.log(data);
+                        if (data['error'])
+                            alert(data['error']);
+                        else {
+                            $("#tag-products").css("display", "block");
+                            $("#org_prod_name").html(data['prod_name']);
+                            $("#vendor_name").html(data['vendor']);
+                            $("#selectable").html(data['prod_name']);
+                            $("#category").html(data['prod_cat']);
+                            $("#sub-category").html(data['prod_subcat']);
+                            var prod_seg = JSON.parse(data['prod_seg']);
+                            var data_obj = {'category': data['prod_cat']};
+                            id = data['id'];
+                            $('.address').taggify(id, prod_seg, data_obj);
+                        }
                     }
-                }
-            });
+                });
+            }
         });
     });
 });

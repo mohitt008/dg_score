@@ -6,5 +6,8 @@ Load_Data/local_data_extraction.py
 Models/*.npy
 Models/SubModels/*.npy
 Models/*
+.idea/*
 cataloguing_ui/__pycache__/*
 cataloguing_ui/.idea/*
+cataloguing_ui/config.py
+

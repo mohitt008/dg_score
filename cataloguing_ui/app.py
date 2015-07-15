@@ -67,7 +67,7 @@ def fb_login():
 
 @app.route('/')
 def index():
-    return render_template("base_tagging.html")
+    return redirect(url_for('login'))
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -105,6 +105,8 @@ def tag_it_vendor():
 def get_vendor_products():
     posted_data = request.get_json()
     print(posted_data)
+    if posted_data['vendor'] == 'All':
+        posted_data.pop("vendor", None)
     tagging_info = get_product_tagging_details(posted_data)
     if 'error' in tagging_info:
         return tagging_info
@@ -190,7 +192,13 @@ def set_tags():
 
 @app.route('/leaderboard')
 def view_leaderboard():
-    return render_template("leaderboard.html", users=get_users())
+    user_id = session['user']['id']
+    tag_count = get_tag_count(user_id)
+    return render_template("leaderboard.html",
+                           users=get_users(),
+                           username=session['user']['name'],
+                           user_id=user_id,
+                           tag_count=tag_count)
 
 if __name__ == '__main__':
     app.debug = True

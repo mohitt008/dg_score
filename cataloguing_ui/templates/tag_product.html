@@ -1,8 +1,8 @@
 {% extends "base_tagging.html" %}
 
 {% block content %}
-  {{username}}
-  <span id="tag-count">{{tag_count}}</span><br/><br/>
+  <!--{{username}}-->
+  <!--<span id="tag-count">{{tag_count}}</span><br/><br/>-->
 
   {% if tag_by == 'vendor' %}
         {% include 'tag_vendor.html' %}
@@ -14,6 +14,7 @@
 <div id="tag-products" style="display:none">
   <h4>Original Product Name</h4>
   <div id='org_prod_name'></div>
+  Vendor : <span id='vendor_name'></span><br>
   Category Identified : <span id='category'></span><br>
   Sub-Category Identified : <span id='sub-category'></span><br><br>
   or choose category:
@@ -39,11 +40,11 @@
             <a href='#' tagtype = "W" tabindex='103'><span class="tag_text">Weight</span></a>
             <a href='#' tagtype = "V" tabindex='104'><span class="tag_text">Volume</span></a>
             <a href='#' tagtype = "D" tabindex='105'><span class="tag_text">Dimensions</span></a>
-          </td>
-          <td class="tag_holder">
             <a href='#' tagtype = "P" tabindex='106'><span class="tag_text">Price</span></a>
             <a href='#' tagtype = "T" tabindex='107'><span class="tag_text">Type</span></a>
-            <!--<a href='#' tagtype = "M2" tabindex='108'><span class="tag_text">Memory</span></a>-->
+          </td>
+          <td class="tag_holder" id="extra-attrs">
+            <!--<a href='#' tagtype = "M2"><span class="tag_text">Memory</span></a>-->
             <!--<a href='#' tagtype = "D2" tabindex='109'><span class="tag_text">Display Size</span></a>-->
           </td>
           </tr>
