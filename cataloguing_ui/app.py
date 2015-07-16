@@ -4,7 +4,7 @@ import config
 from flask import Flask, render_template, request, url_for, session, redirect
 from flask_oauthlib.client import OAuth
 from pymongo import MongoClient
-from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories
+from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist
 from bson.objectid import ObjectId
 from users import add_user, get_tag_count, inc_tag_count, get_users
 
@@ -159,31 +159,33 @@ def confirm_category():
 def change_category():
     posted_data = request.get_json()
     print(posted_data)
-    return update_category(posted_data['id'], posted_data['category'], posted_data['subcat'])
-
+    update_category(posted_data['id'], posted_data['category'], posted_data['subcat'])
+    tag_list = get_taglist(posted_data['category'])
+    tag_list.update(get_taglist(posted_data['subcat']))
+    return json.dumps(tag_list)
 
 @app.route('/set-tags', methods=['GET', 'POST'])
 def set_tags():
     posted_data = request.get_json()
-    user_id = session['user']['id']
-    if posted_data['tags']:
-        db.products.update({'_id': ObjectId(posted_data['id'])},
-                           {"$set": {'tags': posted_data['tags'],
-                                     'tagged_by': user_id,
-                                     'is_dang': posted_data['is_dang'],
-                                     'is_xray': posted_data['is_xray'],
-                                     'is_dirty': posted_data['is_dirty']}
-                           })
-        inc_tag_count(user_id)
+    if posted_data['tags'] and (posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']):
+        posted_data['done'] = True
 
-    # fetching next product name
-    posted_data.pop("id", None)
-    posted_data.pop("tags", None)
-    posted_data.pop("is_dang", None)
-    posted_data.pop("is_xray", None)
-    posted_data.pop("is_dirty", None)
-    print(posted_data)
-    tagging_info = get_product_tagging_details(posted_data)
+    user_id = session['user']['id']
+    posted_data['tagged_by'] = user_id
+    id = posted_data.pop("id", None)
+
+    next_name = {}
+    if 'category' in posted_data:
+        next_name['category'] = posted_data.pop("category")
+    elif 'vendor' in posted_data:
+        next_name['vendor'] = posted_data.pop("vendor")
+
+    print(id, next_name, posted_data)
+    db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
+    inc_tag_count(user_id)
+
+    #fetching nect product tagging info
+    tagging_info = get_product_tagging_details(next_name)
     tag_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
     if 'error' in tagging_info:

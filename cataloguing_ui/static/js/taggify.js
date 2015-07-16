@@ -71,7 +71,7 @@
           'left' : addr_elem.offset().left + addr_elem.outerWidth( false )/2 - tooltip_obj.outerWidth( false )/2 - 215,
           'top' : addr_elem.offset().top - 10
         });
-      })
+      });
       // ---------------Coloring logic-------------------
       var all_elements = $( "span[tag]");
       $.each(all_elements, function(elem_obj){
@@ -115,21 +115,26 @@
       });
 
       sendTagsAJAX(tags, is_dang, is_xray, is_dirty).done(function(data) {
-        console.log("Successfuly Sent Data");
-        console.log(data);
+        console.log('next product-name data: ', data);
         if(data.error)
             alert(data.error);
         else {
-            id = data['id'];
-            //        total_tag_count = data.total_tag_count
-            //        $("#total_tag_count").html(total_tag_count)
             resetTags();
             $('#org_prod_name').html(data.prod_name);
             $('#category').html(data.prod_cat);
             $('#sub-category').html(data.prod_subcat);
             $('#tag-count').html(data.tag_count);
 
+            id = data['id'];
             var segs = JSON.parse(data.prod_seg);
+            var attrs="";
+
+            if (!jQuery.isEmptyObject(data['taglist'])) {
+                $.each(data['taglist'], function (attr, code) {
+                    attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
+                });
+            }
+            $(".extra-attrs").html(attrs);
             setUpAddress(segs)
         }
       })
@@ -137,13 +142,14 @@
 
     function setUp(addr_segs) {
       setUpAddress(addr_segs);
-      bindMenuSnapping()
+      bindMenuSnapping();
       $( "#selectable" ).selectable({ autoRefresh: true,filter:'span',selected: function( event, ui ) {
           showTag(event.pageX,event.pageY)
         }
       });
 
-      $('.tag_list a').bind("click", function(e) {
+      $('.tag_list a').on("click", function(e) {
+        console.log('i m clicked!');
         e.preventDefault();
         tagItem(this)
       });
@@ -153,7 +159,7 @@
       });
 
       $('#submit-button').bind("click", function() {
-        if ($("span[tag]").length == $("span .address_element").length) {
+        if ($("span[tag]").length == $("span .address_element").length || $('input[type=checkbox]').is(':checked')) {
             sendTags();
             $('#submit-button').notify('Tags saved, fetching new product name...', "success");
         } else {

@@ -7,6 +7,7 @@ $(document).ready(function () {
                     event.preventDefault();
                 });
     });
+
     $(function () {
         $("#vendor-button").click(function () {
             vendor = $("#select-vendor").find(":selected").val();
@@ -29,17 +30,20 @@ $(document).ready(function () {
                             $("#selectable").html(data['prod_name']);
                             $("#category").html(data['prod_cat']);
                             $("#sub-category").html(data['prod_subcat']);
-                            var prod_seg = JSON.parse(data['prod_seg']);
                             id = data['id'];
+                            var prod_seg = JSON.parse(data['prod_seg']);
                             var data_obj = {'vendor': vendor};
-                            $('.address').taggify(id, prod_seg, data_obj);
                             var attrs="";
+                            console.log(data['taglist']);
                             if (!jQuery.isEmptyObject(data['taglist'])) {
                                 $.each(data['taglist'], function (attr, code) {
-                                    attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">"' + attr + '"</span></a>';
+                                    attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
                                 });
-                                $("#extra-attrs").html(attrs);
                             }
+
+                            $(".extra-attrs").html(attrs);
+                            $('.address').taggify(id, prod_seg, data_obj);
+
                         }
                     }
                 })
@@ -50,17 +54,16 @@ $(document).ready(function () {
     $(function () {
         $("#update-button").click(function () {
             var cat_id = $("#update-category").find(":selected").val();
-            var subcat_id = $("#update-subcategory").find(":selected").val();
-//            console.log(cat, subcat);
             if (cat_id == '-1')
                 alert('Please select a category first.');
             else {
                 var cat = $("#update-category").find(":selected").text();
+                var subcat_id = $("#update-subcategory").find(":selected").val();
                 var subcat;
                 if (subcat_id == '-1')
                     subcat = null;
                 else
-                    var subcat = $("#update-category").find(":selected").text();
+                    var subcat = $("#update-subcategory").find(":selected").text();
                 $.ajax({
                     url: '/change-category',
                     dataType: 'json',
@@ -68,8 +71,13 @@ $(document).ready(function () {
                     contentType: 'application/json',
                     data: JSON.stringify({ "category": cat, "subcat": subcat, "id": id }),
                     success: function (data) {
-                        alert(data['message']);
-//                    $("#msg").append(data['message']);
+                        alert('Category changed successfully.');
+                        var attrs="";
+                        $.each(data, function (attr, code) {
+                          attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
+                        });
+                        $(".extra-attrs").html(attrs);
+//                        $("#msg").append(data['message']);
                     }
                 });
             }
@@ -129,9 +137,18 @@ $(document).ready(function () {
                             $("#selectable").html(data['prod_name']);
                             $("#category").html(data['prod_cat']);
                             $("#sub-category").html(data['prod_subcat']);
+                            id = data['id'];
                             var prod_seg = JSON.parse(data['prod_seg']);
                             var data_obj = {'category': data['prod_cat']};
-                            id = data['id'];
+                            var attrs="";
+                            console.log(data['taglist']);
+                            if (!jQuery.isEmptyObject(data['taglist'])) {
+                                $.each(data['taglist'], function (attr, code) {
+                                    attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
+                                });
+                            }
+
+                            $(".extra-attrs").html(attrs);
                             $('.address').taggify(id, prod_seg, data_obj);
                         }
                     }

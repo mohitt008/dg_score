@@ -73,6 +73,8 @@ def get_product_tagging_details(query):
         print(prod_seg)
         tag_list = get_taglist(product['category'])
         tag_list.update(get_taglist(product['sub_category']))
+        # tag_list = get_taglist('Electronics and Appliances')
+        # tag_list.update(get_taglist('Televisions'))
 
         tag_info = {}
         tag_info['id'] = str(product['_id'])
@@ -98,7 +100,7 @@ def update_category(id, cat, subcat):
 
 
 def get_random_product(query):
-    query['tags'] = {'$exists': False}
+    query['done'] = {'$exists': False}
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)
