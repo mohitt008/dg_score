@@ -177,19 +177,21 @@ def set_tags():
     next_name = {}
     if 'category' in posted_data:
         next_name['category'] = posted_data.pop("category")
-    elif 'vendor' in posted_data:
+    elif 'vendor' in posted_data and posted_data['vendor'] != 'All':
         next_name['vendor'] = posted_data.pop("vendor")
-
+    print('####id#######next_set######posted_data####')
     print(id, next_name, posted_data)
-    db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
-    inc_tag_count(user_id)
+    if posted_data['tags'] and posted_data['is_dang'] and posted_data['is_xray'] and posted_data['is_dirty']:
+        db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
+        inc_tag_count(user_id)
 
-    #fetching nect product tagging info
+    #fetching next product tagging info
     tagging_info = get_product_tagging_details(next_name)
     tag_count = get_tag_count(user_id)
-    tagging_info['tag_count'] = tag_count
     if 'error' in tagging_info:
         return tagging_info
+
+    tagging_info['tag_count'] = tag_count
     return json.dumps(tagging_info)
 
 @app.route('/leaderboard')
