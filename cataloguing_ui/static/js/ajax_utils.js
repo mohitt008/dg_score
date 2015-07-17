@@ -1,6 +1,10 @@
 $(document).ready(function () {
     var id;
     var vendor;
+    var attrs="";
+    var prod_seg;
+    var data_obj;
+
     $(function () {
         $("input[type=submit], button").button()
                 .click(function (event) {
@@ -31,9 +35,9 @@ $(document).ready(function () {
                             $("#category").html(data['prod_cat']);
                             $("#sub-category").html(data['prod_subcat']);
                             id = data['id'];
-                            var prod_seg = JSON.parse(data['prod_seg']);
-                            var data_obj = {'vendor': vendor};
-                            var attrs="";
+                            prod_seg = JSON.parse(data['prod_seg']);
+                            data_obj = {'vendor': vendor};
+                            attrs="";
                             console.log(data['taglist']);
                             if (!jQuery.isEmptyObject(data['taglist'])) {
                                 $.each(data['taglist'], function (attr, code) {
@@ -72,11 +76,13 @@ $(document).ready(function () {
                     data: JSON.stringify({ "category": cat, "subcat": subcat, "id": id }),
                     success: function (data) {
                         alert('Category changed successfully.');
-                        var attrs="";
+                        attrs="";
                         $.each(data, function (attr, code) {
                           attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
                         });
+                        
                         $(".extra-attrs").html(attrs);
+                        $('.address').taggify(id, prod_seg, data_obj);
 //                        $("#msg").append(data['message']);
                     }
                 });
@@ -138,9 +144,9 @@ $(document).ready(function () {
                             $("#category").html(data['prod_cat']);
                             $("#sub-category").html(data['prod_subcat']);
                             id = data['id'];
-                            var prod_seg = JSON.parse(data['prod_seg']);
-                            var data_obj = {'category': data['prod_cat']};
-                            var attrs="";
+                            prod_seg = JSON.parse(data['prod_seg']);
+                            data_obj = {'category': data['prod_cat']};
+                            attrs="";
                             console.log(data['taglist']);
                             if (!jQuery.isEmptyObject(data['taglist'])) {
                                 $.each(data['taglist'], function (attr, code) {

@@ -101,18 +101,7 @@
       });
     }
 
-    function sendTags() {
-      var is_dang = $('#dangerous-goods').is(':checked');
-      var is_xray = $('#x-ray').is(':checked');
-      var is_dirty = $('#dirty-name').is(':checked');
-      var tags = [];
-      $.each($( "span .address_element"),function() {
-          if($(this).attr('tag') === undefined) {
-              tags = '';
-              return false;
-          }
-          tags.push([$(this).text(),$(this).attr('tag')])
-      });
+    function sendTags(tags, is_dang, is_xray, is_dirty) {
 
       sendTagsAJAX(tags, is_dang, is_xray, is_dirty).done(function(data) {
         console.log('next product-name data: ', data);
@@ -160,7 +149,19 @@
 
       $('#submit-button').bind("click", function() {
         if ($("span[tag]").length == $("span .address_element").length || $('input[type=checkbox]').is(':checked')) {
-            sendTags();
+
+              var is_dang = $('#dangerous-goods').is(':checked');
+              var is_xray = $('#x-ray').is(':checked');
+              var is_dirty = $('#dirty-name').is(':checked');
+              var tags = [];
+              $.each($( "span .address_element"),function() {
+                  if($(this).attr('tag') === undefined) {
+                      tags = '';
+                      return false;
+                  }
+                  tags.push([$(this).text(),$(this).attr('tag')])
+              });
+              sendTags(tags, is_dang, is_xray, is_dirty);
             $('#submit-button').notify('Tags saved, fetching new product name...', "success");
         } else {
             alert("Please tag everything or Skip this name. ")
@@ -168,7 +169,7 @@
       });
 
       $('#skip-button').bind("click", function() {
-          sendTags();
+          sendTags(null, null, null, null);
           $('#submit-button').notify('Skipping product name', "info");
       });
     }

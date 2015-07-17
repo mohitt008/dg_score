@@ -181,7 +181,7 @@ def set_tags():
         next_name['vendor'] = posted_data.pop("vendor")
     print('####id#######next_set######posted_data####')
     print(id, next_name, posted_data)
-    if posted_data['tags'] and posted_data['is_dang'] and posted_data['is_xray'] and posted_data['is_dirty']:
+    if posted_data['tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id)
 

@@ -70,6 +70,7 @@ def get_product_tagging_details(query):
     product = get_random_product(query)
     if product is not None:
         prod_seg = segment_product(product['product_name'])
+        print('###product segmentation###')
         print(prod_seg)
         tag_list = get_taglist(product['category'])
         tag_list.update(get_taglist(product['sub_category']))
