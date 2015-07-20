@@ -10,7 +10,7 @@ from users import add_user, get_tag_count, inc_tag_count, get_users
 
 app = Flask(__name__, static_url_path='', template_folder='templates')
 
-client = MongoClient()
+client = MongoClient(connect=False)
 db = client.products_db
 oauth = OAuth()
 app.secret_key = config.APP_SECRET_KEY
