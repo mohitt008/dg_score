@@ -1,5 +1,5 @@
 (function ($) {
-  $.fn.taggify = function (id, prod_seg, data_obj) {
+  $.fn.taggify = function (idd, segs, data_ob) {
     jq_name_obj = this;
     
     String.prototype.format = String.prototype.f = function () {
@@ -87,17 +87,17 @@
     function sendTagsAJAX(tags, dang, xray, dirty) {
 //      var date = new Date();
 //      return_obj.epoch = date.getTime()
-      data_obj['id']=id;
-      data_obj['tags']=tags;
-      data_obj['is_dang']=dang;
-      data_obj['is_xray']=xray;
-      data_obj['is_dirty']=dirty;
+      data_ob['id']=idd;
+      data_ob['tags']=tags;
+      data_ob['is_dang']=dang;
+      data_ob['is_xray']=xray;
+      data_ob['is_dirty']=dirty;
       return $.ajax({
         url: '/set-tags',
         dataType: 'json',
         type: 'POST', //make query POST
         contentType: 'application/json',
-        data: JSON.stringify(data_obj)
+        data: JSON.stringify(data_ob)
       });
     }
 
@@ -114,17 +114,23 @@
             $('#sub-category').html(data.prod_subcat);
             $('#tag-count').html(data.tag_count);
 
-            id = data['id'];
-            var segs = JSON.parse(data.prod_seg);
             var attrs="";
-
             if (!jQuery.isEmptyObject(data['taglist'])) {
                 $.each(data['taglist'], function (attr, code) {
                     attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
                 });
             }
             $(".extra-attrs").html(attrs);
-            setUpAddress(segs)
+//            setUpAddress(prod_seg)
+
+            id = data['id'];
+            prod_seg = JSON.parse(data.prod_seg);
+            if ('vendor' in data_ob)
+                data_obj = {'vendor': data_ob['vendor']};
+            else
+                data_obj = {'category': data_ob['category']};
+            console.log('id and prod seg of new product...', id, prod_seg, data_obj);
+            $('.address').taggify(id, prod_seg, data_obj);
         }
       })
     }
@@ -174,7 +180,7 @@
       });
     }
 
-    setUp(prod_seg)
+    setUp(segs)
   };
   return this
 }( jQuery ));

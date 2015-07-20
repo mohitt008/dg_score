@@ -1,8 +1,8 @@
 $(document).ready(function () {
-    var id;
-    var vendor;
+    window.id;
+    window.vendor;
     var attrs="";
-    var prod_seg;
+    window.prod_seg;
     var data_obj;
 
     $(function () {
@@ -82,6 +82,7 @@ $(document).ready(function () {
                         });
                         
                         $(".extra-attrs").html(attrs);
+                        console.log(id, prod_seg, data_obj);
                         $('.address').taggify(id, prod_seg, data_obj);
 //                        $("#msg").append(data['message']);
                     }
