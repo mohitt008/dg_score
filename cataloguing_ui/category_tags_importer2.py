@@ -59,3 +59,4 @@ for row in reader:
             # print(tag_list)
             res = db.categories.update({'_id': ObjectId(subcat_id)},
                                        {'$set': {'tags': tag_list}})
+print(tag_dict)

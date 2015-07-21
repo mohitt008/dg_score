@@ -66,6 +66,15 @@ def get_taglist(cat_name):
         return {}
 
 
+def get_all_tags():
+    tags_cursor = db.categories.find({'tags': {'$exists': True}}, {'_id': 0, 'tags': 1})
+    tags = {}
+    for tag_dict in tags_cursor:
+        tags.update(tag_dict['tags'])
+    print('######tag list######', tags, type(tags))
+    return tags
+
+
 def get_product_tagging_details(query):
     product = get_random_product(query)
     if product is not None:

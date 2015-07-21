@@ -4,7 +4,7 @@ import config
 from flask import Flask, render_template, request, url_for, session, redirect
 from flask_oauthlib.client import OAuth
 from pymongo import MongoClient
-from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist
+from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags
 from bson.objectid import ObjectId
 from users import add_user, get_tag_count, inc_tag_count, get_users
 
@@ -200,6 +200,16 @@ def view_leaderboard():
     tag_count = get_tag_count(user_id)
     return render_template("leaderboard.html",
                            users=get_users(),
+                           username=session['user']['name'],
+                           user_id=user_id,
+                           tag_count=tag_count)
+
+@app.route('/tag-list')
+def get_tags():
+    user_id = session['user']['id']
+    tag_count = get_tag_count(user_id)
+    return render_template("tag_list.html",
+                           tags=get_all_tags(),
                            username=session['user']['name'],
                            user_id=user_id,
                            tag_count=tag_count)

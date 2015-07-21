@@ -1,0 +1,7 @@
+{% extends "base_tagging.html" %}
+
+{% block content %}
+        {% for attr, code in tags.items() %}
+            {{ code }} - {{attr}}<br>
+        {% endfor %}
+{% endblock %}
