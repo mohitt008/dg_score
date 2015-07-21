@@ -86,19 +86,19 @@ def logout():
 
 @bp.route('/vendor/tag-it')
 def tag_it_vendor():
-    # if 'user' in session:
-    user_id = session['user']['id']
-    tag_count = get_tag_count(user_id)
-    return render_template("tag_product.html",
-                           vendors=get_vendors(),
-                           available_cats=get_categories(),
-                           username=session['user']['name'],
-                           user_id=user_id,
-                           tag_count=tag_count,
-                           tag_by='vendor',
-                           autoescape=False)
-    # else:
-    #     return redirect(url_for(bp.login))
+    if 'user' in session:
+        user_id = session['user']['id']
+        tag_count = get_tag_count(user_id)
+        return render_template("tag_product.html",
+                               vendors=get_vendors(),
+                               available_cats=get_categories(),
+                               username=session['user']['name'],
+                               user_id=user_id,
+                               tag_count=tag_count,
+                               tag_by='vendor',
+                               autoescape=False)
+    else:
+        return redirect(url_for('bp.login'))
 
 @bp.route('/get-vendor-products', methods=['GET', 'POST'])
 def get_vendor_products():
@@ -125,7 +125,7 @@ def tag_it_category():
                                tag_by='category',
                                autoescape=False)
     else:
-        return redirect(url_for(bp.login))
+        return redirect(url_for('bp.login'))
 
 @bp.route('/get-category-products', methods=['GET', 'POST'])
 def get_category_products():
@@ -141,18 +141,6 @@ def get_subcats():
     posted_data = request.get_json()
     print(posted_data)
     return get_subcategories(posted_data['category_id'])
-
-@bp.route('/confirm-category', methods=['GET', 'POST'])
-def confirm_category():
-    posted_data = request.get_json()
-    print(posted_data)
-    if posted_data['sub_category'] == 'None':
-        sub_cat = None
-    else:
-        sub_cat = posted_data['sub_category'].split('->')[-1]
-
-    return update_category(posted_data['id'], posted_data['category'], sub_cat)
-
 
 @bp.route('/change-category', methods=['GET', 'POST'])
 def change_category():
