@@ -19,7 +19,7 @@ $(document).ready(function () {
                 alert('Select a Vendor first.');
             else {
                 $.ajax({
-                    url: '/get-vendor-products',
+                    url: '/cat-ui/get-vendor-products',
                     dataType: 'json',
                     type: 'POST',
                     contentType: 'application/json',
@@ -69,7 +69,7 @@ $(document).ready(function () {
                 else
                     var subcat = $("#update-subcategory").find(":selected").text();
                 $.ajax({
-                    url: '/change-category',
+                    url: '/cat-ui/change-category',
                     dataType: 'json',
                     type: 'POST',
                     contentType: 'application/json',
@@ -95,7 +95,7 @@ $(document).ready(function () {
         $('#update-category').on("change", function () {
             var cat_id = $(this).find(':selected').val();
             $.ajax({
-                url: '/get-subcats',
+                url: '/cat-ui/get-subcats',
                 dataType: 'json',
                 type: 'POST',
                 contentType: 'application/json',
@@ -128,7 +128,7 @@ $(document).ready(function () {
                 alert('Please select a category first.');
             else {
                 $.ajax({
-                    url: '/get-category-products',
+                    url: '/cat-ui/get-category-products',
                     dataType: 'json',
                     type: 'POST',
                     contentType: 'application/json',

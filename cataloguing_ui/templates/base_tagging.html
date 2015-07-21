@@ -31,14 +31,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/vendor/tag-it">Delhivery - Product Tagging</a>
+          <a class="navbar-brand" href="{{ url_for('bp.tag_it_vendor') }}" >Delhivery - Product Tagging</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
                 <!--<li><a href="/vendor/tag-it">Home</a></li>-->
               <li><a>{{username}}</a></li>
               <li><a id="tag-count">{{tag_count}}</a></li>
-              <li><a href="/logout">Logout</a></li>
+              <li><a href="{{ url_for('bp.logout') }}">Logout</a></li>
           </ul>
         </div>
       </div>
@@ -50,10 +50,10 @@
             {% block side_block %}
                 <div class="col-sm-3 col-md-2 sidebar">
                     <ul class="nav">
-                        <li><a href="/vendor/tag-it">Tag By Vendor</a></li>
-                        <li><a href="/category/tag-it">Tag by Category</a></li>
-                        <li><a href="/tag-list">Tags-list</a></li>
-                        <li><a href="/leaderboard">Leaderboard</a></li>
+                        <li><a href="{{ url_for('bp.tag_it_vendor') }}">Tag By Vendor</a></li>
+                        <li><a href="{{ url_for('bp.tag_it_category') }}">Tag by Category</a></li>
+                        <li><a href="{{ url_for('bp.get_tags') }}">Tags-list</a></li>
+                        <li><a href="{{ url_for('bp.view_leaderboard') }}">Leaderboard</a></li>
                     </ul>
                 </div>
             {% endblock %}

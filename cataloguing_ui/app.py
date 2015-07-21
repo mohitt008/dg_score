@@ -1,19 +1,20 @@
 import json
 import config
 
-from flask import Flask, render_template, request, url_for, session, redirect
+from flask import Flask, render_template, request, url_for, session, redirect, Blueprint
 from flask_oauthlib.client import OAuth
 from pymongo import MongoClient
 from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags
 from bson.objectid import ObjectId
 from users import add_user, get_tag_count, inc_tag_count, get_users
 
-app = Flask(__name__, static_url_path='', template_folder='templates')
+bp = Blueprint('bp', __name__, static_url_path='', template_folder='templates')
+app = Flask(__name__)
+app.secret_key = config.APP_SECRET_KEY
 
 client = MongoClient(connect=False)
 db = client.products_db
 oauth = OAuth()
-app.secret_key = config.APP_SECRET_KEY
 
 facebook = oauth.remote_app('facebook',
                             base_url='https://graph.facebook.com/',
@@ -25,7 +26,7 @@ facebook = oauth.remote_app('facebook',
                             request_token_params={'scope': 'email'})
 
 
-@app.route('/login/fbauthorized')
+@bp.route('/login/fbauthorized')
 @facebook.authorized_handler
 def facebook_authorized(resp):
     if resp is None:
@@ -52,7 +53,7 @@ def get_facebook_oauth_token():
     return session.get('oauth_token')
 
 
-@app.route('/fb-login')
+@bp.route('/fb-login')
 def fb_login():
     """
     The facebook login page. Clears the session before allowing a new user to authenticate.
@@ -60,48 +61,46 @@ def fb_login():
     print("login attempt")
     session.clear()
     print(request.args.get('next'))
-    return facebook.authorize(callback=url_for('facebook_authorized',
+    return facebook.authorize(callback=url_for('bp.facebook_authorized',
                                                next=request.args.get('next') or request.referrer or None,
                                                _external=True))
 
 
-@app.route('/')
+@bp.route('/')
 def index():
-    return redirect(url_for('login'))
+    return redirect(url_for('bp.login'))
 
-
-@app.route('/login', methods=['POST', 'GET'])
+@bp.route('/login', methods=['POST', 'GET'])
 def login():
     '''
     Render the simple login page having fb icon
     '''
     return render_template('login.htm')
 
-
-@app.route('/logout')
+@bp.route('/logout')
 def logout():
     if 'user' in session:
         session.pop('user')
-    return redirect(request.args.get('next') or '/login')
+    return redirect(request.args.get('next') or url_for('bp.login'))
 
 
-@app.route('/vendor/tag-it')
+@bp.route('/vendor/tag-it')
 def tag_it_vendor():
-    if 'user' in session:
-        user_id = session['user']['id']
-        tag_count = get_tag_count(user_id)
-        return render_template("tag_product.html",
-                               vendors=get_vendors(),
-                               available_cats=get_categories(),
-                               username=session['user']['name'],
-                               user_id=user_id,
-                               tag_count=tag_count,
-                               tag_by='vendor',
-                               autoescape=False)
-    else:
-        return redirect(url_for('login'))
+    # if 'user' in session:
+    user_id = session['user']['id']
+    tag_count = get_tag_count(user_id)
+    return render_template("tag_product.html",
+                           vendors=get_vendors(),
+                           available_cats=get_categories(),
+                           username=session['user']['name'],
+                           user_id=user_id,
+                           tag_count=tag_count,
+                           tag_by='vendor',
+                           autoescape=False)
+    # else:
+    #     return redirect(url_for(bp.login))
 
-@app.route('/get-vendor-products', methods=['GET', 'POST'])
+@bp.route('/get-vendor-products', methods=['GET', 'POST'])
 def get_vendor_products():
     posted_data = request.get_json()
     print(posted_data)
@@ -112,7 +111,7 @@ def get_vendor_products():
         return tagging_info
     return json.dumps(tagging_info)
 
-@app.route('/category/tag-it')
+@bp.route('/category/tag-it')
 def tag_it_category():
     if 'user' in session:
         user_id = session['user']['id']
@@ -126,9 +125,9 @@ def tag_it_category():
                                tag_by='category',
                                autoescape=False)
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for(bp.login))
 
-@app.route('/get-category-products', methods=['GET', 'POST'])
+@bp.route('/get-category-products', methods=['GET', 'POST'])
 def get_category_products():
     posted_data = request.get_json()
     print(posted_data)
@@ -137,13 +136,13 @@ def get_category_products():
         return tagging_info
     return json.dumps(tagging_info)
 
-@app.route('/get-subcats', methods=['GET', 'POST'])
+@bp.route('/get-subcats', methods=['GET', 'POST'])
 def get_subcats():
     posted_data = request.get_json()
     print(posted_data)
     return get_subcategories(posted_data['category_id'])
 
-@app.route('/confirm-category', methods=['GET', 'POST'])
+@bp.route('/confirm-category', methods=['GET', 'POST'])
 def confirm_category():
     posted_data = request.get_json()
     print(posted_data)
@@ -155,7 +154,7 @@ def confirm_category():
     return update_category(posted_data['id'], posted_data['category'], sub_cat)
 
 
-@app.route('/change-category', methods=['GET', 'POST'])
+@bp.route('/change-category', methods=['GET', 'POST'])
 def change_category():
     posted_data = request.get_json()
     print(posted_data)
@@ -164,7 +163,7 @@ def change_category():
     tag_list.update(get_taglist(posted_data['subcat']))
     return json.dumps(tag_list)
 
-@app.route('/set-tags', methods=['GET', 'POST'])
+@bp.route('/set-tags', methods=['GET', 'POST'])
 def set_tags():
     posted_data = request.get_json()
     if posted_data['tags'] and (posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']):
@@ -194,7 +193,7 @@ def set_tags():
     tagging_info['tag_count'] = tag_count
     return json.dumps(tagging_info)
 
-@app.route('/leaderboard')
+@bp.route('/leaderboard')
 def view_leaderboard():
     user_id = session['user']['id']
     tag_count = get_tag_count(user_id)
@@ -204,7 +203,7 @@ def view_leaderboard():
                            user_id=user_id,
                            tag_count=tag_count)
 
-@app.route('/tag-list')
+@bp.route('/tag-list')
 def get_tags():
     user_id = session['user']['id']
     tag_count = get_tag_count(user_id)
@@ -214,6 +213,7 @@ def get_tags():
                            user_id=user_id,
                            tag_count=tag_count)
 
+app.register_blueprint(bp, url_prefix='/cat-ui')
 if __name__ == '__main__':
     app.debug = True
     app.run()

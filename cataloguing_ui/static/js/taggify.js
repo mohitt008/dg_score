@@ -93,7 +93,7 @@
       data_ob['is_xray']=xray;
       data_ob['is_dirty']=dirty;
       return $.ajax({
-        url: '/set-tags',
+        url: '/cat-ui/set-tags',
         dataType: 'json',
         type: 'POST', //make query POST
         contentType: 'application/json',
