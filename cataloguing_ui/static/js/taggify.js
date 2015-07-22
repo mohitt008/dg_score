@@ -153,7 +153,7 @@
         resetTags()
       });
 
-      $('#submit-button').bind("click", function() {
+      $('#submit-button').off().on('click', function() {
         if ($("span[tag]").length == $("span .address_element").length || $('input[type=checkbox]').is(':checked')) {
 
               var is_dang = $('#dangerous-goods').is(':checked');
@@ -174,7 +174,7 @@
         }
       });
 
-      $('#skip-button').bind("click", function() {
+      $('#skip-button').off().on('click', function() {
           sendTags(null, null, null, null);
           $('#submit-button').notify('Skipping product name', "info");
       });
