@@ -1,18 +1,11 @@
+import os
 import csv
-
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 client = MongoClient()
 db = client.products_db
 tag_dict = {}
-#finding all existing codes
-# # t = db.categories.find({'tags': {'$exists': True}}, {'tags': 1})
-# # lis = []
-# # for i in t:
-# #     lis.append(i['tags'])
-# s = set(val for dic in lis for val in dic.values())
-# print(s)
 
 
 def get_code(word):
@@ -23,22 +16,14 @@ def get_code(word):
         code = word[:k+1]
         if code not in tag_dict.values():
             tag_dict[word] = code
-            print(tag_dict)
+            # print(tag_dict)
             return code
     print(tag_dict)
-# print('code', get_code('And'))
-# print('code', get_code('abdd'))
-# print('code', get_code('Abd'))
 
-reader = csv.reader(open('/home/delhivery/category_tags_mapping.csv', 'r'), delimiter=',')
+
+fn = os.path.join(os.path.dirname(__file__), 'data/category_attrs_mapping.csv')
+reader = csv.reader(open(fn, 'r'), delimiter=',')
 for row in reader:
-    tag_list = None
-    if row[2]:
-        tags = row[2].split(';')
-        for tag in tags:
-            tag_list = dict((tag, get_code(tag)) for tag in tags)
-        # print(tag_list)
-
     if row[0]:
         cat_obj = db.categories.find_and_modify(
             {"category_name": row[0]},
@@ -46,17 +31,32 @@ for row in reader:
             new=True,
             upsert=True
         )
-    if row[1]:
-        subcat_id = db.categories.insert({'category_name': row[1], 'par_category': ObjectId(cat_obj['_id'])})
-        # print(subcat_id)
-        a = db.categories.update({"_id": ObjectId(cat_obj['_id'])},
-                                 {'$addToSet': {'children': ObjectId(subcat_id)}})
-        # print(a)
-    if tag_list is not None:
+        # print(cat_obj)
+
+        tag_list = None
         if row[1]:
-            res = db.categories.update({'_id': ObjectId(subcat_id)},
-                                       {'$set': {'tags': tag_list}})
-        else:
+            tags = row[1].split(';')
+            for tag in tags:
+                tag_list = dict((tag, get_code(tag)) for tag in tags)
+            # print(tag_list)
             res = db.categories.update({'_id': ObjectId(cat_obj['_id'])},
                                        {'$set': {'tags': tag_list}})
-        # print(res)
+
+    if row[2]:
+        print(row[2])
+        subcat_id = db.categories.insert({'category_name': row[2], 'par_category': ObjectId(cat_obj['_id'])})
+        print(subcat_id)
+        a = db.categories.update({"_id": ObjectId(cat_obj['_id'])},
+                                 {'$addToSet': {'children': ObjectId(subcat_id)}},
+                                 upsert=True)
+        print(a)
+
+        tag_list = None
+        if row[3]:
+            tags = row[3].split(';')
+            for tag in tags:
+                tag_list = dict((tag, get_code(tag)) for tag in tags)
+            # print(tag_list)
+            res = db.categories.update({'_id': ObjectId(subcat_id)},
+                                       {'$set': {'tags': tag_list}})
+print(tag_dict)
