@@ -43,7 +43,7 @@ def facebook_authorized(resp):
     add_user(me.data)
     if me.data['id'] and me.data['name']:
         session['user'] = me.data
-        return redirect(request.args.get('next', '/tag'))
+        return redirect(url_for('bp.tag_it_vendor'))
     else:
         return "Login failed"
 
