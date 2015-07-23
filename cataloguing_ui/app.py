@@ -8,7 +8,7 @@ from utils import update_category, get_categories, get_product_tagging_details, 
 from bson.objectid import ObjectId
 from users import add_user, get_tag_count, inc_tag_count, get_users
 
-bp = Blueprint('bp', __name__, static_url_path='', template_folder='templates')
+bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
 app = Flask(__name__)
 app.secret_key = config.APP_SECRET_KEY
 
