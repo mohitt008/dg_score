@@ -12,12 +12,21 @@
   {% endif %}
 
 <div id="tag-products" style="display:none">
-  <h4>Original Product Name</h4>
-  <div id='org_prod_name'></div>
-  Vendor : <span id='vendor_name'></span><br>
-  Category Identified : <span id='category'></span><br>
-  Sub-Category Identified : <span id='sub-category'></span><br><br>
-  or choose category:
+  <h4>Product details :</h4>
+  <!--<div id='org_prod_name'></div>-->
+  <table class="table table-bordered table-hover">
+      <tbody>
+          <tr><td>Product Name</td><td><span id='org_prod_name'></span></td></tr>
+          <tr><td>Vendor</td><td><span id='vendor_name'></span></td></tr>
+          <tr><td>Category Identified</td><td><span id='category'></span></td></tr>
+          <tr><td>Sub-Category Identified</td><td><span id='sub-category'></span></td></tr>
+      </tbody>
+  </table>
+
+  <!--Vendor : <span id='vendor_name'></span><br>-->
+  <!--Category Identified : <span id='category'></span><br>-->
+  <!--Sub-Category Identified : <span id='sub-category'></span><br>-->
+  Update category:
 
   <select id="update-category">
       <option value='-1'>----------- Select Category -----------</option>
@@ -28,7 +37,6 @@
   <select id="update-subcategory" disabled></select>
   <input type="submit" class="btn btn-primary" value="Update Category" id="update-button">
 
-  <div id="msg"></div>
   <div id='tag_template' style="display:none">
   <div class='tag_list'>
       <table>
@@ -48,7 +56,6 @@
           </td>
           <td class="tag_holder extra-attrs">
             <!--<a href='#' tagtype = "M2"><span class="tag_text">Memory</span></a>-->
-            <!--<a href='#' tagtype = "D2" tabindex='109'><span class="tag_text">Display Size</span></a>-->
           </td>
           </tr>
       </table>
@@ -63,5 +70,5 @@
     <input type="submit" class="btn btn-primary" value="Clear" id="clear-button">
     <input type="button" class="btn btn-primary" value="Skip this product" id="skip-button">
   </div>
-  </div>
+</div>
 {% endblock %}

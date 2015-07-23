@@ -75,7 +75,7 @@ $(document).ready(function () {
                     contentType: 'application/json',
                     data: JSON.stringify({ "category": cat, "subcat": subcat, "id": id }),
                     success: function (data) {
-                        alert('Category changed successfully.');
+                        $('#update-button').notify('Category Updated Successfully!', "success");
                         attrs="";
                         $.each(data, function (attr, code) {
                           attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
@@ -84,7 +84,6 @@ $(document).ready(function () {
                         $(".extra-attrs").html(attrs);
                         console.log(id, prod_seg, data_obj);
                         $('.address').taggify(id, prod_seg, data_obj);
-//                        $("#msg").append(data['message']);
                     }
                 });
             }

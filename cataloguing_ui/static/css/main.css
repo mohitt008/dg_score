@@ -144,14 +144,6 @@ h1
 	border-width: 8px; 
 	margin-left: -8px; 
 }
-#org_prod_name {
-  font-size: italic;
-  color: #666;
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #eee;
-  /*border: 1px solid;*/
-}
 
 .buttons {
   margin-top: 20px;

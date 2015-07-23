@@ -183,23 +183,30 @@ def set_tags():
 
 @bp.route('/leaderboard')
 def view_leaderboard():
-    user_id = session['user']['id']
-    tag_count = get_tag_count(user_id)
-    return render_template("leaderboard.html",
-                           users=get_users(),
-                           username=session['user']['name'],
-                           user_id=user_id,
-                           tag_count=tag_count)
+    if 'user' in session:
+        user_id = session['user']['id']
+        tag_count = get_tag_count(user_id)
+        return render_template("leaderboard.html",
+                               users=get_users(),
+                               username=session['user']['name'],
+                               user_id=user_id,
+                               tag_count=tag_count)
+    else:
+        return redirect(url_for('bp.login'))
 
 @bp.route('/tag-list')
 def get_tags():
-    user_id = session['user']['id']
-    tag_count = get_tag_count(user_id)
-    return render_template("tag_list.html",
-                           tags=get_all_tags(),
-                           username=session['user']['name'],
-                           user_id=user_id,
-                           tag_count=tag_count)
+    if 'user' in session:
+        user_id = session['user']['id']
+        tag_count = get_tag_count(user_id)
+        return render_template("tag_list.html",
+                               tags=get_all_tags(),
+                               username=session['user']['name'],
+                               user_id=user_id,
+                               tag_count=tag_count)
+    else:
+        return redirect(url_for('bp.login'))
+
 
 app.register_blueprint(bp, url_prefix='/cat-ui')
 if __name__ == '__main__':
