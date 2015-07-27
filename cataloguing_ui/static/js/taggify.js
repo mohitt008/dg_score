@@ -106,7 +106,7 @@
       sendTagsAJAX(tags, is_dang, is_xray, is_dirty).done(function(data) {
         console.log('next product-name data: ', data);
         if(data.error)
-            alert(data.error);
+            $.notify(data.error, { position:"bottom-right" });
         else {
             resetTags();
             $('#org_prod_name').html(data.prod_name);
@@ -170,7 +170,7 @@
               sendTags(tags, is_dang, is_xray, is_dirty);
             $('#submit-button').notify('Tags saved, fetching new product name...', "success");
         } else {
-            alert("Please tag everything or Skip this name. ")
+            $.notify('Please tag everything or Skip this name.', { position:"bottom-right" });
         }
       });
 

@@ -1,9 +1,6 @@
 {% extends "base_tagging.html" %}
 
 {% block content %}
-  <!--{{username}}-->
-  <!--<span id="tag-count">{{tag_count}}</span><br/><br/>-->
-
   {% if tag_by == 'vendor' %}
         {% include 'tag_vendor.html' %}
   {% endif %}
@@ -13,7 +10,6 @@
 
 <div id="tag-products" style="display:none">
   <h4>Product details :</h4>
-  <!--<div id='org_prod_name'></div>-->
   <table class="table table-bordered table-hover">
       <tbody>
           <tr><td>Product Name</td><td><span id='org_prod_name'></span></td></tr>
@@ -23,11 +19,7 @@
       </tbody>
   </table>
 
-  <!--Vendor : <span id='vendor_name'></span><br>-->
-  <!--Category Identified : <span id='category'></span><br>-->
-  <!--Sub-Category Identified : <span id='sub-category'></span><br>-->
   Update category:
-
   <select id="update-category">
       <option value='-1'>----------- Select Category -----------</option>
       {% for cat in available_cats %}
