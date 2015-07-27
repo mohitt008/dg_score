@@ -16,7 +16,7 @@ $(document).ready(function () {
         $("#vendor-button").click(function () {
             vendor = $("#select-vendor").find(":selected").val();
             if (vendor == '-1')
-                alert('Select a Vendor first.');
+                $("#select-vendor").notify("Please select a Vendor first.", "error");
             else {
                 $.ajax({
                     url: '/cat-ui/get-vendor-products',
@@ -26,7 +26,7 @@ $(document).ready(function () {
                     data: JSON.stringify({ "vendor": vendor}),
                     success: function (data) {
                         if (data['error'])
-                            alert(data['error']);
+                            $("#select-vendor").notify(data['error']);
                         else {
                             $("#tag-products").css("display", "block");
                             $("#org_prod_name").html(data['prod_name']);
@@ -59,7 +59,7 @@ $(document).ready(function () {
         $("#update-button").click(function () {
             var cat_id = $("#update-category").find(":selected").val();
             if (cat_id == '-1')
-                alert('Please select a category first.');
+                $("#update-button").notify('Please select a category first.');
             else {
                 var cat = $("#update-category").find(":selected").text();
                 var subcat_id = $("#update-subcategory").find(":selected").val();
@@ -124,7 +124,7 @@ $(document).ready(function () {
             var cat = $("#select-category").find(":selected").text();
             var cat_id = $("#select-category").find(":selected").val();
             if(cat_id=='-1')
-                alert('Please select a category first.');
+                $("#select-category").notify('Please select a category first.');
             else {
                 $.ajax({
                     url: '/cat-ui/get-category-products',
@@ -135,7 +135,7 @@ $(document).ready(function () {
                     success: function (data) {
                         console.log(data);
                         if (data['error'])
-                            alert(data['error']);
+                            $("#select-category").notify(data['error']);
                         else {
                             $("#tag-products").css("display", "block");
                             $("#org_prod_name").html(data['prod_name']);

@@ -176,7 +176,7 @@
 
       $('#skip-button').off().on('click', function() {
           sendTags(null, null, null, null);
-          $('#submit-button').notify('Skipping product name', "info");
+          $('#skip-button').notify('Skipping product name', "info");
       });
     }
 
