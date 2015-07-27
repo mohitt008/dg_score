@@ -112,6 +112,8 @@
             $('#org_prod_name').html(data.prod_name);
             $('#category').html(data.prod_cat);
             $('#sub-category').html(data.prod_subcat);
+            $("#prod-url").html(data.prod_url);
+            $("#prod-url").attr("href", data['prod_url']);
             $('#tag-count').html(data.tag_count);
 
             var attrs="";

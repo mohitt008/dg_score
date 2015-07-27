@@ -34,6 +34,8 @@ $(document).ready(function () {
                             $("#selectable").html(data['prod_name']);
                             $("#category").html(data['prod_cat']);
                             $("#sub-category").html(data['prod_subcat']);
+                            $("#prod-url").html(data['prod_url']);
+                            $("#prod-url").attr("href", data['prod_url']);
                             id = data['id'];
                             prod_seg = JSON.parse(data['prod_seg']);
                             data_obj = {'vendor': vendor};
@@ -143,6 +145,8 @@ $(document).ready(function () {
                             $("#selectable").html(data['prod_name']);
                             $("#category").html(data['prod_cat']);
                             $("#sub-category").html(data['prod_subcat']);
+                            $("#prod-url").html(data['prod_url']);
+                            $("#prod-url").attr("href", data['prod_url']);
                             id = data['id'];
                             prod_seg = JSON.parse(data['prod_seg']);
                             data_obj = {'category': data['prod_cat']};
