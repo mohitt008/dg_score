@@ -85,13 +85,13 @@
     }
 
     function sendTagsAJAX(tags, dang, xray, dirty) {
-//      var date = new Date();
-//      return_obj.epoch = date.getTime()
-      data_ob['id']=idd;
-      data_ob['tags']=tags;
-      data_ob['is_dang']=dang;
-      data_ob['is_xray']=xray;
-      data_ob['is_dirty']=dirty;
+      var date = new Date();
+      data_ob.epoch = date.getTime();
+      data_ob['id'] = idd;
+      data_ob['tags'] = tags;
+      data_ob['is_dang'] = dang;
+      data_ob['is_xray'] = xray;
+      data_ob['is_dirty'] = dirty;
       return $.ajax({
         url: '/cat-ui/set-tags',
         dataType: 'json',

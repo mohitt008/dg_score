@@ -28,6 +28,7 @@ for i in data:
         db.products.insert({'product_name': j['record']['product_name'],
                             "vendor": 'Flipkart',
                             "category": response['category'],
-                            "sub_category": subcat})
+                            "sub_category": subcat,
+                            "product_url": j['record']['product_url']})
 
 print('No of records: ', x)
