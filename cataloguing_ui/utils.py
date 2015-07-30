@@ -110,6 +110,7 @@ def update_category(id, cat, subcat):
 
 def get_random_product(query):
     query['done'] = {'$exists': False}
+    query['dirty'] = {'$exists': False}
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)
