@@ -23,6 +23,7 @@ def get_code(word):
 
 fn = os.path.join(os.path.dirname(__file__), 'data/category_attrs_mapping.csv')
 reader = csv.reader(open(fn, 'r'), delimiter=',')
+next(reader, None)
 for row in reader:
     if row[0]:
         cat_obj = db.categories.find_and_modify(
