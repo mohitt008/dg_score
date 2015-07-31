@@ -5,7 +5,7 @@ client = MongoClient()
 db = client.products_db
 
 data = []
-with open('/home/delhivery/Downloads/saquib.json') as f:
+with open('data/may/flipkart_com_delhivery_set1_delhivery_product_deduped_n-20150531_1215426670023_20150531231215.json') as f:
     for line in f:
         data.append(json.loads(line))
 

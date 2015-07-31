@@ -37,7 +37,7 @@ for row in reader:
         if row[1]:
             tags = row[1].split(';')
             for tag in tags:
-                tag_list = dict((tag, get_code(tag)) for tag in tags)
+                tag_list = dict((tag.strip(), get_code(tag.strip())) for tag in tags)
             # print(tag_list)
             res = db.categories.update({'_id': ObjectId(cat_obj['_id'])},
                                        {'$set': {'tags': tag_list}})
@@ -55,7 +55,7 @@ for row in reader:
         if row[3]:
             tags = row[3].split(';')
             for tag in tags:
-                tag_list = dict((tag, get_code(tag)) for tag in tags)
+                tag_list = dict((tag.strip(), get_code(tag.strip())) for tag in tags)
             # print(tag_list)
             res = db.categories.update({'_id': ObjectId(subcat_id)},
                                        {'$set': {'tags': tag_list}})
