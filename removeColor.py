@@ -5,6 +5,7 @@ Input: List of colors and sentence
 Output: Sentence after removing colours
 """
 from utilities import COLOR_SET
+import re
 
 """
 Create a trie to store list of strings with a word as a key.
@@ -57,7 +58,8 @@ def removeColor(sentence):
 	Uses this trie to remove color names from sentence
 	"""
 
-    stringIndexed = sentence.split()
+    # stringIndexed = sentence.split()
+    stringIndexed  = re.findall(r"[\w']+", sentence)
     index = 0
     while index <= len(stringIndexed) - 1:
         # print stringIndexed[index],index,stringIndexed[index+1]
@@ -83,6 +85,6 @@ def removeColor(sentence):
     return ' '.join(stringIndexed)
 
 
-if __name__ == '__main__':
-    print removeColor("woodland sea green shoes".lower())
+# if __name__ == '__main__':
+#     print removeColor("jabra solemate nfc wireless bluetooth speakers (black)".lower())
 
