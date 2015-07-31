@@ -12,4 +12,3 @@ def get_color_set():
 
 COLOR_SET=get_color_set()
 print
-
