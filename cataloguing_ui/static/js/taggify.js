@@ -84,7 +84,7 @@
       })
     }
 
-    function sendTagsAJAX(tags, dang, xray, dirty) {
+    function sendTagsAJAX(tags, dang, xray, dirty,skipped) {
       var date = new Date();
       data_ob.epoch = date.getTime();
       data_ob['id'] = idd;
@@ -92,6 +92,11 @@
       data_ob['is_dang'] = dang;
       data_ob['is_xray'] = xray;
       data_ob['is_dirty'] = dirty;
+      //console.log("skipped value");
+      //console.log(skipped);
+      data_ob['is_skipped'] = skipped;
+      //console.log("Sending data to app");
+      //console.log(data_ob);
       return $.ajax({
         url: '/cat-ui/set-tags',
         dataType: 'json',
@@ -101,9 +106,9 @@
       });
     }
 
-    function sendTags(tags, is_dang, is_xray, is_dirty) {
+    function sendTags(tags, is_dang, is_xray, is_dirty,is_skipped) {
 
-      sendTagsAJAX(tags, is_dang, is_xray, is_dirty).done(function(data) {
+      sendTagsAJAX(tags, is_dang, is_xray, is_dirty,is_skipped).done(function(data) {
         console.log('next product-name data: ', data);
         if(data.error) {
             $.notify(data.error, { position:"bottom-right" });
@@ -117,6 +122,10 @@
             $('#category').html(data.prod_cat);
             $('#sub-category').html(data.prod_subcat);
             $('#tag-count').html(data.tag_count);
+
+            //if(data.skip_con > 4){
+            //    $('#dirty-name').checked(true);
+            //}
 
             var attrs="";
             if (!jQuery.isEmptyObject(data['taglist'])) {
@@ -162,6 +171,7 @@
               var is_dang = $('#dangerous-goods').is(':checked');
               var is_xray = $('#x-ray').is(':checked');
               var is_dirty = $('#dirty-name').is(':checked');
+              var is_skipped = false
               var tags = [];
               $.each($( "span .address_element"),function() {
                   if($(this).attr('tag') === undefined) {
@@ -170,7 +180,7 @@
                   }
                   tags.push([$(this).text(),$(this).attr('tag')])
               });
-              sendTags(tags, is_dang, is_xray, is_dirty);
+              sendTags(tags, is_dang, is_xray, is_dirty,is_skipped);
             $('#submit-button').notify('Tags saved, fetching new product name...', "success");
         } else {
             $.notify('Please tag everything or Skip this name.', { position:"bottom-right" });
@@ -178,7 +188,8 @@
       });
 
       $('#skip-button').off().on('click', function() {
-          sendTags(null, null, null, null);
+          var is_skipped = true
+          sendTags(null, null, null, null,is_skipped);
           $('#skip-button').notify('Skipping product name', "info");
       });
     }
