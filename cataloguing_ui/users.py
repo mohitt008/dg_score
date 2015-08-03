@@ -37,8 +37,6 @@ def inc_tag_count(user_id):
 def get_users():
     return db.users.find({},{'name':1, 'tags':1, '_id':0}).sort([('tags', -1)])
 
-def inc_skip_count(product_id):
-    db.products.update({"_id":ObjectId(product_id)},{"$inc":{"skip_count":1}})
 
 def get_skip_count(product_id):
     temp_dict = db.products.find({"_id":ObjectId(product_id)},{"skip_count":1,"_id":0})

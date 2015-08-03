@@ -106,7 +106,7 @@
       });
     }
 
-    function sendTags(tags, is_dang, is_xray, is_dirty,is_skipped) {
+    function sendTags(tags, is_dang, is_xray, is_dirty, is_skipped) {
 
       sendTagsAJAX(tags, is_dang, is_xray, is_dirty,is_skipped).done(function(data) {
         console.log('next product-name data: ', data);
@@ -180,7 +180,7 @@
                   }
                   tags.push([$(this).text(),$(this).attr('tag')])
               });
-              sendTags(tags, is_dang, is_xray, is_dirty,is_skipped);
+              sendTags(tags, is_dang, is_xray, is_dirty, is_skipped);
             $('#submit-button').notify('Tags saved, fetching new product name...', "success");
         } else {
             $.notify('Please tag everything or Skip this name.', { position:"bottom-right" });
@@ -189,7 +189,7 @@
 
       $('#skip-button').off().on('click', function() {
           var is_skipped = true
-          sendTags(null, null, null, null,is_skipped);
+          sendTags(null, null, null, null, is_skipped);
           $('#skip-button').notify('Skipping product name', "info");
       });
     }

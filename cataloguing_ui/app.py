@@ -6,7 +6,7 @@ from flask_oauthlib.client import OAuth
 from pymongo import MongoClient
 from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags
 from bson.objectid import ObjectId
-from users import add_user, get_tag_count, inc_tag_count, get_users, get_skip_count, inc_skip_count
+from users import add_user, get_tag_count, inc_tag_count, get_users, get_skip_count
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
 app = Flask(__name__)
@@ -163,14 +163,13 @@ def set_tags():
     id = posted_data.pop("id", None)
 
     if posted_data['is_skipped']:
-        when_skipped = {}
-        # skip_c = inc_skip_count(id)
+        skip_data = {}
         skip_c = get_skip_count(id)
-        skip_c = skip_c + 1
-        when_skipped['skip_count'] = skip_c
+        skip_c += 1
+        skip_data['skip_count'] = skip_c
         if skip_c > 4:
-            when_skipped['is_dirty'] = True
-        db.products.update({'_id': ObjectId(id)}, {"$set": when_skipped})
+            skip_data['is_dirty'] = True
+        db.products.update({'_id': ObjectId(id)}, {"$set": skip_data})
 
     next_name = {}
     if 'category' in posted_data:
