@@ -105,15 +105,17 @@
 
       sendTagsAJAX(tags, is_dang, is_xray, is_dirty).done(function(data) {
         console.log('next product-name data: ', data);
-        if(data.error)
+        if(data.error) {
             $.notify(data.error, { position:"bottom-right" });
+            $("#tag-products").css("display", "none");
+        }
         else {
             resetTags();
             $('#org_prod_name').html(data.prod_name);
+            $("#vendor_name").html(data['vendor']);
+            $("#vendor_name").attr("href", data['prod_url']);
             $('#category').html(data.prod_cat);
             $('#sub-category').html(data.prod_subcat);
-            $("#prod-url").html(data.prod_url);
-            $("#prod-url").attr("href", data['prod_url']);
             $('#tag-count').html(data.tag_count);
 
             var attrs="";
@@ -123,7 +125,6 @@
                 });
             }
             $(".extra-attrs").html(attrs);
-//            setUpAddress(prod_seg)
 
             id = data['id'];
             prod_seg = JSON.parse(data.prod_seg);
