@@ -3,12 +3,13 @@ __author__ = 'rohan'
 import sys
 import os.path
 
-PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname('__file__')))
+print PARENT_DIR
 sys.path.append(PARENT_DIR)
 
 import re
 from removeColor import removeColor
-from Load_Data.get_products import get_categories, get_delhivery_products
+from Load_Data.get_products import get_categories, get_delhivery_products, get_vendor_category_products, get_delhivery_vendor_products
 from config_details import second_level_cat_names
 
 import csv
@@ -28,6 +29,17 @@ from sklearn.feature_selection import SelectPercentile, chi2, f_classif, SelectF
 from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
 
+plural_dict = {}
+with open('Train_Model/word_list_verified.csv','rb') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        type(row[2])
+        if row[2]!='0':
+            plural_dict[row[0]] = row[1]
+
+client = MongoClient()
+db = client['cat_identification']
+product_table = db['products_new']
 
 def mypluralremover(word):
     """
@@ -35,11 +47,33 @@ def mypluralremover(word):
     :param word:  the word to remove plural from
     :return: the singular verson of the word
     """
-
-    if word.endswith('ies') and len(word) >= 5:
-        return word[:-3] + "y"
-    elif word.endswith('s') and len(word) >= 5:
-        return word[:-1]
+    # if word == "men's" or word == "men":
+    #     return "man"
+    # elif word == "women's" or word == "women":
+    #     return "woman"
+    # elif word.endswith == "'s":
+    #     return word[:-2]
+    # elif word.endswith('ies') and len(word) >= 5:
+    #     return word[:-3] + "y"
+    # elif word.endswith('ves') and len(word) >= 5:
+    #     return word[:-3] + "f"
+    # elif (word.endswith('ches') or word.endswith('sses') or word.endswith('shes') or word.endswith('xes')) and len(word) >=5:
+    #     return word[:-2]
+    # elif word.endswith('ss'):
+    #     return word
+    # elif word.endswith('s') and len(word) >= 4:
+    #     return word[:-1]
+    # else:
+    #     return word
+    # if word.endswith('ves'):
+    #     return word[:-1]
+    # else:
+    #     return singularize(word)
+    if word.endswith('s') or word.endswith('S'):
+        if word in plural_dict:
+            return plural_dict[word]
+        else:
+            return word
     else:
         return word
 
@@ -103,7 +137,7 @@ def get_products(cat_id, count):
 
 
 def root_training_prcoess():
-    count=5000
+    count=1000
     category_tree=json.loads(get_categories())
     category_list=category_tree.keys()
     product_list=[]
@@ -111,8 +145,10 @@ def root_training_prcoess():
     second_level_categories=set()
     train_x=[]
     train_y=[]
-    # print category_list
-    # import pdb;pdb.set_trace()
+    # # print category_list
+    # # import pdb;pdb.set_trace()
+    ## For vendor based model
+    """
     total=0
     for category_id in category_list:
         current_prod_list=json.loads(get_products(category_id,count=count))
@@ -132,6 +168,23 @@ def root_training_prcoess():
             train_x.append(products.get('product_name',"").encode('ascii','ignore').lower())
             train_y.append(current_category_name)
             product_list.append((products,current_category_name))
+    """
+    hq = product_table.find({"vendor_id":"HQ"})
+    print "----------------"
+    print "root training"
+    print hq.count()
+    for products in hq:
+        train_x.append(products['product_name'].encode('ascii','ignore').lower())
+        if products['vendor_category_id'] == 'NA':
+            current_category_name = 'Delhivery_Others'
+        else:
+            current_category_name =  products['vendor_category_id'].split('->')[0]
+        train_y.append(current_category_name)
+        product_list.append((products,current_category_name))
+
+
+
+
     print "Training Set Constructed"
     print "Training Set Stats"
     print category_count_dict
@@ -181,11 +234,11 @@ def root_training_prcoess():
     clf_fpr.fit(train_x_vectorized, train_y)
 
     print "model 3 done"
-    print os.path.dirname(__file__)+'/../Models/clf_bayes.pkl'
-    joblib.dump(clf_bayes, os.path.dirname(__file__)+'/../Models/clf_bayes.pkl')
-    joblib.dump(clf_chi, os.path.dirname(__file__)+'/../Models/clf_chi.pkl')
-    joblib.dump(clf_fpr, os.path.dirname(__file__)+'/../Models/clf_fpr.pkl')
-    joblib.dump(vectorizer,os.path.dirname(__file__)+'/../Models/vectorizer.pkl')
+    print os.path.dirname(os.path.realpath('__file__'))+'/../Models/clf_bayes.pkl'
+    joblib.dump(clf_bayes, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_bayes.pkl')
+    joblib.dump(clf_chi, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_chi.pkl')
+    joblib.dump(clf_fpr, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_fpr.pkl')
+    joblib.dump(vectorizer,os.path.dirname(os.path.realpath('__file__'))+'/Models/vectorizer.pkl')
 
 
     # joblib.dump(second_level_cats,'../Models')
@@ -194,7 +247,7 @@ def root_training_prcoess():
 
 
 def second_training_process():
-    count=1500
+    count=10000
     category_tree=json.loads(get_categories())
     for parent_category in second_level_cat_names:
         train_x=[]
@@ -202,7 +255,9 @@ def second_training_process():
         total=0
         category_count_dict={}
         for category_id in category_tree[parent_category].keys():
-            # print get_products(category_id,count)
+            ## For vendor based model
+            """
+            print get_products(category_id,count)
             current_prod_list=json.loads(get_products(category_id,count=count))
             print category_id
             total=total+ len(current_prod_list)
@@ -218,6 +273,19 @@ def second_training_process():
                 # print products
                 train_x.append(products.get('product_name',"").encode('ascii','ignore').lower())
                 train_y.append(current_category_name)
+            """
+            try:
+                hq = product_table.find({"vendor_id":"HQ","vendor_category_id":category_id})
+                print "---------------------"
+                print category_id,hq.count()
+                print "---------------------"
+                for products in hq:
+                    train_x.append(products['product_name'].encode('ascii','ignore').lower())
+                    current_category_name =  category_id
+                    train_y.append(current_category_name)
+                    # product_list.append((products,current_category_name))
+            except:
+                pass
         print "Training Set Constructed for %s "%(parent_category)
         print "Training Set Stats"
         print len(train_x), len(train_y)
