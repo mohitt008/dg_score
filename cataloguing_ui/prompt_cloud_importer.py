@@ -160,7 +160,7 @@ if __name__ == "__main__":
     p = Pool(processes=16)
     path_to_json = os.path.join(os.path.dirname(__file__), 'data/may/')
     json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
-    print(json_files)
+    print(json_files, len(json_files))
 
     data = []
     records = []
@@ -172,7 +172,10 @@ if __name__ == "__main__":
     # print(data)
     for i in data:
         for j in i:
-            records.append({'product_name': j['record']['product_name'], 'product_url': j['record']['product_url']})
+            try:
+                records.append({'product_name': j['record']['product_name'], 'product_url': j['record']['product_url']})
+            except Exception as e:
+                pass
     start = 0
     end = len(records)
     diff = int(end/16)
