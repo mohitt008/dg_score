@@ -1,11 +1,14 @@
 import json
 import config
+import os
 
-from flask import Flask, render_template, request, url_for, session, redirect, Blueprint
+from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint
 from flask_oauthlib.client import OAuth
+from flask_oauth2_login import GoogleLogin
 from pymongo import MongoClient
-from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags
 from bson.objectid import ObjectId
+
+from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags
 from users import add_user, get_tag_count, inc_tag_count, get_users, get_skip_count
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
@@ -15,6 +18,37 @@ app.secret_key = config.APP_SECRET_KEY
 client = MongoClient(connect=False)
 db = client.products_db
 oauth = OAuth()
+
+############################------Google Login------####################################
+
+app.config.update(
+  GOOGLE_LOGIN_REDIRECT_SCHEME="http",
+)
+
+app.config['GOOGLE_LOGIN_CLIENT_ID'] = '159548149132-ovllp5nn6ss26p8ttcustb6n8j8u3v1a.apps.googleusercontent.com'
+app.config['GOOGLE_LOGIN_CLIENT_SECRET'] = '2ou9K8DtCt7IXQt1r7yievrf'
+
+google_login = GoogleLogin(app)
+
+@bp.route('/google-redirect')
+def redirect_google():
+    return redirect(google_login.authorization_url())
+
+@google_login.login_success
+def login_success(token, profile):
+    add_user(profile)
+    if profile['id'] and profile['name']:
+        session['user'] = profile
+        return redirect(url_for('bp.tag_it_vendor'))
+    else:
+        print('Login failed.')
+        return "Login failed"
+
+@google_login.login_failure
+def login_failure(e):
+  return jsonify(error=str(e))
+
+############################------Facebook Login------##################################
 
 facebook = oauth.remote_app('facebook',
                             base_url='https://graph.facebook.com/',
@@ -65,6 +99,7 @@ def fb_login():
                                                next=request.args.get('next') or request.referrer or None,
                                                _external=True))
 
+###########################------Facebook Login Ends Here------#################################
 
 @bp.route('/')
 def index():
@@ -82,7 +117,6 @@ def logout():
     if 'user' in session:
         session.pop('user')
     return redirect(request.args.get('next') or url_for('bp.login'))
-
 
 @bp.route('/vendor/tag-it')
 def tag_it_vendor():

@@ -92,11 +92,7 @@
       data_ob['is_dang'] = dang;
       data_ob['is_xray'] = xray;
       data_ob['is_dirty'] = dirty;
-      //console.log("skipped value");
-      //console.log(skipped);
       data_ob['is_skipped'] = skipped;
-      //console.log("Sending data to app");
-      //console.log(data_ob);
       return $.ajax({
         url: '/cat-ui/set-tags',
         dataType: 'json',
@@ -122,10 +118,6 @@
             $('#category').html(data.prod_cat);
             $('#sub-category').html(data.prod_subcat);
             $('#tag-count').html(data.tag_count);
-
-            //if(data.skip_con > 4){
-            //    $('#dirty-name').checked(true);
-            //}
 
             var attrs="";
             if (!jQuery.isEmptyObject(data['taglist'])) {
