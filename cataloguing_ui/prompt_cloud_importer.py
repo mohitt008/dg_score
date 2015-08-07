@@ -155,9 +155,23 @@ def get_category(products):
                 err, list_product_names))
         print(str(err))
 
+def create_pool(records, start, end, diff):
+    p = Pool(processes=16)
+    try:
+        while start < end:
+            #print records[start:start+diff]
+            print(start, diff, end)
+            p.apply_async(get_category, args=(records[start:start+diff], ))
+            start = start + diff
+        p.close()
+        p.join()
+    except (KeyboardInterrupt, SystemExit):
+        print("Exiting...")
+        p.terminate()
+        p.join()
+
 
 if __name__ == "__main__":
-    p = Pool(processes=16)
     path_to_json = os.path.join(os.path.dirname(__file__), 'data/may/')
     json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
     print(json_files, len(json_files))
@@ -179,15 +193,4 @@ if __name__ == "__main__":
     start = 0
     end = len(records)
     diff = int(end/16)
-    try:
-        while start < end:
-            #print records[start:start+diff]
-            print(start, diff, end)
-            p.apply_async(get_category, args=(records[start:start+diff], ))
-            start = start + diff
-        p.close()
-        p.join()
-    except (KeyboardInterrupt, SystemExit):
-        print("Exiting...")
-        p.terminate()
-        p.join()
+    create_pool(records, start, end, diff)
