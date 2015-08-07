@@ -36,9 +36,3 @@ def inc_tag_count(user_id):
 
 def get_users():
     return db.users.find({},{'name':1, 'tags':1, '_id':0}).sort([('tags', -1)])
-
-
-def get_skip_count(product_id):
-    temp_dict = db.products.find({"_id":ObjectId(product_id)},{"skip_count":1,"_id":0})
-    for items in temp_dict:
-        return int(items["skip_count"])

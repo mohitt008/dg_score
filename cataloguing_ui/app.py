@@ -8,8 +8,8 @@ from flask_oauth2_login import GoogleLogin
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags
-from users import add_user, get_tag_count, inc_tag_count, get_users, get_skip_count
+from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, get_skip_count
+from users import add_user, get_tag_count, inc_tag_count, get_users
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
 app = Flask(__name__)

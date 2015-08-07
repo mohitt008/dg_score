@@ -117,3 +117,11 @@ def get_random_product(query):
     prod_obj = next(cur, None)
     print('random product name object:', prod_obj)
     return prod_obj
+
+
+def get_skip_count(product_id):
+    temp_dict = db.products.find({"_id":ObjectId(product_id)},{"skip_count":1,"_id":0})
+    for items in temp_dict:
+        if 'skip_count' in items:
+            return int(items["skip_count"])
+        return 0
