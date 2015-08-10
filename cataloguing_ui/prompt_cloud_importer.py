@@ -119,7 +119,6 @@ def predict_category(product_name):
         print(
             'Exception {} occurred against product: {}'.format(
                 err, product_name))
-
     return (first_level,second_level)
 
 #@app.route('/get_category', methods = ['POST'])
@@ -142,8 +141,11 @@ def get_category(products):
             else:
                 subcat = None
 
+            if 'product_url' not in product_name_dict:
+                product_name_dict['product_url'] = None
+
             db.products.insert({'product_name': product_name_dict['product_name'],
-                                "vendor": 'Flipkart',
+                                "vendor": 'HQ-Data',
                                 "category": response['category'],
                                 "sub_category": subcat,
                                 "product_url": product_name_dict['product_url']})
