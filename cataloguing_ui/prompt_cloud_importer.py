@@ -1,3 +1,7 @@
+'''
+Reads product_name from .json files, identifies their cat/sub_cat and populates mongodb
+Note: Make sure you change vendor name before running this file. Default vendor name is : 'HQ-Data'
+'''
 import os
 import sys
 import numpy as np

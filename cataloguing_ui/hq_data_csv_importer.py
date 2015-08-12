@@ -1,3 +1,10 @@
+'''
+Imports data present in all the .csv files of folder data/hq_data into mongodb
+Note-1: Please ensure you change vendor name in prompt_cloud_importer before running this file.
+        Default vendor name is : 'HQ-Data'
+Note-2: Please make sure the product names are present in first column of .csv file
+'''
+
 import csv
 import glob
 
