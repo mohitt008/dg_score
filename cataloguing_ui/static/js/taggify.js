@@ -1,6 +1,7 @@
 (function ($) {
   $.fn.taggify = function (idd, segs, data_ob) {
     jq_name_obj = this;
+    var color_dict = {}
     
     String.prototype.format = String.prototype.f = function () {
       var s = this, i = arguments.length;
@@ -46,15 +47,20 @@
       $("<div class='tooltip'>Tooltip Box</div>").insertAfter('.address_element')
     }
 
-    function getRandomColor () {
+    function getRandomColor (tag_type) {
 //      var hex = Math.floor(0.3*Math.random() * 0xFFFFFF);
 //      var color = "#" + ("000000" + hex.toString(16)).substr(-6);
-        var letters = '0123456789ABCDEF'.split('');
-        var color = '#';
-        for (var i = 0; i < 6; i++ ) {
+        if (color_dict[tag_type])
+          return color_dict[tag_type]
+        else {
+          var letters = '0123456789ABCDEF'.split('');
+          var color = '#';
+          for (var i = 0; i < 6; i++ ) {
             color += letters[Math.floor(Math.random() * 16)];
+          }
+          color_dict[tag_type] = color
+          return color;
         }
-        return color;
     }
 
     function tagItem(obj) {
@@ -78,7 +84,7 @@
         if ($(this).attr('tag') == tag_type)
           {
             $(this).css({
-              'background-color': getRandomColor()
+              'background-color': getRandomColor(tag_type)
             });
           }
       })
