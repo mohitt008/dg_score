@@ -196,6 +196,9 @@ def set_tags():
     posted_data['tagged_by'] = user_id
     id = posted_data.pop("id", None)
 
+    if ('vendor' in posted_data) and (posted_data['vendor'] == 'All'):
+        posted_data.pop('vendor')
+
     if posted_data['is_skipped']:
         skip_data = {}
         skip_c = get_skip_count(id)
