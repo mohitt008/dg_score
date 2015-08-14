@@ -108,7 +108,7 @@ def index():
 @bp.route('/login', methods=['POST', 'GET'])
 def login():
     '''
-    Render the simple login page having fb icon
+    Render the simple login page having signin icons
     '''
     return render_template('login.htm')
 

@@ -35,4 +35,4 @@ def inc_tag_count(user_id):
 
 
 def get_users():
-    return db.users.find({},{'name':1, 'tags':1, 'email':1, '_id':0}).sort([('tags', -1)])
+    return db.users.find({},{'name':1, 'tags':1, 'email':1, 'id':1, '_id':0}).sort([('tags', -1)])
