@@ -2,7 +2,7 @@ import json
 import config
 import os
 
-from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint
+from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
 from flask_oauth2_login import GoogleLogin
 from pymongo import MongoClient
@@ -158,7 +158,7 @@ def tag_it_category():
 
 @bp.route('/vendor/verify', methods=['GET', 'POST', 'OPTIONS'])
 def vendor_verify():
-    if session['is_admin']:
+    if session['is_admin'] and 'user' in session:
         user_id = session['user']['id']
         tag_count = get_tag_count(user_id)
         return render_template("verify_product.html",
@@ -170,11 +170,12 @@ def vendor_verify():
                                tag_by='vendor',
                                autoescape=False)
     else:
+        flash('Invalid credentials', 'error')
         return redirect(url_for('bp.login'))
 
 @bp.route('/category/verify', methods=['GET', 'POST', 'OPTIONS'])
 def category_verify():
-    if session['is_admin']:
+    if session['is_admin'] and 'user' in session:
         user_id = session['user']['id']
         tag_count = get_tag_count(user_id)
         return render_template("verify_product.html",

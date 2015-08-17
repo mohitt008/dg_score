@@ -2,6 +2,8 @@
 <head>
     <title>Product tagging - Delhivery</title>
     <link rel="icon" href="{{ url_for('bp.static', filename='img/delhivery-favicon.png') }}">
+    <script src="{{ url_for('bp.static', filename='js/jquery-2.1.4.min.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='js/notify.min.js') }}"></script>
     
     <style>
 
@@ -58,14 +60,19 @@
 </head>
 
 <body>
+{% with messages = get_flashed_messages(category_filter=["error"]) %}
+  {% if messages %}
+    {% for message in messages %}
+        <script>$.notify("Please login as Admin to access verify URL.", {clickToHide: true});</script>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
   <div id="centered">
-
     <a href="/cat-ui/google-redirect"><img src="{{ url_for('bp.static', filename='img/google.png') }}" height="25%" width = "70%" class='img-box'/></a>
-
     <p></p>
-
     <a href="/cat-ui/fb-login?next=/cat-ui/vendor/tag-it"><img src="{{ url_for('bp.static', filename='img/facebook.png') }}" height="25%" width = "70%" class='img-box'/></a>
-
   </div>
+
 </body>
 </html>
