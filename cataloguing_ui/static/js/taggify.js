@@ -118,28 +118,15 @@
         }
         else {
             resetTags();
-            $('#org_prod_name').html(data.prod_name);
-            $("#vendor_name").html(data['vendor']);
-            $("#vendor_name").attr("href", data['prod_url']);
-            $('#category').html(data.prod_cat);
-            $('#sub-category').html(data.prod_subcat);
-            $('#tag-count').html(data.tag_count);
-
-            var attrs="";
-            if (!jQuery.isEmptyObject(data['taglist'])) {
-                $.each(data['taglist'], function (attr, code) {
-                    attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
-                });
-            }
-            $(".extra-attrs").html(attrs);
-
+            update_values(data)
             id = data['id'];
             prod_seg = JSON.parse(data.prod_seg);
+
             if ('vendor' in data_ob)
                 data_obj = {'vendor': data_ob['vendor']};
             else
                 data_obj = {'category': data_ob['category']};
-            console.log('id and prod seg of new product...', id, prod_seg, data_obj);
+
             $('.address').taggify(id, prod_seg, data_obj);
         }
       })

@@ -28,26 +28,10 @@ $(document).ready(function () {
                         if (data['error'])
                             $("#select-vendor").notify(data['error']);
                         else {
-                            $("#tag-products").css("display", "block");
-                            $("#org_prod_name").html(data['prod_name']);
-                            $("#vendor_name").html(data['vendor']);
-                            $("#vendor_name").attr("href", data['prod_url']);
-                            $("#selectable").html(data['prod_name']);
-                            $("#category").html(data['prod_cat']);
-                            $("#sub-category").html(data['prod_subcat']);
-
+                            update_values(data);
                             id = data['id'];
                             prod_seg = JSON.parse(data['prod_seg']);
                             data_obj = {'vendor': vendor};
-                            attrs="";
-                            console.log(data['taglist']);
-                            if (!jQuery.isEmptyObject(data['taglist'])) {
-                                $.each(data['taglist'], function (attr, code) {
-                                    attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
-                                });
-                            }
-
-                            $(".extra-attrs").html(attrs);
                             $('.address').taggify(id, prod_seg, data_obj);
 
                         }
@@ -75,26 +59,11 @@ $(document).ready(function () {
                         if (data['error'])
                             $("#select-category").notify(data['error']);
                         else {
-                            $("#tag-products").css("display", "block");
-                            $("#org_prod_name").html(data['prod_name']);
-                            $("#vendor_name").html(data['vendor']);
-                            $("#vendor_name").attr("href", data['prod_url']);
-                            $("#selectable").html(data['prod_name']);
-                            $("#category").html(data['prod_cat']);
-                            $("#sub-category").html(data['prod_subcat']);
-
+                            update_values(data);
                             id = data['id'];
                             prod_seg = JSON.parse(data['prod_seg']);
                             data_obj = {'category': data['prod_cat']};
-                            attrs="";
-                            console.log(data['taglist']);
-                            if (!jQuery.isEmptyObject(data['taglist'])) {
-                                $.each(data['taglist'], function (attr, code) {
-                                    attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
-                                });
-                            }
 
-                            $(".extra-attrs").html(attrs);
                             $('.address').taggify(id, prod_seg, data_obj);
                         }
                     }

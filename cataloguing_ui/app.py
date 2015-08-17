@@ -37,8 +37,11 @@ def redirect_google():
 @google_login.login_success
 def login_success(token, profile):
     add_user(profile)
+    session['is_admin'] = False
     if profile['id'] and profile['name']:
         session['user'] = profile
+        if profile['email'] in config.ADMINS:
+            session['is_admin'] = True
         return redirect(url_for('bp.tag_it_vendor'))
     else:
         print('Login failed.')
@@ -75,8 +78,11 @@ def facebook_authorized(resp):
     me = facebook.get('/me')
     print(me.data)
     add_user(me.data)
-    if me.data['id'] and me.data['name']:
+    session['is_admin'] = False
+    if me.data['id'] and me.data['name'] and me.data['email']:
         session['user'] = me.data
+        if me.data['email'] in config.ADMINS:
+            session['is_admin'] = True
         return redirect(url_for('bp.tag_it_vendor'))
     else:
         return "Login failed"
@@ -326,12 +332,13 @@ def set_verified_tags():
 def view_leaderboard():
     if 'user' in session:
         user_id = session['user']['id']
-        tag_count = get_tag_count(user_id)
+        tag_count = get_tag_count(user_id, session['is_admin'])
         return render_template("leaderboard.html",
                                users=get_users(),
                                username=session['user']['name'],
                                user_id=user_id,
-                               tag_count=tag_count)
+                               tag_count=tag_count,
+                               is_admin=session['is_admin'])
     else:
         return redirect(url_for('bp.login'))
 
@@ -339,12 +346,13 @@ def view_leaderboard():
 def get_tags():
     if 'user' in session:
         user_id = session['user']['id']
-        tag_count = get_tag_count(user_id)
+        tag_count = get_tag_count(user_id, session['is_admin'])
         return render_template("tag_list.html",
                                tags=get_all_tags(),
                                username=session['user']['name'],
                                user_id=user_id,
-                               tag_count=tag_count)
+                               tag_count=tag_count,
+                               is_admin=session['is_admin'])
     else:
         return redirect(url_for('bp.login'))
 

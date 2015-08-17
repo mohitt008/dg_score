@@ -16,7 +16,7 @@
     <script src="{{ url_for('bp.static', filename='js/jquery-2.1.4.min.js') }}"></script>
     <script src="{{ url_for('bp.static', filename='js/jquery-ui.min.js') }}"></script>
     <script src="{{ url_for('bp.static', filename='js/notify.min.js') }}"></script>
-    <script src="{{ url_for('bp.static', filename='js/data.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='js/utils.js') }}"></script>
     {% block head %}{% endblock %}
   </head>
 
@@ -48,8 +48,6 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav">
                     {% block side_block %} {% endblock %}
-                    <li><a href="{{ url_for('bp.tag_it_vendor') }}">Tag By Vendor</a></li>
-                    <li><a href="{{ url_for('bp.tag_it_category') }}">Tag by Category</a></li>
                     <li><a href="{{ url_for('bp.get_tags') }}">Tags-list</a></li>
                     <li><a href="{{ url_for('bp.view_leaderboard') }}">Leaderboard</a></li>
                 </ul>
