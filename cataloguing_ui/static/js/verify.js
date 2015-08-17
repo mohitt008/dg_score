@@ -1,6 +1,7 @@
 (function ($) {
   $.fn.taggify = function (idd, segs, data_ob, tags_data) {
     jq_name_obj = this;
+    var color_dict = {}
     
     String.prototype.format = String.prototype.f = function () {
       var s = this, i = arguments.length;
@@ -109,7 +110,7 @@
         if ($(this).attr('tag') == tag_type)
           {
             $(this).css({
-              'background-color': getRandomColor()
+              'background-color': getRandomColor(tag_type)
             });
           }
       })
@@ -119,7 +120,7 @@
       var date = new Date();
       data_ob.epoch = date.getTime();
       data_ob['id'] = idd;
-      data_ob['tags'] = tags;
+      data_ob['admin_tags'] = tags;
       data_ob['is_dang'] = dang;
       data_ob['is_xray'] = xray;
       data_ob['is_dirty'] = dirty;
@@ -143,7 +144,7 @@
         }
         else {
             resetTags();
-            update_values(data);
+            update_html(data);
             tags_dat = (data['tags']) ? data['tags'] : ""
             id = data['id'];
             prod_seg = JSON.parse(data.prod_seg);

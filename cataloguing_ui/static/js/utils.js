@@ -1,4 +1,4 @@
-function update_values(data) {
+function update_html(data) {
     $("#tag-products").css("display", "block");
     $("#org_prod_name").html(data['prod_name']);
     $("#vendor_name").html(data['vendor']);

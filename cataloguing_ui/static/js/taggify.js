@@ -118,7 +118,7 @@
         }
         else {
             resetTags();
-            update_values(data)
+            update_html(data)
             id = data['id'];
             prod_seg = JSON.parse(data.prod_seg);
 

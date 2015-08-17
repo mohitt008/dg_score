@@ -158,7 +158,7 @@ def tag_it_category():
 
 @bp.route('/vendor/verify', methods=['GET', 'POST', 'OPTIONS'])
 def vendor_verify():
-    if 'user' in session:
+    if session['is_admin']:
         user_id = session['user']['id']
         tag_count = get_tag_count(user_id)
         return render_template("verify_product.html",
@@ -174,7 +174,7 @@ def vendor_verify():
 
 @bp.route('/category/verify', methods=['GET', 'POST', 'OPTIONS'])
 def category_verify():
-    if 'user' in session:
+    if session['is_admin']:
         user_id = session['user']['id']
         tag_count = get_tag_count(user_id)
         return render_template("verify_product.html",
@@ -275,6 +275,7 @@ def set_tags():
     print('####id#######next_set######posted_data####')
     print(id, next_name, posted_data)
     if posted_data['tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
+        posted_data.pop("is_skipped")
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id)
 
@@ -291,21 +292,18 @@ def set_tags():
 def set_verified_tags():
     posted_data = request.get_json()
     print(posted_data)
-    if posted_data['tags'] and (posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']):
+    if posted_data['admin_tags'] and (posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']):
         posted_data['done'] = True
 
     user_id = session['user']['id']
     posted_data['verified_by'] = user_id
     id = posted_data.pop("id", None)
 
+    if ('vendor' in posted_data) and (posted_data['vendor'] == 'All'):
+        posted_data.pop('vendor')
+
     if posted_data['is_skipped']:
-        skip_data = {}
-        skip_c = get_skip_count(id)
-        skip_c += 1
-        skip_data['skip_count'] = skip_c
-        if skip_c > 4:
-            skip_data['is_dirty'] = True
-        db.products.update({'_id': ObjectId(id)}, {"$set": skip_data})
+        db.products.update({'_id': ObjectId(id)}, {"$set": {'dirty_by_admin': True}})
 
     next_name = {}
     if 'category' in posted_data:
@@ -314,7 +312,8 @@ def set_verified_tags():
         next_name['vendor'] = posted_data.pop("vendor")
     print('####id#######next_set######posted_data####')
     print(id, next_name, posted_data)
-    if posted_data['tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
+    if posted_data['admin_tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
+        posted_data.pop("is_skipped")
         posted_data['verified'] = True
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id, True)

@@ -28,7 +28,7 @@ $(document).ready(function () {
                         if (data['error'])
                             $("#select-vendor").notify(data['error']);
                         else {
-                            update_values(data);
+                            update_html(data);
                             id = data['id'];
                             prod_seg = JSON.parse(data['prod_seg']);
                             data_obj = {'vendor': vendor};
@@ -59,7 +59,7 @@ $(document).ready(function () {
                         if (data['error'])
                             $("#select-category").notify(data['error']);
                         else {
-                            update_values(data);
+                            update_html(data);
                             id = data['id'];
                             prod_seg = JSON.parse(data['prod_seg']);
                             data_obj = {'category': data['prod_cat']};
