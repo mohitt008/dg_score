@@ -1,5 +1,10 @@
 {% extends "base_tagging.html" %}
 
+{% block head %}
+    <script src="{{ url_for('bp.static', filename='js/taggify.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='js/taggify_utils.js') }}"></script>
+{% endblock %}
+
 {% block content %}
   {% if tag_by == 'vendor' %}
         {% include 'tag_vendor.html' %}

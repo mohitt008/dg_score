@@ -5,7 +5,6 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import randint
 from bson import json_util
-from category_service import request_to_segment_product
 
 client = MongoClient()
 db = client.products_db
@@ -75,8 +74,8 @@ def get_all_tags():
     return tags
 
 
-def get_product_tagging_details(query):
-    product = get_random_product(query)
+def get_product_tagging_details(query, to_verify=False):
+    product = get_random_product(query, to_verify)
     if product is not None:
         prod_seg = segment_product(product['product_name'])
         print('###product segmentation###')
@@ -93,6 +92,13 @@ def get_product_tagging_details(query):
         tag_info['prod_url'] = product['product_url']
         tag_info['taglist'] = tag_list
         tag_info['prod_seg'] = json.dumps(prod_seg)
+
+        if to_verify:
+            tag_info['tags'] = product['tags']
+            tag_info['is_dang'] = product['is_dang']
+            tag_info['is_xray'] = product['is_xray']
+            tag_info['is_dirty'] = product['is_dirty']
+
         return tag_info
     else:
         return json.dumps({'error': 'No untagged products for this vendor.'})
@@ -108,9 +114,13 @@ def update_category(id, cat, subcat):
         return json.dumps({'message': 'Error!'})
 
 
-def get_random_product(query):
-    query['done'] = {'$exists': False}
-    query['is_dirty'] = {'$exists': False}
+def get_random_product(query, to_verify=False):
+    if to_verify:
+        query['tags'] = {'$exists': True}
+    else:
+        query['done'] = {'$exists': False}
+        query['is_dirty'] = {'$exists': False}
+
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)

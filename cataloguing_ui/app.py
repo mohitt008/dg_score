@@ -134,17 +134,6 @@ def tag_it_vendor():
     else:
         return redirect(url_for('bp.login'))
 
-@bp.route('/get-vendor-products', methods=['GET', 'POST'])
-def get_vendor_products():
-    posted_data = request.get_json()
-    print(posted_data)
-    if posted_data['vendor'] == 'All':
-        posted_data.pop("vendor", None)
-    tagging_info = get_product_tagging_details(posted_data)
-    if 'error' in tagging_info:
-        return tagging_info
-    return json.dumps(tagging_info)
-
 @bp.route('/category/tag-it')
 def tag_it_category():
     if 'user' in session:
@@ -161,11 +150,75 @@ def tag_it_category():
     else:
         return redirect(url_for('bp.login'))
 
+@bp.route('/vendor/verify', methods=['GET', 'POST', 'OPTIONS'])
+def vendor_verify():
+    if 'user' in session:
+        user_id = session['user']['id']
+        tag_count = get_tag_count(user_id)
+        return render_template("verify_product.html",
+                               vendors=get_vendors(),
+                               available_cats=get_categories(),
+                               username=session['user']['name'],
+                               user_id=user_id,
+                               tag_count=tag_count,
+                               tag_by='vendor',
+                               autoescape=False)
+    else:
+        return redirect(url_for('bp.login'))
+
+@bp.route('/category/verify', methods=['GET', 'POST', 'OPTIONS'])
+def category_verify():
+    if 'user' in session:
+        user_id = session['user']['id']
+        tag_count = get_tag_count(user_id)
+        return render_template("verify_product.html",
+                               available_cats=get_categories(),
+                               available_cats1=get_categories(),
+                               username=session['user']['name'],
+                               user_id=user_id,
+                               tag_count=tag_count,
+                               tag_by='category',
+                               autoescape=False)
+    else:
+        return redirect(url_for('bp.login'))
+
+@bp.route('/get-vendor-products', methods=['GET', 'POST'])
+def get_vendor_products():
+    posted_data = request.get_json()
+    print(posted_data)
+    if posted_data['vendor'] == 'All':
+        posted_data.pop("vendor", None)
+    tagging_info = get_product_tagging_details(posted_data)
+    if 'error' in tagging_info:
+        return tagging_info
+    return json.dumps(tagging_info)
+
+@bp.route('/get-vendor-products-verify', methods=['GET', 'POST'])
+def get_vendor_products_verify():
+    posted_data = request.get_json()
+    print(posted_data)
+    if posted_data['vendor'] == 'All':
+        posted_data.pop("vendor", None)
+    print(posted_data)
+    tagging_info = get_product_tagging_details(posted_data, True)
+    if 'error' in tagging_info:
+        return tagging_info
+    return json.dumps(tagging_info)
+
 @bp.route('/get-category-products', methods=['GET', 'POST'])
 def get_category_products():
     posted_data = request.get_json()
     print(posted_data)
     tagging_info = get_product_tagging_details(posted_data)
+    if 'error' in tagging_info:
+        return tagging_info
+    return json.dumps(tagging_info)
+
+@bp.route('/get-category-products-verify', methods=['GET', 'POST'])
+def get_category_products_verify():
+    posted_data = request.get_json()
+    print(posted_data)
+    tagging_info = get_product_tagging_details(posted_data, True)
     if 'error' in tagging_info:
         return tagging_info
     return json.dumps(tagging_info)
@@ -221,6 +274,47 @@ def set_tags():
 
     #fetching next product tagging info
     tagging_info = get_product_tagging_details(next_name)
+    tag_count = get_tag_count(user_id)
+    if 'error' in tagging_info:
+        return tagging_info
+
+    tagging_info['tag_count'] = tag_count
+    return json.dumps(tagging_info)
+
+@bp.route('/set-verified-tags', methods=['GET', 'POST'])
+def set_verified_tags():
+    posted_data = request.get_json()
+    print(posted_data)
+    if posted_data['tags'] and (posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']):
+        posted_data['done'] = True
+
+    user_id = session['user']['id']
+    posted_data['verified_by'] = user_id
+    id = posted_data.pop("id", None)
+
+    if posted_data['is_skipped']:
+        skip_data = {}
+        skip_c = get_skip_count(id)
+        skip_c += 1
+        skip_data['skip_count'] = skip_c
+        if skip_c > 4:
+            skip_data['is_dirty'] = True
+        db.products.update({'_id': ObjectId(id)}, {"$set": skip_data})
+
+    next_name = {}
+    if 'category' in posted_data:
+        next_name['category'] = posted_data.pop("category")
+    elif 'vendor' in posted_data and posted_data['vendor'] != 'All':
+        next_name['vendor'] = posted_data.pop("vendor")
+    print('####id#######next_set######posted_data####')
+    print(id, next_name, posted_data)
+    if posted_data['tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
+        posted_data['verified'] = True
+        db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
+        inc_tag_count(user_id, True)
+
+    #fetching next product tagging info
+    tagging_info = get_product_tagging_details(next_name, True)
     tag_count = get_tag_count(user_id)
     if 'error' in tagging_info:
         return tagging_info

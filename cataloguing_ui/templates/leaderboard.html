@@ -1,5 +1,10 @@
 {% extends "base_tagging.html" %}
 
+{% block side_block %}
+    <li><a href="{{ url_for('bp.tag_it_vendor') }}">Tag By Vendor</a></li>
+    <li><a href="{{ url_for('bp.tag_it_category') }}">Tag by Category</a></li>
+{% endblock %}
+
 {% block content %}
 
 <table class="table table-bordered table-hover">

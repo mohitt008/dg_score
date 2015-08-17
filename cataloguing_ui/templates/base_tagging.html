@@ -15,9 +15,8 @@
 
     <script src="{{ url_for('bp.static', filename='js/jquery-2.1.4.min.js') }}"></script>
     <script src="{{ url_for('bp.static', filename='js/jquery-ui.min.js') }}"></script>
-    <script src="{{ url_for('bp.static', filename='js/taggify.js') }}"></script>
     <script src="{{ url_for('bp.static', filename='js/notify.min.js') }}"></script>
-    <script src="{{ url_for('bp.static', filename='js/ajax_utils.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='js/data.js') }}"></script>
     {% block head %}{% endblock %}
   </head>
 
@@ -31,7 +30,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{{ url_for('bp.tag_it_vendor') }}" >Delhivery - Product Tagging</a>
+          <a class="navbar-brand" href="#" >Delhivery - Product Tagging</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -46,16 +45,15 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-            {% block side_block %}
-                <div class="col-sm-3 col-md-2 sidebar">
-                    <ul class="nav">
-                        <li><a href="{{ url_for('bp.tag_it_vendor') }}">Tag By Vendor</a></li>
-                        <li><a href="{{ url_for('bp.tag_it_category') }}">Tag by Category</a></li>
-                        <li><a href="{{ url_for('bp.get_tags') }}">Tags-list</a></li>
-                        <li><a href="{{ url_for('bp.view_leaderboard') }}">Leaderboard</a></li>
-                    </ul>
-                </div>
-            {% endblock %}
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav">
+                    {% block side_block %} {% endblock %}
+                    <li><a href="{{ url_for('bp.tag_it_vendor') }}">Tag By Vendor</a></li>
+                    <li><a href="{{ url_for('bp.tag_it_category') }}">Tag by Category</a></li>
+                    <li><a href="{{ url_for('bp.get_tags') }}">Tags-list</a></li>
+                    <li><a href="{{ url_for('bp.view_leaderboard') }}">Leaderboard</a></li>
+                </ul>
+            </div>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
            <div id="content">

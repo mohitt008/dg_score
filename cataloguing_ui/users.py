@@ -30,8 +30,11 @@ def get_tag_count(user_id):
     return db.users.find_one({"id" : user_id})['tags']
 
 
-def inc_tag_count(user_id):
-    db.users.update({'id': user_id}, {'$inc': {'tags': 1}})
+def inc_tag_count(user_id, admin=False):
+    if admin:
+        db.users.update({'id': user_id}, {'$inc': {'tags_verified': 1}})
+    else:
+        db.users.update({'id': user_id}, {'$inc': {'tags': 1}})
 
 
 def get_users():
