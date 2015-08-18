@@ -1,9 +1,8 @@
 $(document).ready(function () {
     window.id;
     window.vendor;
-    var attrs="";
     window.prod_seg;
-    var data_obj;
+    window.data_obj;
 
     $(function () {
         $("input[type=submit], button").button()
@@ -29,11 +28,8 @@ $(document).ready(function () {
                             $("#select-vendor").notify(data['error']);
                         else {
                             update_html(data);
-                            id = data['id'];
-                            prod_seg = JSON.parse(data['prod_seg']);
                             data_obj = {'vendor': vendor};
-                            $('.address').taggify(id, prod_seg, data_obj);
-
+                            $('.address').taggify();
                         }
                     }
                 })
@@ -60,11 +56,8 @@ $(document).ready(function () {
                             $("#select-category").notify(data['error']);
                         else {
                             update_html(data);
-                            id = data['id'];
-                            prod_seg = JSON.parse(data['prod_seg']);
                             data_obj = {'category': data['prod_cat']};
-
-                            $('.address').taggify(id, prod_seg, data_obj);
+                            $('.address').taggify();
                         }
                     }
                 });

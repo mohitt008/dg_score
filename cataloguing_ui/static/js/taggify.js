@@ -1,5 +1,5 @@
 (function ($) {
-  $.fn.taggify = function (idd, segs, data_ob) {
+  $.fn.taggify = function () {
     jq_name_obj = this;
     var color_dict = {}
     
@@ -35,11 +35,11 @@
       jq_name_obj.children().removeClass('ui-selected tagged').removeAttr('style').removeAttr('tag')
     }
 
-    function setUpAddress(content_list) {
+    function setUpAddress() {
       var span_text = "<span class='address_element' tabindex='{0}'><abc>{1}</abc></span>";
       total_string = "";
-      for (i = 0; i < content_list.length; i++) {
-          total_string += span_text.f(i+1,content_list[i])
+      for (i = 0; i < prod_seg.length; i++) {
+          total_string += span_text.f(i+1,prod_seg[i])
       }
       var tags = $('#tag_template').html();
       jq_name_obj.html(total_string);
@@ -92,19 +92,19 @@
 
     function sendTagsAJAX(tags, dang, xray, dirty,skipped) {
       var date = new Date();
-      data_ob.epoch = date.getTime();
-      data_ob['id'] = idd;
-      data_ob['tags'] = tags;
-      data_ob['is_dang'] = dang;
-      data_ob['is_xray'] = xray;
-      data_ob['is_dirty'] = dirty;
-      data_ob['is_skipped'] = skipped;
+      data_obj.epoch = date.getTime();
+      data_obj['id'] = id;
+      data_obj['tags'] = tags;
+      data_obj['is_dang'] = dang;
+      data_obj['is_xray'] = xray;
+      data_obj['is_dirty'] = dirty;
+      data_obj['is_skipped'] = skipped;
       return $.ajax({
         url: '/cat-ui/set-tags',
         dataType: 'json',
         type: 'POST', //make query POST
         contentType: 'application/json',
-        data: JSON.stringify(data_ob)
+        data: JSON.stringify(data_obj)
       });
     }
 
@@ -122,18 +122,13 @@
             id = data['id'];
             prod_seg = JSON.parse(data.prod_seg);
 
-            if ('vendor' in data_ob)
-                data_obj = {'vendor': data_ob['vendor']};
-            else
-                data_obj = {'category': data_ob['category']};
-
-            $('.address').taggify(id, prod_seg, data_obj);
+            $('.address').taggify();
         }
       })
     }
 
-    function setUp(addr_segs) {
-      setUpAddress(addr_segs);
+    function setUp() {
+      setUpAddress();
       bindMenuSnapping();
       $( "#selectable" ).selectable({ autoRefresh: true,filter:'span',selected: function( event, ui ) {
           showTag(event.pageX,event.pageY)
@@ -179,7 +174,7 @@
       });
     }
 
-    setUp(segs)
+    setUp()
   };
   return this
 }( jQuery ));

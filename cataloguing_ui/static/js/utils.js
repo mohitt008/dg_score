@@ -22,6 +22,8 @@ function update_html(data) {
       });
     }
     $(".extra-attrs").html(attrs);
+    id = data['id'];
+    prod_seg = JSON.parse(data['prod_seg']);
 }
 
 $(function () {
@@ -51,8 +53,7 @@ $(function () {
                     });
 
                     $(".extra-attrs").html(attrs);
-                    console.log(id, prod_seg, data_obj);
-                    $('.address').taggify(id, prod_seg, data_obj, "");
+                    $('.address').taggify();
                 }
             });
         }

@@ -4,11 +4,17 @@
   <script src="{{ url_for('bp.static', filename='js/verify.js') }}"></script>
   <script>
   $(document).ready(function () {
-      $(function () {
-        $("input[type=submit], button").button()
-                .click(function (event) {
-                    event.preventDefault();
-                });
+  window.id;
+  window.vendor;
+  window.prod_seg;
+  window.data_obj;
+  window.tagged_data = "";
+
+  $(function () {
+    $("input[type=submit], button").button()
+            .click(function (event) {
+                event.preventDefault();
+            });
     });
 
     $("#vendor-button1").click(function () {
@@ -27,11 +33,10 @@
                   if (data['error'])
                       $("#select-vendor").notify(data['error']);
                   else {
-                      update_html(data)
-                      id = data['id'];
-                      prod_seg = JSON.parse(data['prod_seg']);
+                      update_html(data);
+                      tagged_data = data['tags']
                       data_obj = {'vendor': vendor};
-                      $('.address').taggify(id, prod_seg, data_obj, data['tags']);
+                      $('.address').taggify();
 
                   }
               }
@@ -57,11 +62,10 @@
                     if (data['error'])
                         $("#select-category").notify(data['error']);
                     else {
-                        update_html(data)
-                        id = data['id'];
-                        prod_seg = JSON.parse(data['prod_seg']);
+                        update_html(data);
                         data_obj = {'category': data['prod_cat']};
-                        $('.address').taggify(id, prod_seg, data_obj, data['tags']);
+                        tagged_data = data['tags']
+                        $('.address').taggify();
                     }
                 }
             });
