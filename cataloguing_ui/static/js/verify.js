@@ -171,7 +171,7 @@
       });
 
       $('#submit-button').off().on('click', function() {
-        if ($("span[tag]").length == $("span .address_element").length || $('input[type=checkbox]').is(':checked')) {
+        if ($("span[tag]").length == $("span .address_element").length || $('#dirty-name'.is(':checked')) {
 
               var is_dang = $('#dangerous-goods').is(':checked');
               var is_xray = $('#x-ray').is(':checked');
