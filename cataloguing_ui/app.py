@@ -241,15 +241,20 @@ def change_category():
 def set_tags():
     posted_data = request.get_json()
     print(posted_data)
+    id = posted_data.pop("id", None)
+    user_id = session['user']['id']
+    posted_data['tagged_by'] = user_id
+
     if posted_data['tags'] and (posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']):
         posted_data['done'] = True
 
-    user_id = session['user']['id']
-    posted_data['tagged_by'] = user_id
-    id = posted_data.pop("id", None)
-
-    if ('vendor' in posted_data) and (posted_data['vendor'] == 'All'):
-        posted_data.pop('vendor')
+    next_name = {}
+    if 'category' in posted_data:
+        next_name['category'] = posted_data.pop("category")
+    else:
+        vendor = posted_data.pop("vendor")
+        if vendor is not 'All':
+            next_name['vendor'] = vendor
 
     if posted_data['is_skipped']:
         skip_data = {}
@@ -260,15 +265,9 @@ def set_tags():
             skip_data['is_dirty'] = True
         db.products.update({'_id': ObjectId(id)}, {"$set": skip_data})
 
-    next_name = {}
-    if 'category' in posted_data:
-        next_name['category'] = posted_data.pop("category")
-    elif 'vendor' in posted_data and posted_data['vendor'] != 'All':
-        next_name['vendor'] = posted_data.pop("vendor")
-    print('####id#######next_set######posted_data####')
-    print(id, next_name, posted_data)
     if posted_data['tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
         posted_data.pop("is_skipped")
+        print('####id####data to be saved####', id, posted_data)
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id)
 
@@ -276,40 +275,33 @@ def set_tags():
     tagging_info = get_product_tagging_details(next_name)
     tag_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
-
     return json.dumps(tagging_info)
 
 @bp.route('/set-verified-tags', methods=['GET', 'POST'])
 def set_verified_tags():
     posted_data = request.get_json()
     print(posted_data)
-
     id = posted_data.pop("id", None)
     user_id = session['user']['id']
     posted_data['verified_by'] = user_id
     posted_data['verified'] = True
 
-    if ('vendor' in posted_data) and (posted_data['vendor'] == 'All'):
-        posted_data.pop('vendor')
-
-    if posted_data['admin_tags'] and (posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']):
-        posted_data['done'] = True
+    next_name = {}
+    if 'category' in posted_data:
+        next_name['category'] = posted_data.pop("category")
+    else:
+        vendor = posted_data.pop("vendor")
+        if vendor is not 'All':
+            next_name['vendor'] = vendor
 
     if posted_data['is_skipped']:
         admin_skip_keys = ['verified_by', 'verified', 'admin_tags']
         admin_skip_data = dict(map(lambda key: (key, posted_data.get(key, None)), admin_skip_keys))
         admin_skip_data['dirty_by_admin'] = True
         db.products.update({'_id': ObjectId(id)}, {"$set": admin_skip_data})
-
-    next_name = {}
-    if 'category' in posted_data:
-        next_name['category'] = posted_data.pop("category")
-    elif 'vendor' in posted_data and posted_data['vendor'] != 'All':
-        next_name['vendor'] = posted_data.pop("vendor")
-    print('####id#######next_set######posted_data####')
-    print(id, next_name, posted_data)
-    if posted_data['admin_tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
+    else:
         posted_data.pop("is_skipped")
+        print('####id####data to be saved####', id, posted_data)
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id, True)
 
