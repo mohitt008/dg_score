@@ -6,7 +6,7 @@ sub_category
 tags
 is_dirty
 is_dang
-is_skipped
+skip_count
 is_xray
 tagged_by
 epoch

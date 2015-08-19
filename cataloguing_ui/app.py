@@ -196,8 +196,6 @@ def get_vendor_products():
     if posted_data['vendor'] == 'All':
         posted_data.pop("vendor", None)
     tagging_info = get_product_tagging_details(posted_data)
-    if 'error' in tagging_info:
-        return tagging_info
     return json.dumps(tagging_info)
 
 @bp.route('/get-vendor-products-verify', methods=['GET', 'POST'])
@@ -208,8 +206,6 @@ def get_vendor_products_verify():
         posted_data.pop("vendor", None)
     print(posted_data)
     tagging_info = get_product_tagging_details(posted_data, True)
-    if 'error' in tagging_info:
-        return tagging_info
     return json.dumps(tagging_info)
 
 @bp.route('/get-category-products', methods=['GET', 'POST'])
@@ -217,8 +213,6 @@ def get_category_products():
     posted_data = request.get_json()
     print(posted_data)
     tagging_info = get_product_tagging_details(posted_data)
-    if 'error' in tagging_info:
-        return tagging_info
     return json.dumps(tagging_info)
 
 @bp.route('/get-category-products-verify', methods=['GET', 'POST'])
@@ -226,8 +220,6 @@ def get_category_products_verify():
     posted_data = request.get_json()
     print(posted_data)
     tagging_info = get_product_tagging_details(posted_data, True)
-    if 'error' in tagging_info:
-        return tagging_info
     return json.dumps(tagging_info)
 
 @bp.route('/get-subcats', methods=['GET', 'POST'])
@@ -283,10 +275,8 @@ def set_tags():
     #fetching next product tagging info
     tagging_info = get_product_tagging_details(next_name)
     tag_count = get_tag_count(user_id)
-    if 'error' in tagging_info:
-        return tagging_info
-
     tagging_info['tag_count'] = tag_count
+
     return json.dumps(tagging_info)
 
 @bp.route('/set-verified-tags', methods=['GET', 'POST'])
@@ -322,10 +312,8 @@ def set_verified_tags():
     #fetching next product tagging info
     tagging_info = get_product_tagging_details(next_name, True)
     tag_count = get_tag_count(user_id)
-    if 'error' in tagging_info:
-        return tagging_info
-
     tagging_info['tag_count'] = tag_count
+
     return json.dumps(tagging_info)
 
 @bp.route('/leaderboard')

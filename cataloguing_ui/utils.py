@@ -101,7 +101,7 @@ def get_product_tagging_details(query, to_verify=False):
 
         return tag_info
     else:
-        return json.dumps({'error': 'No untagged products for this vendor.'})
+        return {'error': 'No untagged products for this vendor.'}
 
 
 def update_category(id, cat, subcat):
