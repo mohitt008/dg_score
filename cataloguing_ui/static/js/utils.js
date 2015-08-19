@@ -13,6 +13,10 @@ function update_html(data) {
         $('#x-ray').attr('checked','checked');
     if (data['is_dirty'])
         $('#dirty-name').attr('checked','checked');
+    if (data['tag_count'])
+        $('#tag-count').html(data.tag_count);
+    if (data['verify_count'])
+        $('#verify-count').html(data.verify_count);
 
     attrs="";
     console.log(data['taglist']);

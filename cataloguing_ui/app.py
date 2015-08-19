@@ -25,8 +25,8 @@ app.config.update(
   GOOGLE_LOGIN_REDIRECT_SCHEME="http",
 )
 
-app.config['GOOGLE_LOGIN_CLIENT_ID'] = '159548149132-ovllp5nn6ss26p8ttcustb6n8j8u3v1a.apps.googleusercontent.com'
-app.config['GOOGLE_LOGIN_CLIENT_SECRET'] = '2ou9K8DtCt7IXQt1r7yievrf'
+app.config['GOOGLE_LOGIN_CLIENT_ID'] = config.GOOGLE_CLIENT_ID
+app.config['GOOGLE_LOGIN_CLIENT_SECRET'] = config.GOOGLE_CLIENT_SECRET
 
 google_login = GoogleLogin(app)
 
@@ -128,13 +128,14 @@ def logout():
 def tag_it_vendor():
     if 'user' in session:
         user_id = session['user']['id']
-        tag_count = get_tag_count(user_id)
+        tag_count, verify_count = get_tag_count(user_id)
         return render_template("tag_product.html",
                                vendors=get_vendors(),
                                available_cats=get_categories(),
                                username=session['user']['name'],
                                user_id=user_id,
                                tag_count=tag_count,
+                               verify_count=verify_count,
                                tag_by='vendor',
                                autoescape=False)
     else:
@@ -144,13 +145,14 @@ def tag_it_vendor():
 def tag_it_category():
     if 'user' in session:
         user_id = session['user']['id']
-        tag_count = get_tag_count(user_id)
+        tag_count, verify_count = get_tag_count(user_id)
         return render_template("tag_product.html",
                                available_cats=get_categories(),
                                available_cats1=get_categories(),
                                username=session['user']['name'],
                                user_id=user_id,
                                tag_count=tag_count,
+                               verify_count=verify_count,
                                tag_by='category',
                                autoescape=False)
     else:
@@ -160,13 +162,14 @@ def tag_it_category():
 def vendor_verify():
     if session['is_admin'] and 'user' in session:
         user_id = session['user']['id']
-        tag_count = get_tag_count(user_id)
+        tag_count, verify_count = get_tag_count(user_id)
         return render_template("verify_product.html",
                                vendors=get_vendors(),
                                available_cats=get_categories(),
                                username=session['user']['name'],
                                user_id=user_id,
                                tag_count=tag_count,
+                               verify_count=verify_count,
                                tag_by='vendor',
                                autoescape=False)
     else:
@@ -177,16 +180,18 @@ def vendor_verify():
 def category_verify():
     if session['is_admin'] and 'user' in session:
         user_id = session['user']['id']
-        tag_count = get_tag_count(user_id)
+        tag_count, verify_count = get_tag_count(user_id)
         return render_template("verify_product.html",
                                available_cats=get_categories(),
                                available_cats1=get_categories(),
                                username=session['user']['name'],
                                user_id=user_id,
                                tag_count=tag_count,
+                               verify_count=verify_count,
                                tag_by='category',
                                autoescape=False)
     else:
+        flash('Invalid credentials', 'error')
         return redirect(url_for('bp.login'))
 
 @bp.route('/get-vendor-products', methods=['GET', 'POST'])
@@ -273,8 +278,9 @@ def set_tags():
 
     #fetching next product tagging info
     tagging_info = get_product_tagging_details(next_name)
-    tag_count = get_tag_count(user_id)
+    tag_count, verify_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
+    tagging_info['verify_count'] = verify_count
     return json.dumps(tagging_info)
 
 @bp.route('/set-verified-tags', methods=['GET', 'POST'])
@@ -307,8 +313,9 @@ def set_verified_tags():
 
     #fetching next product tagging info
     tagging_info = get_product_tagging_details(next_name, True)
-    tag_count = get_tag_count(user_id)
+    tag_count, verify_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
+    tagging_info['verify_count'] = verify_count
 
     return json.dumps(tagging_info)
 
@@ -316,12 +323,13 @@ def set_verified_tags():
 def view_leaderboard():
     if 'user' in session:
         user_id = session['user']['id']
-        tag_count = get_tag_count(user_id, session['is_admin'])
+        tag_count, verify_count = get_tag_count(user_id)
         return render_template("leaderboard.html",
                                users=get_users(),
                                username=session['user']['name'],
                                user_id=user_id,
                                tag_count=tag_count,
+                               verify_count=verify_count,
                                is_admin=session['is_admin'])
     else:
         return redirect(url_for('bp.login'))
@@ -330,12 +338,13 @@ def view_leaderboard():
 def get_tags():
     if 'user' in session:
         user_id = session['user']['id']
-        tag_count = get_tag_count(user_id, session['is_admin'])
+        tag_count, verify_count = get_tag_count(user_id)
         return render_template("tag_list.html",
                                tags=get_all_tags(),
                                username=session['user']['name'],
                                user_id=user_id,
                                tag_count=tag_count,
+                               verify_count=verify_count,
                                is_admin=session['is_admin'])
     else:
         return redirect(url_for('bp.login'))

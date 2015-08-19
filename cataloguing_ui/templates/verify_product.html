@@ -5,11 +5,6 @@
   <script src="{{ url_for('bp.static', filename='js/verify_utils.js') }}"></script>
 {% endblock %}
 
-{% block side_block %}
-    <li><a href="{{ url_for('bp.vendor_verify') }}">Verify By Vendor</a></li>
-    <li><a href="{{ url_for('bp.category_verify') }}">Verify by Category</a></li>
-{% endblock %}
-
 {% block content %}
   {% if tag_by == 'vendor' %}
         <select id="select-vendor">

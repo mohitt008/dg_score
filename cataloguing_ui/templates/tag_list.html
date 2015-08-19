@@ -1,15 +1,5 @@
 {% extends "base_tagging.html" %}
 
-{% block side_block %}
-    {% if is_admin %}
-        <li><a href="{{ url_for('bp.vendor_verify') }}">Verify By Vendor</a></li>
-        <li><a href="{{ url_for('bp.category_verify') }}">Verify by Category</a></li>
-    {% else %}
-        <li><a href="{{ url_for('bp.tag_it_vendor') }}">Tag By Vendor</a></li>
-        <li><a href="{{ url_for('bp.tag_it_category') }}">Tag by Category</a></li>
-    {% endif %}
-{% endblock %}
-
 {% block content %}
     <table class="table table-bordered">
     <thead>
