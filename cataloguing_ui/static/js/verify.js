@@ -140,12 +140,13 @@
         console.log('next product-name data: ', data);
         if(data.error) {
             $.notify(data.error, { position:"bottom-right" });
+            $('#verify-count').html(data.verify_count);
             $("#tag-products").css("display", "none");
         }
         else {
             resetTags();
             update_html(data);
-            tagged_data = data['tags']
+            tagged_data = data['tags'];
             $('.address').taggify();
         }
       })
