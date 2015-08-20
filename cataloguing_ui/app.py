@@ -133,7 +133,6 @@ def tag_it_vendor():
                                vendors=get_vendors(),
                                available_cats=get_categories(),
                                username=session['user']['name'],
-                               user_id=user_id,
                                tag_count=tag_count,
                                verify_count=verify_count,
                                tag_by='vendor',
@@ -150,7 +149,6 @@ def tag_it_category():
                                available_cats=get_categories(),
                                available_cats1=get_categories(),
                                username=session['user']['name'],
-                               user_id=user_id,
                                tag_count=tag_count,
                                verify_count=verify_count,
                                tag_by='category',
@@ -167,7 +165,6 @@ def vendor_verify():
                                vendors=get_vendors(),
                                available_cats=get_categories(),
                                username=session['user']['name'],
-                               user_id=user_id,
                                tag_count=tag_count,
                                verify_count=verify_count,
                                tag_by='vendor',
@@ -185,7 +182,6 @@ def category_verify():
                                available_cats=get_categories(),
                                available_cats1=get_categories(),
                                username=session['user']['name'],
-                               user_id=user_id,
                                tag_count=tag_count,
                                verify_count=verify_count,
                                tag_by='category',
@@ -327,10 +323,8 @@ def view_leaderboard():
         return render_template("leaderboard.html",
                                users=get_users(),
                                username=session['user']['name'],
-                               user_id=user_id,
                                tag_count=tag_count,
-                               verify_count=verify_count,
-                               is_admin=session['is_admin'])
+                               verify_count=verify_count)
     else:
         return redirect(url_for('bp.login'))
 
@@ -342,10 +336,8 @@ def get_tags():
         return render_template("tag_list.html",
                                tags=get_all_tags(),
                                username=session['user']['name'],
-                               user_id=user_id,
                                tag_count=tag_count,
-                               verify_count=verify_count,
-                               is_admin=session['is_admin'])
+                               verify_count=verify_count)
     else:
         return redirect(url_for('bp.login'))
 
