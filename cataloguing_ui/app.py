@@ -36,6 +36,7 @@ def redirect_google():
 
 @google_login.login_success
 def login_success(token, profile):
+    try:
     add_user(profile)
     session['is_admin'] = False
     if profile['id'] and profile['name']:
@@ -46,6 +47,8 @@ def login_success(token, profile):
     else:
         print('Login failed.')
         return "Login failed"
+    except Exception as err:
+        print ('Exception {} token {} profile {}'.format(err, token, profile))
 
 @google_login.login_failure
 def login_failure(e):
