@@ -1,6 +1,5 @@
 import json
 import config
-import os
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
@@ -130,16 +129,19 @@ def logout():
 @bp.route('/vendor/tag-it')
 def tag_it_vendor():
     if 'user' in session:
-        user_id = session['user']['id']
-        tag_count, verify_count = get_tag_count(user_id)
-        return render_template("tag_product.html",
-                               vendors=get_vendors(),
-                               available_cats=get_categories(),
-                               username=session['user']['name'],
-                               tag_count=tag_count,
-                               verify_count=verify_count,
-                               tag_by='vendor',
-                               autoescape=False)
+        try:
+            user_id = session['user']['id']
+            tag_count, verify_count = get_tag_count(user_id)
+            return render_template("tag_product.html",
+                                vendors=get_vendors(),
+                                available_cats=get_categories(),
+                                username=session['user']['name'],
+                                tag_count=tag_count,
+                                verify_count=verify_count,
+                                tag_by='vendor',
+                                autoescape=False)
+        except Exception as err:
+            print('vendor_tag_it: Exception {}'.format(err))
     else:
         return redirect(url_for('bp.login'))
 
@@ -148,14 +150,17 @@ def tag_it_category():
     if 'user' in session:
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
-        return render_template("tag_product.html",
-                               available_cats=get_categories(),
-                               available_cats1=get_categories(),
-                               username=session['user']['name'],
-                               tag_count=tag_count,
-                               verify_count=verify_count,
-                               tag_by='category',
-                               autoescape=False)
+        try:
+            return render_template("tag_product.html",
+                                available_cats=get_categories(),
+                                available_cats1=get_categories(),
+                                username=session['user']['name'],
+                                tag_count=tag_count,
+                                verify_count=verify_count,
+                                tag_by='category',
+                                autoescape=False)
+        except Exception as err:
+            print('category_tag_it: Exception {}'.format(err))
     else:
         return redirect(url_for('bp.login'))
 
@@ -195,12 +200,15 @@ def category_verify():
 
 @bp.route('/get-vendor-products', methods=['GET', 'POST'])
 def get_vendor_products():
-    posted_data = request.get_json()
-    print(posted_data)
-    if posted_data['vendor'] == 'All':
-        posted_data.pop("vendor", None)
-    tagging_info = get_product_tagging_details(posted_data)
-    return json.dumps(tagging_info)
+    try:
+        posted_data = request.get_json()
+        print(posted_data)
+        if posted_data['vendor'] == 'All':
+            posted_data.pop("vendor", None)
+        tagging_info = get_product_tagging_details(posted_data)
+        return json.dumps(tagging_info)
+    except Exception as err:
+        print('get_vendor_products: Exception {}'.format(err))
 
 @bp.route('/get-vendor-products-verify', methods=['GET', 'POST'])
 def get_vendor_products_verify():
@@ -347,5 +355,5 @@ def get_tags():
 
 app.register_blueprint(bp, url_prefix='/cat-ui')
 if __name__ == '__main__':
-    app.debug = True
+    app.debug = False
     app.run()

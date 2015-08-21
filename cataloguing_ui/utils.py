@@ -41,11 +41,13 @@ def to_json(data):
 
 
 def get_categories():
-    return db.categories.find({'par_category': None})
+    return db.categories.find({'par_category': None}).sort([('category_name', 1)])
 
 
 def get_subcategories(cat_id):
-    cursor = db.categories.find({'par_category': ObjectId(cat_id)}, {'par_category': 0})
+    cursor = db.categories.find({'par_category': ObjectId(cat_id)},
+                                {'par_category': 0}).sort([('category_name', 1)])
+
     json_results = []
     for result in cursor:
         json_results.append(result)
