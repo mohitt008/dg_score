@@ -37,16 +37,16 @@ def redirect_google():
 @google_login.login_success
 def login_success(token, profile):
     try:
-    add_user(profile)
-    session['is_admin'] = False
-    if profile['id'] and profile['name']:
-        session['user'] = profile
-        if profile['email'] in config.ADMINS:
-            session['is_admin'] = True
-        return redirect(url_for('bp.tag_it_vendor'))
-    else:
-        print('Login failed.')
-        return "Login failed"
+        add_user(profile)
+        session['is_admin'] = False
+        if profile['id'] and profile['name']:
+            session['user'] = profile
+            if profile['email'] in config.ADMINS:
+                session['is_admin'] = True
+            return redirect(url_for('bp.tag_it_vendor'))
+        else:
+            print('Login failed.')
+            return "Login failed"
     except Exception as err:
         print ('Exception {} token {} profile {}'.format(err, token, profile))
 
