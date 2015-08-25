@@ -45,7 +45,9 @@ def get_categories():
 
 
 def get_subcategories(cat_id):
-    cursor = db.categories.find({'par_category': ObjectId(cat_id)}, {'par_category': 0}).sort([('category_name', 1)])
+    cursor = db.categories.find({'par_category': ObjectId(cat_id)},
+                                {'par_category': 0}).sort([('category_name', 1)])
+
     json_results = []
     for result in cursor:
         json_results.append(result)

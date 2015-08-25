@@ -1,6 +1,5 @@
 import json
 import config
-import os
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
@@ -36,6 +35,7 @@ def redirect_google():
 
 @google_login.login_success
 def login_success(token, profile):
+<<<<<<< HEAD
     add_user(profile)
     session['is_admin'] = False
     if profile['id'] and profile['name']:
@@ -46,6 +46,21 @@ def login_success(token, profile):
     else:
         print('Login failed.')
         return "Login failed"
+=======
+    try:
+        add_user(profile)
+        session['is_admin'] = False
+        if profile['id'] and profile['name']:
+            session['user'] = profile
+            if profile['email'] in config.ADMINS:
+                session['is_admin'] = True
+            return redirect(url_for('bp.tag_it_vendor'))
+        else:
+            print('Login failed.')
+            return "Login failed"
+    except Exception as err:
+        print ('Exception {} token {} profile {}'.format(err, token, profile))
+>>>>>>> cataloging_ui
 
 @google_login.login_failure
 def login_failure(e):
@@ -295,5 +310,5 @@ def get_tags():
 
 app.register_blueprint(bp, url_prefix='/cat-ui')
 if __name__ == '__main__':
-    app.debug = True
+    app.debug = False
     app.run()

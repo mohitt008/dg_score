@@ -18,8 +18,14 @@ class GoogleLogin(OAuth2Login):
   profile_url = "https://www.googleapis.com/oauth2/v2/userinfo"
 
   def get_profile(self, sess):
-    resp = sess.get(self.profile_url)
-    # FIXME: Check `error` key
-    resp.raise_for_status()
-    return resp.json()
+    try:
+        resp = sess.get(self.profile_url)
+        # FIXME: Check `error` key
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as err:
+        print ('Exception: {} sess: {}'.format(err, sess))
+
+
+
 
