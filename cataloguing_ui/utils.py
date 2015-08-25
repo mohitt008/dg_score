@@ -41,11 +41,11 @@ def to_json(data):
 
 
 def get_categories():
-    return db.categories.find({'par_category': None})
+    return db.categories.find({'par_category': None}).sort([('category_name', 1)])
 
 
 def get_subcategories(cat_id):
-    cursor = db.categories.find({'par_category': ObjectId(cat_id)}, {'par_category': 0})
+    cursor = db.categories.find({'par_category': ObjectId(cat_id)}, {'par_category': 0}).sort([('category_name', 1)])
     json_results = []
     for result in cursor:
         json_results.append(result)
@@ -75,7 +75,12 @@ def get_all_tags():
 
 
 def get_product_tagging_details(query, to_verify=False):
-    product = get_random_product(query, to_verify)
+    if '_id' in query:
+        product = db.products.find_one(query)
+        print('-------------------------------product_name-----------------------------------------')
+        print(product['product_name'])
+    else:
+        product = get_random_product(query, to_verify)
     if product is not None:
         prod_seg = segment_product(product['product_name'])
         print('###product segmentation###')
@@ -115,13 +120,15 @@ def update_category(id, cat, subcat):
 
 
 def get_random_product(query, to_verify=False):
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print(query)
     if to_verify:
         query['tags'] = {'$exists': True}
         query['verified'] = {'$exists': False}
     else:
         query['done'] = {'$exists': False}
         query['is_dirty'] = {'$exists': False}
-
+        #query['skip_count'] = {'$lt': 3}
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)

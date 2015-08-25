@@ -42,7 +42,7 @@ def login_success(token, profile):
         session['user'] = profile
         if profile['email'] in config.ADMINS:
             session['is_admin'] = True
-        return redirect(url_for('bp.tag_it_vendor'))
+        return redirect(url_for('bp.tag_it'))
     else:
         print('Login failed.')
         return "Login failed"
@@ -83,7 +83,7 @@ def facebook_authorized(resp):
         session['user'] = me.data
         if me.data['email'] in config.ADMINS:
             session['is_admin'] = True
-        return redirect(url_for('bp.tag_it_vendor'))
+        return redirect(url_for('bp.tag_it'))
     else:
         return "Login failed"
 
@@ -124,102 +124,56 @@ def logout():
         session.pop('user')
     return redirect(request.args.get('next') or url_for('bp.login'))
 
-@bp.route('/vendor/tag-it')
-def tag_it_vendor():
+@bp.route('/tag-it')
+def tag_it():
     if 'user' in session:
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
         return render_template("tag_product.html",
                                vendors=get_vendors(),
                                available_cats=get_categories(),
-                               username=session['user']['name'],
-                               tag_count=tag_count,
-                               verify_count=verify_count,
-                               tag_by='vendor',
-                               autoescape=False)
-    else:
-        return redirect(url_for('bp.login'))
-
-@bp.route('/category/tag-it')
-def tag_it_category():
-    if 'user' in session:
-        user_id = session['user']['id']
-        tag_count, verify_count = get_tag_count(user_id)
-        return render_template("tag_product.html",
-                               available_cats=get_categories(),
                                available_cats1=get_categories(),
                                username=session['user']['name'],
                                tag_count=tag_count,
                                verify_count=verify_count,
-                               tag_by='category',
                                autoescape=False)
     else:
         return redirect(url_for('bp.login'))
 
-@bp.route('/vendor/verify', methods=['GET', 'POST', 'OPTIONS'])
-def vendor_verify():
+@bp.route('/verify', methods=['GET', 'POST', 'OPTIONS'])
+def verify():
     if session['is_admin'] and 'user' in session:
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
         return render_template("verify_product.html",
                                vendors=get_vendors(),
                                available_cats=get_categories(),
-                               username=session['user']['name'],
-                               tag_count=tag_count,
-                               verify_count=verify_count,
-                               tag_by='vendor',
-                               autoescape=False)
-    else:
-        flash('Invalid credentials', 'error')
-        return redirect(url_for('bp.login'))
-
-@bp.route('/category/verify', methods=['GET', 'POST', 'OPTIONS'])
-def category_verify():
-    if session['is_admin'] and 'user' in session:
-        user_id = session['user']['id']
-        tag_count, verify_count = get_tag_count(user_id)
-        return render_template("verify_product.html",
-                               available_cats=get_categories(),
                                available_cats1=get_categories(),
                                username=session['user']['name'],
                                tag_count=tag_count,
                                verify_count=verify_count,
-                               tag_by='category',
                                autoescape=False)
     else:
         flash('Invalid credentials', 'error')
         return redirect(url_for('bp.login'))
 
-@bp.route('/get-vendor-products', methods=['GET', 'POST'])
-def get_vendor_products():
+@bp.route('/get-products', methods=['GET', 'POST'])
+def get_products():
     posted_data = request.get_json()
+    print("##########################################################")
     print(posted_data)
-    if posted_data['vendor'] == 'All':
+    if 'vendor' in posted_data and posted_data['vendor'] == 'All':
         posted_data.pop("vendor", None)
-    tagging_info = get_product_tagging_details(posted_data)
-    return json.dumps(tagging_info)
-
-@bp.route('/get-vendor-products-verify', methods=['GET', 'POST'])
-def get_vendor_products_verify():
-    posted_data = request.get_json()
-    print(posted_data)
-    if posted_data['vendor'] == 'All':
-        posted_data.pop("vendor", None)
-    print(posted_data)
-    tagging_info = get_product_tagging_details(posted_data, True)
-    return json.dumps(tagging_info)
-
-@bp.route('/get-category-products', methods=['GET', 'POST'])
-def get_category_products():
-    posted_data = request.get_json()
     print(posted_data)
     tagging_info = get_product_tagging_details(posted_data)
     return json.dumps(tagging_info)
 
-@bp.route('/get-category-products-verify', methods=['GET', 'POST'])
-def get_category_products_verify():
+@bp.route('/verify-products', methods=['GET', 'POST'])
+def verify_products():
     posted_data = request.get_json()
     print(posted_data)
+    if 'vendor' in posted_data and posted_data['vendor'] == 'All':
+        posted_data.pop("vendor", None)
     tagging_info = get_product_tagging_details(posted_data, True)
     return json.dumps(tagging_info)
 
@@ -251,20 +205,17 @@ def set_tags():
 
     next_name = {}
     if 'category' in posted_data:
-        next_name['category'] = posted_data.pop("category")
-    else:
+        category = posted_data.pop("category")
+        next_name['category'] = category
+    if 'vendor' in posted_data:
         vendor = posted_data.pop("vendor")
         if vendor is not 'All':
             next_name['vendor'] = vendor
 
     if posted_data['is_skipped']:
-        skip_data = {}
         skip_c = get_skip_count(id)
         skip_c += 1
-        skip_data['skip_count'] = skip_c
-        if skip_c > 4:
-            skip_data['is_dirty'] = True
-        db.products.update({'_id': ObjectId(id)}, {"$set": skip_data})
+        db.products.update({'_id': ObjectId(id)}, {"$set": {'skip_count':skip_c}})
 
     if posted_data['tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
         posted_data.pop("is_skipped")
@@ -291,7 +242,7 @@ def set_verified_tags():
     next_name = {}
     if 'category' in posted_data:
         next_name['category'] = posted_data.pop("category")
-    else:
+    if 'vendor' in posted_data:
         vendor = posted_data.pop("vendor")
         if vendor is not 'All':
             next_name['vendor'] = vendor

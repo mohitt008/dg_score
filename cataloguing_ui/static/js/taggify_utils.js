@@ -11,56 +11,37 @@ $(document).ready(function () {
                 });
     });
 
-    $(function () {
-        $("#vendor-button").click(function () {
-            vendor = $("#select-vendor").find(":selected").val();
-            if (vendor == '-1')
-                $("#select-vendor").notify("Please select a Vendor first.", "error");
-            else {
-                $.ajax({
-                    url: '/cat-ui/get-vendor-products',
-                    dataType: 'json',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ "vendor": vendor}),
-                    success: function (data) {
-                        if (data['error'])
-                            $("#select-vendor").notify(data['error']);
-                        else {
-                            update_html(data);
-                            data_obj = {'vendor': vendor};
-                            $('.address').taggify();
-                        }
-                    }
-                })
-            }
-        });
-    });
-
     $(function() {
-        $( "#category-button" ).click(function() {
+        $( "#tag-button" ).click(function() {
+            var vendor = $("#select-vendor").find(":selected").val();
+            var cat_val = $("#select-category").find(":selected").val();
             var cat = $("#select-category").find(":selected").text();
-            var cat_id = $("#select-category").find(":selected").val();
-            if(cat_id=='-1')
-                $("#select-category").notify('Please select a category first.');
+
+            if( vendor=='-1' && cat_val=='-1' )
+                $("#tag-button").notify('Please select a vendor or category first.');
             else {
+                data_obj = {}
+                if( vendor != '-1' )
+                    data_obj['vendor'] = vendor;
+                if( cat_val != '-1' )
+                    data_obj['category'] = cat;
+                console.log(data_obj);
                 $.ajax({
-                    url: '/cat-ui/get-category-products',
+                    url: '/cat-ui/get-products',
                     dataType: 'json',
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({"category": cat}),
+                    data: JSON.stringify(data_obj),
                     success: function (data) {
                         console.log(data);
                         if (data['error'])
-                            $("#select-category").notify(data['error']);
+                            $("#tag-button").notify(data['error']);
                         else {
                             update_html(data);
-                            data_obj = {'category': data['prod_cat']};
                             $('.address').taggify();
                         }
                     }
-                });
+                });                         
             }
         });
     });
