@@ -28,6 +28,7 @@ from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_selection import SelectPercentile, chi2, f_classif, SelectFpr
 from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
+import lda
 
 plural_dict = {}
 with open('Train_Model/word_list_verified.csv','rb') as f:
@@ -234,11 +235,23 @@ def root_training_prcoess():
     clf_fpr.fit(train_x_vectorized, train_y)
 
     print "model 3 done"
+    
+    ## starting lda training##
+    model_lda = lda.LDA(n_topics=200, n_iter=1000, random_state=1)
+    model_lda.fit(train_x_vectorized)
+    doc_topic=model_lda.doc_topic_
+    
+    clf_lda_bayes=naive_bayes.MultinomialNB(fit_prior=False)
+    clf_lda_bayes.fit(doc_topic,train_y)
+    
+    
     print os.path.dirname(os.path.realpath('__file__'))+'/../Models/clf_bayes.pkl'
     joblib.dump(clf_bayes, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_bayes.pkl')
     joblib.dump(clf_chi, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_chi.pkl')
     joblib.dump(clf_fpr, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_fpr.pkl')
     joblib.dump(vectorizer,os.path.dirname(os.path.realpath('__file__'))+'/Models/vectorizer.pkl')
+    joblib.dump(clf_lda_bayes,os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_lda_bayes.pkl')
+    joblib.dump(model_lda,os.path.dirname(os.path.realpath('__file__'))+'/Models/model_lda.pkl')
 
 
     # joblib.dump(second_level_cats,'../Models')
