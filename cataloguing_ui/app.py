@@ -115,12 +115,13 @@ def login():
     '''
     Render the simple login page having signin icons
     '''
+    if 'user' in session:
+        return redirect(url_for('bp.tag_it'))
     return render_template('login.htm')
 
 @bp.route('/logout')
 def logout():
-    if 'user' in session:
-        session.pop('user')
+    session.clear()
     return redirect(request.args.get('next') or url_for('bp.login'))
 
 @bp.route('/tag-it')

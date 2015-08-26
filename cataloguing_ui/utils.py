@@ -128,7 +128,8 @@ def get_random_product(query, to_verify=False):
     else:
         query['done'] = {'$exists': False}
         query['is_dirty'] = {'$exists': False}
-        #query['skip_count'] = {'$lt': 3}
+        query['$or'] = [{'skip_count': {'$exists': False}}, {'skip_count': {'$lt': 3}}]
+
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)
