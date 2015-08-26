@@ -35,7 +35,6 @@ def redirect_google():
 
 @google_login.login_success
 def login_success(token, profile):
-<<<<<<< HEAD
     add_user(profile)
     session['is_admin'] = False
     if profile['id'] and profile['name']:
@@ -46,22 +45,7 @@ def login_success(token, profile):
     else:
         print('Login failed.')
         return "Login failed"
-=======
-    try:
-        add_user(profile)
-        session['is_admin'] = False
-        if profile['id'] and profile['name']:
-            session['user'] = profile
-            if profile['email'] in config.ADMINS:
-                session['is_admin'] = True
-            return redirect(url_for('bp.tag_it_vendor'))
-        else:
-            print('Login failed.')
-            return "Login failed"
-    except Exception as err:
-        print ('Exception {} token {} profile {}'.format(err, token, profile))
->>>>>>> cataloging_ui
-
+        
 @google_login.login_failure
 def login_failure(e):
   return jsonify(error=str(e))
@@ -175,11 +159,8 @@ def verify():
 @bp.route('/get-products', methods=['GET', 'POST'])
 def get_products():
     posted_data = request.get_json()
-    print("##########################################################")
-    print(posted_data)
     if 'vendor' in posted_data and posted_data['vendor'] == 'All':
         posted_data.pop("vendor", None)
-    print(posted_data)
     tagging_info = get_product_tagging_details(posted_data)
     return json.dumps(tagging_info)
 

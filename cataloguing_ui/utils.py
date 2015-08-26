@@ -122,8 +122,6 @@ def update_category(id, cat, subcat):
 
 
 def get_random_product(query, to_verify=False):
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print(query)
     if to_verify:
         query['tags'] = {'$exists': True}
         query['verified'] = {'$exists': False}
