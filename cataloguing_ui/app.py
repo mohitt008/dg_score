@@ -240,7 +240,7 @@ def set_verified_tags():
         next_name['category'] = posted_data.pop("category")
     if 'vendor' in posted_data:
         vendor = posted_data.pop("vendor")
-        if vendor is not 'All':
+        if vendor != 'All':
             next_name['vendor'] = vendor
 
     if posted_data['is_skipped']:
