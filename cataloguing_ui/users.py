@@ -28,7 +28,7 @@ def add_user(user_dict):
 
 def get_tag_count(user_id):
     tags = db.users.find_one({"id": user_id})
-    return tags['tags'], tags['tags_verified'] if 'tags_verified' in tags else 0
+    return tags['tags'], tags['tags_verified']
 
 
 def inc_tag_count(user_id, admin=False):

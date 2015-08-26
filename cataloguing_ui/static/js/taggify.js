@@ -36,11 +36,13 @@
     }
 
     function setUpAddress() {
-      var span_text = "<span class='address_element' tabindex='{0}'><abc>{1}</abc></span>";
+      var span_text = "<span class = 'address_element' tabindex='{0}'><abc>{1}</abc></span>";
       total_string = "";
+
       for (i = 0; i < prod_seg.length; i++) {
-          total_string += span_text.f(i+1,prod_seg[i])
+        total_string += span_text.f(i+1,prod_seg[i])
       }
+
       var tags = $('#tag_template').html();
       jq_name_obj.html(total_string);
       $(tags).insertAfter(jq_name_obj);
@@ -170,8 +172,8 @@
           sendTags(null, null, null, null, is_skipped);
           $('#skip-button').notify('Skipping product name', "info");
       });
+      
     }
-
     setUp()
   };
   return this

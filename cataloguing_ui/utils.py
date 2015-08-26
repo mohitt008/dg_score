@@ -77,7 +77,12 @@ def get_all_tags():
 
 
 def get_product_tagging_details(query, to_verify=False):
-    product = get_random_product(query, to_verify)
+    if '_id' in query:
+        product = db.products.find_one(query)
+        print('-------------------------------product_name-----------------------------------------')
+        print(product['product_name'])
+    else:
+        product = get_random_product(query, to_verify)
     if product is not None:
         prod_seg = segment_product(product['product_name'])
         print('###product segmentation###')
@@ -123,6 +128,7 @@ def get_random_product(query, to_verify=False):
     else:
         query['done'] = {'$exists': False}
         query['is_dirty'] = {'$exists': False}
+        query['$or'] = [{'skip_count': {'$exists': False}}, {'skip_count': {'$lt': 3}}]
 
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)

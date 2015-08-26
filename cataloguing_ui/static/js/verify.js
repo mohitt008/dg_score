@@ -136,7 +136,7 @@
 
     function sendTags(tags, is_dang, is_xray, is_dirty, is_skipped) {
 
-      sendTagsAJAX(tags, is_dang, is_xray, is_dirty,is_skipped).done(function(data) {
+      sendTagsAJAX(tags, is_dang, is_xray, is_dirty, is_skipped).done(function(data) {
         console.log('next product-name data: ', data);
         if(data.error) {
             $.notify(data.error, { position:"bottom-right" });

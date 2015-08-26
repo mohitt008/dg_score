@@ -1,7 +1,0 @@
-<select id="select-category">
-  <option value='-1'>----------- Select Category -----------</option>
-  {% for cat in available_cats1 %}
-    <option value='{{cat._id}}'>{{cat.category_name}}</option>
-  {% endfor %}
-</select>
-<input type="submit" class="btn btn-primary" value="Get Products" id="category-button">
