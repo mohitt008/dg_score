@@ -192,7 +192,7 @@ def change_category():
 @bp.route('/set-tags', methods=['GET', 'POST'])
 def set_tags():
     posted_data = request.get_json()
-    print(posted_data)
+    print('############posted_data###########', posted_data)
     id = posted_data.pop("id", None)
     user_id = session['user']['id']
     posted_data['tagged_by'] = user_id
@@ -202,11 +202,10 @@ def set_tags():
 
     next_name = {}
     if 'category' in posted_data:
-        category = posted_data.pop("category")
-        next_name['category'] = category
+        next_name['category'] = posted_data.pop("category")
     if 'vendor' in posted_data:
         vendor = posted_data.pop("vendor")
-        if vendor is not 'All':
+        if vendor != 'All':
             next_name['vendor'] = vendor
 
     if posted_data['is_skipped']:
