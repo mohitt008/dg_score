@@ -244,6 +244,7 @@ def root_training_prcoess():
     clf_lda_bayes=naive_bayes.MultinomialNB(fit_prior=False)
     clf_lda_bayes.fit(doc_topic,train_y)
     
+    print "naive bayes classification with lda representation done"
     
     print os.path.dirname(os.path.realpath('__file__'))+'/../Models/clf_bayes.pkl'
     joblib.dump(clf_bayes, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_bayes.pkl')
