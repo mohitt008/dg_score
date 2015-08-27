@@ -49,8 +49,8 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav">
                     {% block side_block %} {% endblock %}
-                    <li><a href="{{ url_for('bp.tag_it') }}">Tag Products</a></li>
-                    <li><a href="{{ url_for('bp.verify') }}">Verify Products</a></li>
+                    <li><a href="{{ url_for('bp.tag', q='tag') }}">Tag Products</a></li>
+                    <li><a href="{{ url_for('bp.tag', q='verify') }}">Verify Products</a></li>
                     <li><a href="{{ url_for('bp.get_tags') }}">Tags-list</a></li>
                     <li><a href="{{ url_for('bp.view_leaderboard') }}">Leaderboard</a></li>
                 </ul>

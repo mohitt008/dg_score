@@ -82,7 +82,7 @@ def facebook_authorized(resp):
         session['user'] = me.data
         if me.data['email'] in config.ADMINS:
             session['is_admin'] = True
-        return redirect(url_for('bp.tag_it'))
+        return redirect(url_for('bp.tag', q='tag'))
     else:
         return "Login failed"
 
@@ -116,20 +116,25 @@ def login():
     Render the simple login page having signin icons
     '''
     if 'user' in session:
-        return redirect(url_for('bp.tag_it'))
+        return redirect(url_for('bp.tag', q='tag'))
     return render_template('login.htm')
 
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(request.args.get('next') or url_for('bp.login'))
+    return redirect(url_for('bp.login'))
 
-@bp.route('/tag-it')
-def tag_it():
+@bp.route('/tagging', methods=['POST', 'GET'])
+def tag():
     if 'user' in session:
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
-        return render_template("tag_product.html",
+        if request.args.get('q') == 'tag':
+            template_name = 'tag_product.html'
+        if request.args.get('q') == 'verify':
+            template_name = 'verify_product.html'
+        print(request.args.get('q'), template_name)    
+        return render_template(template_name,
                                vendors=get_vendors(),
                                available_cats=get_categories(),
                                available_cats1=get_categories(),
@@ -138,23 +143,6 @@ def tag_it():
                                verify_count=verify_count,
                                autoescape=False)
     else:
-        return redirect(url_for('bp.login'))
-
-@bp.route('/verify', methods=['GET', 'POST', 'OPTIONS'])
-def verify():
-    if session['is_admin'] and 'user' in session:
-        user_id = session['user']['id']
-        tag_count, verify_count = get_tag_count(user_id)
-        return render_template("verify_product.html",
-                               vendors=get_vendors(),
-                               available_cats=get_categories(),
-                               available_cats1=get_categories(),
-                               username=session['user']['name'],
-                               tag_count=tag_count,
-                               verify_count=verify_count,
-                               autoescape=False)
-    else:
-        flash('Invalid credentials', 'error')
         return redirect(url_for('bp.login'))
 
 @bp.route('/get-products', methods=['GET', 'POST'])
