@@ -1,34 +1,42 @@
-function update_html(data) {
-    $("#tag-products").css("display", "block");
-    $("#org_prod_name").html(data['prod_name']);
-    $("#vendor_name").html(data['vendor']);
-    $("#vendor_name").attr("href", data['prod_url']);
-    $("#selectable").html(data['prod_name']);
-    $("#category").html(data['prod_cat']);
-    $("#sub-category").html(data['prod_subcat']);
+$(function() {
+    $( "#get-products-button" ).click(function() {
+        var vendor = $("#select-vendor").find(":selected").val();
+        var cat_val = $("#select-category").find(":selected").val();
+        var cat = $("#select-category").find(":selected").text();
+        var sPageURL = window.location.search.substring(1);
+        sPageURL_split_list = sPageURL.split('=');
 
-    if (data['is_dang'])
-        $('#dangerous-goods').attr('checked','checked');
-    if (data['is_xray'])
-        $('#x-ray').attr('checked','checked');
-    if (data['is_dirty'])
-        $('#dirty-name').attr('checked','checked');
-    if (data['tag_count'])
-        $('#tag-count').html(data.tag_count);
-    if (data['verify_count'])
-        $('#verify-count').html(data.verify_count);
-
-    attrs="";
-    console.log(data['taglist']);
-    if (!jQuery.isEmptyObject(data['taglist'])) {
-      $.each(data['taglist'], function (attr, code) {
-          attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
-      });
-    }
-    $(".extra-attrs").html(attrs);
-    id = data['id'];
-    prod_seg = JSON.parse(data['prod_seg']);
-}
+        if( vendor=='-1' && cat_val=='-1' )
+            $("#get-products-button").notify('Please select a vendor or category first.');
+        else {
+            data_obj = {}
+            if( vendor != '-1' )
+                data_obj['vendor'] = vendor;
+            if( cat_val != '-1' )
+                data_obj['category'] = cat;
+            data_obj[sPageURL_split_list[0]] = sPageURL_split_list[1];
+            console.log(data_obj);
+            $.ajax({
+                url: '/cat-ui/get-products',
+                dataType: 'json',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data_obj),
+                success: function (data) {
+                    console.log(data);
+                    if (data['error'])
+                        $("#get-products-button").notify(data['error']);
+                    else {
+                        update_html(data);
+                        if ( sPageURL_split_list[1] == 'verify' )
+                            tagged_data = data['tags']
+                        $('.address').taggify();
+                    }
+                }
+            });                         
+        }
+    });
+});
 
 $(function () {
     $("#update-button").click(function () {
@@ -92,3 +100,35 @@ $(function () {
         });
     });
 });
+
+function update_html(data) {
+    $("#tag-products").css("display", "block");
+    $("#org_prod_name").html(data['prod_name']);
+    $("#vendor_name").html(data['vendor']);
+    $("#vendor_name").attr("href", data['prod_url']);
+    $("#selectable").html(data['prod_name']);
+    $("#category").html(data['prod_cat']);
+    $("#sub-category").html(data['prod_subcat']);
+
+    if (data['is_dang'])
+        $('#dangerous-goods').attr('checked','checked');
+    if (data['is_xray'])
+        $('#x-ray').attr('checked','checked');
+    if (data['is_dirty'])
+        $('#dirty-name').attr('checked','checked');
+    if (data['tag_count'])
+        $('#tag-count').html(data.tag_count);
+    if (data['verify_count'])
+        $('#verify-count').html(data.verify_count);
+
+    attrs="";
+    console.log(data['taglist']);
+    if (!jQuery.isEmptyObject(data['taglist'])) {
+      $.each(data['taglist'], function (attr, code) {
+          attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
+      });
+    }
+    $(".extra-attrs").html(attrs);
+    id = data['id'];
+    prod_seg = JSON.parse(data['prod_seg']);
+}

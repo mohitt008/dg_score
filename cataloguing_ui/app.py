@@ -41,7 +41,7 @@ def login_success(token, profile):
         session['user'] = profile
         if profile['email'] in config.ADMINS:
             session['is_admin'] = True
-        return redirect(url_for('bp.tag_it'))
+        return redirect(url_for('bp.tag', q='tag'))
     else:
         print('Login failed.')
         return "Login failed"
@@ -129,18 +129,20 @@ def tag():
     if 'user' in session:
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
-        if request.args.get('q') == 'tag':
-            template_name = 'tag_product.html'
-        if request.args.get('q') == 'verify':
-            template_name = 'verify_product.html'
-        print(request.args.get('q'), template_name)    
-        return render_template(template_name,
+        q = request.args.get('q') 
+        
+        if (not session['is_admin']) and (q == 'verify' or q == '3-skips'):
+            flash('Invalid credentials', 'error')
+            return redirect(url_for('bp.login'))
+        
+        return render_template('tag_product.html',
                                vendors=get_vendors(),
                                available_cats=get_categories(),
                                available_cats1=get_categories(),
                                username=session['user']['name'],
                                tag_count=tag_count,
                                verify_count=verify_count,
+                               q=q,
                                autoescape=False)
     else:
         return redirect(url_for('bp.login'))
@@ -148,18 +150,16 @@ def tag():
 @bp.route('/get-products', methods=['GET', 'POST'])
 def get_products():
     posted_data = request.get_json()
-    if 'vendor' in posted_data and posted_data['vendor'] == 'All':
-        posted_data.pop("vendor", None)
-    tagging_info = get_product_tagging_details(posted_data)
-    return json.dumps(tagging_info)
+    q = posted_data.pop('q', None)
 
-@bp.route('/verify-products', methods=['GET', 'POST'])
-def verify_products():
-    posted_data = request.get_json()
-    print(posted_data)
     if 'vendor' in posted_data and posted_data['vendor'] == 'All':
-        posted_data.pop("vendor", None)
-    tagging_info = get_product_tagging_details(posted_data, True)
+        posted_data.pop('vendor', None)
+    if q == 'tag':
+        tagging_info = get_product_tagging_details(posted_data)
+    if q == 'verify':
+        tagging_info = get_product_tagging_details(posted_data, True)
+    if q == '3-skips':
+        tagging_info = get_product_tagging_details(posted_data, False, True)
     return json.dumps(tagging_info)
 
 @bp.route('/get-subcats', methods=['GET', 'POST'])

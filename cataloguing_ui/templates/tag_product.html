@@ -1,8 +1,27 @@
 {% extends "base_tagging.html" %}
 
 {% block head %}
+  {% if q == 'verify' %}
+    <script src="{{ url_for('bp.static', filename='js/verify.js') }}"></script>
+  {% else %}
     <script src="{{ url_for('bp.static', filename='js/taggify.js') }}"></script>
-    <script src="{{ url_for('bp.static', filename='js/taggify_utils.js') }}"></script>
+  {% endif %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      window.id;
+      window.vendor;
+      window.prod_seg;
+      window.data_obj;
+      window.tagged_data = "";
+
+      $(function () {
+          $("input[type=submit], button").button()
+                  .click(function (event) {
+                      event.preventDefault();
+                  });
+      });
+    });
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -26,7 +45,7 @@
   {% endfor %}
 </select>
 
-<input type="submit" class="btn btn-primary" value="Get Products" id="tag-button">
+<input type="submit" class="btn btn-primary" value="Get Products" id="get-products-button">
 
 <div id="tag-products" style="display:none">
   <h4>Product details :</h4>
@@ -66,7 +85,8 @@
             <a href='#' tagtype = "V1" tabindex='109'><span class="tag_text">Volume/Quantity</span></a>
             <a href='#' tagtype = "S1" tabindex='110'><span class="tag_text">Style No.</span></a>
             <a href='#' tagtype = "F1" tabindex='111'><span class="tag_text">Flavour/Fragrance</span></a>
-            <a href='#' tagtype = "O1" tabindex='112'><span class="tag_text">Others</span></a>
+            <a href='#' tagtype = "W2" tabindex='112'><span class="tag_text">Wattage/Power</span></a>
+            <a href='#' tagtype = "O1" tabindex='113'><span class="tag_text">Others</span></a>
           </td>
           <td class="tag_holder extra-attrs">
             <!--<a href='#' tagtype = "M2"><span class="tag_text">Memory</span></a>-->
@@ -89,7 +109,7 @@
 {% with messages = get_flashed_messages(category_filter=["error"]) %}
   {% if messages %}
     {% for message in messages %}
-        <script>$.notify("Please login as Admin to access verify URL.", {clickToHide: true});</script>
+        <script>$.notify("Access denied. Please login as Admin.", {clickToHide: true});</script>
     {% endfor %}
   {% endif %}
 {% endwith %}

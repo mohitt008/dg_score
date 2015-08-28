@@ -76,13 +76,13 @@ def get_all_tags():
     return tags
 
 
-def get_product_tagging_details(query, to_verify=False):
+def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
     if '_id' in query:
         product = db.products.find_one(query)
         print('-------------------------------product_name-----------------------------------------')
         print(product['product_name'])
     else:
-        product = get_random_product(query, to_verify)
+        product = get_random_product(query, to_verify, skipped_thrice)
     if product is not None:
         prod_seg = segment_product(product['product_name'])
         print('###product segmentation###')
@@ -121,10 +121,12 @@ def update_category(id, cat, subcat):
         return json.dumps({'message': 'Error!'})
 
 
-def get_random_product(query, to_verify=False):
+def get_random_product(query, to_verify=False, skipped_thrice=False):
     if to_verify:
         query['tags'] = {'$exists': True}
         query['verified'] = {'$exists': False}
+    elif skipped_thrice:
+        query['skip_count'] = {'$exists': True, '$gt': 2}
     else:
         query['done'] = {'$exists': False}
         query['is_dirty'] = {'$exists': False}
