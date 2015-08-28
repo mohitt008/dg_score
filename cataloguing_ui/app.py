@@ -180,6 +180,7 @@ def change_category():
 @bp.route('/set-tags', methods=['GET', 'POST'])
 def set_tags():
     posted_data = request.get_json()
+    q = posted_data.pop('q', None)
     print('############posted_data###########', posted_data)
     id = posted_data.pop("id", None)
     user_id = session['user']['id']
@@ -217,7 +218,8 @@ def set_tags():
 @bp.route('/set-verified-tags', methods=['GET', 'POST'])
 def set_verified_tags():
     posted_data = request.get_json()
-    print(posted_data)
+    q = posted_data.pop('q', None)
+    print('############posted_data###########', posted_data)
     id = posted_data.pop("id", None)
     user_id = session['user']['id']
     posted_data['verified_by'] = user_id
@@ -243,11 +245,14 @@ def set_verified_tags():
         inc_tag_count(user_id, True)
 
     #fetching next product tagging info
-    tagging_info = get_product_tagging_details(next_name, True)
+    if q == 'verify':
+        tagging_info = get_product_tagging_details(next_name, True)
+    elif q == '3-skips':
+        tagging_info = get_product_tagging_details(next_name, False, True)
+
     tag_count, verify_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
     tagging_info['verify_count'] = verify_count
-
     return json.dumps(tagging_info)
 
 @bp.route('/leaderboard')

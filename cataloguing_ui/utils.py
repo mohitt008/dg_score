@@ -126,12 +126,12 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
         query['tags'] = {'$exists': True}
         query['verified'] = {'$exists': False}
     elif skipped_thrice:
+        query['verified'] = {'$exists': False}
         query['skip_count'] = {'$exists': True, '$gt': 2}
     else:
         query['done'] = {'$exists': False}
         query['is_dirty'] = {'$exists': False}
         query['$or'] = [{'skip_count': {'$exists': False}}, {'skip_count': {'$lt': 3}}]
-
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)

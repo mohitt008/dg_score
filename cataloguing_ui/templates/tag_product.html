@@ -1,27 +1,11 @@
 {% extends "base_tagging.html" %}
 
 {% block head %}
-  {% if q == 'verify' %}
-    <script src="{{ url_for('bp.static', filename='js/verify.js') }}"></script>
-  {% else %}
+  {% if q == 'tag' %}
     <script src="{{ url_for('bp.static', filename='js/taggify.js') }}"></script>
+  {% else %}
+    <script src="{{ url_for('bp.static', filename='js/verify.js') }}"></script>
   {% endif %}
-  <script type="text/javascript">
-    $(document).ready(function () {
-      window.id;
-      window.vendor;
-      window.prod_seg;
-      window.data_obj;
-      window.tagged_data = "";
-
-      $(function () {
-          $("input[type=submit], button").button()
-                  .click(function (event) {
-                      event.preventDefault();
-                  });
-      });
-    });
-  </script>
 {% endblock %}
 
 {% block content %}

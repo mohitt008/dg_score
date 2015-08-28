@@ -146,7 +146,8 @@
         else {
             resetTags();
             update_html(data);
-            tagged_data = data['tags'];
+            if ( q == 'verify' )
+                tagged_data = data['tags']
             $('.address').taggify();
         }
       })
