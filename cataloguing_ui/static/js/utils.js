@@ -12,7 +12,6 @@ $(document).ready(function () {
                       event.preventDefault();
                   });
       });
-
     $(function() {
         $( "#get-products-button" ).click(function() {
             var vendor = $("#select-vendor").find(":selected").val();
