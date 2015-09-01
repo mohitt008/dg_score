@@ -36,12 +36,17 @@
     }
 
     function setUpAddress() {
-      var span_text = "<span class = 'address_element' tabindex='{0}'><abc>{1}</abc></span>";
+      var span_text = "<span class = 'address_element' tabindex='{0}' tag='{1}'><abc>{2}</abc></span>";
       total_string = "";
 
-      for (i = 0; i < prod_seg.length; i++) {
-        total_string += span_text.f(i+1,prod_seg[i])
-      }
+      if (tagged_data == "")
+          for (i = 0; i < prod_seg.length; i++) {
+            total_string += span_text.f(i+1, null, prod_seg[i])
+          }
+      else
+          for (i = 0; i < tagged_data.length; i++) {
+            total_string += span_text.f(i+1, tagged_data[i][1], tagged_data[i][0])
+          }
 
       var tags = $('#tag_template').html();
       jq_name_obj.html(total_string);
@@ -92,7 +97,7 @@
       })
     }
 
-    function sendTagsAJAX(tags, dang, xray, dirty,skipped) {
+    function sendTagsAJAX(tags, dang, xray, dirty, skipped, undo) {
       var date = new Date();
       data_obj.epoch = date.getTime();
       data_obj['id'] = id;
@@ -101,6 +106,7 @@
       data_obj['is_xray'] = xray;
       data_obj['is_dirty'] = dirty;
       data_obj['is_skipped'] = skipped;
+      data_obj['undo'] = undo;
       return $.ajax({
         url: '/cat-ui/set-tags',
         dataType: 'json',
@@ -110,9 +116,9 @@
       });
     }
 
-    function sendTags(tags, is_dang, is_xray, is_dirty, is_skipped) {
+    function sendTags(tags, is_dang, is_xray, is_dirty, is_skipped, undo) {
 
-      sendTagsAJAX(tags, is_dang, is_xray, is_dirty,is_skipped).done(function(data) {
+      sendTagsAJAX(tags, is_dang, is_xray, is_dirty, is_skipped, undo).done(function(data) {
         console.log('next product-name data: ', data);
         if(data.error) {
             $.notify(data.error, { position:"bottom-right" });
@@ -121,6 +127,10 @@
         }
         else {
             resetTags();
+            if (undo) {
+              tagged_data = data['tags'];
+              pid = data['id']
+            }
             update_html(data);
             $('.address').taggify();
         }
@@ -171,6 +181,15 @@
           var is_skipped = true
           sendTags(null, null, null, null, is_skipped);
           $('#skip-button').notify('Skipping product name', "info");
+      });
+      $('#undo-button').off().on('click', function() {
+          if (pid) {
+            var undo = true
+            sendTags(null, null, null, null, null, undo);
+            $('#undo-button').notify('Skipping product name', "info");
+          }
+          else
+            $('#undo-button').notify('Pehle kuch tag toh karle!', "error");
       });
       
     }

@@ -5,6 +5,7 @@ $(document).ready(function () {
       window.prod_seg;
       window.data_obj;
       window.tagged_data = "";
+      window.pid = null;
 
       $(function () {
           $("input[type=submit], button").button()

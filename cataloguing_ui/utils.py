@@ -77,20 +77,24 @@ def get_all_tags():
 
 
 def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
+    tag_info = {}
     if '_id' in query:
         product = db.products.find_one(query)
-        print('-------------------------------product_name-----------------------------------------')
-        print(product['product_name'])
+        print('----------------product_name------------', product)
+        tag_info['tags'] = product['tags']
+        tag_info['is_dang'] = product['is_dang']
+        tag_info['is_xray'] = product['is_xray']
+        tag_info['is_dirty'] = product['is_dirty']
     else:
         product = get_random_product(query, to_verify, skipped_thrice)
+
     if product is not None:
         prod_seg = segment_product(product['product_name'])
         print('###product segmentation###')
         print(prod_seg)
         tag_list = get_taglist(product['category'])
         tag_list.update(get_taglist(product['sub_category']))
-
-        tag_info = {}
+        
         tag_info['id'] = str(product['_id'])
         tag_info['prod_name'] = product['product_name']
         tag_info['vendor'] = product['vendor']
