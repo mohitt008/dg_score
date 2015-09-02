@@ -4,6 +4,8 @@ import numpy as np
 import logging
 import json
 import traceback
+import csv
+import re
 
 from flask import Flask, request,Response
 from sklearn.externals import joblib
@@ -25,6 +27,38 @@ second_level_cat_names=\
                   "Computers and Laptops",
                   "Shoes and Footwear"
                  ]
+dangerous_cat_set=set()
+f_dang=open(PARENT_DIR_PATH+"/dangerous_categories.csv")
+reader=csv.DictReader(f_dang)
+for row in reader:
+    if row['dang']=="1":
+        dangerous_cat_set.add(row['cat_name'])
+f_dang.close()
+# print dang_set
+
+dangerous_word_set=set()
+f_dang=open(PARENT_DIR_PATH+"/dangerous_words.csv")
+reader=csv.reader(f_dang)
+for row in reader:
+    dangerous_word_set.add(row[0])
+print dangerous_word_set
+f_dang.close()
+
+dangerous_ambi_set=set()
+f_dang=open(PARENT_DIR_PATH+"/dangerous_ambi.csv")
+reader=csv.reader(f_dang)
+for row in reader:
+    dangerous_ambi_set.add(row[0])
+print dangerous_ambi_set
+f_dang.close()
+
+non_dangerous_set=set()
+f_dang=open(PARENT_DIR_PATH+"/non_dangerous_words.csv")
+reader=csv.reader(f_dang)
+for row in reader:
+    non_dangerous_set.add(row[0])
+print non_dangerous_set
+f_dang.close()
 
 
 second_level_cat_names_set=set(second_level_cat_names)
@@ -60,6 +94,8 @@ def predict_category(product_name):
 
     try:
         l_product_name = product_name.lower()
+        product_words=re.findall("[0-9.]+(?=[a-zA-Z]{1}[0-9]+)|[0-9.]+[a-zA-Z}{1}|[0-9.]+|[a-zA-Z]+",l_product_name)
+        clean_product_name = " ".join(product_words)
         class1 = clf_bayes.predict(vectorizer.transform([l_product_name]))[0]
         class2_prob_vector = clf_chi.predict_proba(vectorizer.transform([l_product_name]))[0]
         class3_prob_vector = clf_fpr.predict_proba(vectorizer.transform([l_product_name]))[0]
@@ -97,6 +133,25 @@ def predict_category(product_name):
                 second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
 
 
+        for word in non_dangerous_set:
+            if word in clean_product_name:
+                clean_product_name=clean_product_name.replace(word," ")
+
+        dangerous_flag=False
+        for word in dangerous_word_set:
+            if word in clean_product_name:
+                dangerous_flag=True
+                break
+
+        if first_level in dangerous_cat_set:
+            for word in dangerous_ambi_set:
+                if word in clean_product_name:
+                    dangerous_flag=True
+                    break
+        if re.search("[0-9]+[\s]*ml",clean_product_name):
+            dangerous_flag=True
+
+
         # prob_vector= second_level_clf[class_name].predict_proba(
             #second_level_vectorizer[class_name].transform([product_name.lower()]))[0]
 
@@ -111,7 +166,7 @@ def predict_category(product_name):
             'Exception {} occurred against product: {}'.format(
                 err, product_name))
 
-    return (first_level,second_level)
+    return (first_level,second_level,dangerous_flag)
 
 @app.route('/get_category', methods = ['POST'])
 def get_category():
@@ -122,7 +177,7 @@ def get_category():
 
         for product_name_dict in list_product_names:
             result = dict()
-            result['category'], result['sub_category'] = predict_category(product_name_dict.get('product_name',"").encode('ascii','ignore'))
+            result['category'], result['sub_category'], result['dangerous'] = predict_category(product_name_dict.get('product_name',"").encode('ascii','ignore'))
             output_list.append(result)
 
         return Response(json.dumps(output_list),  mimetype='application/json')
@@ -133,6 +188,7 @@ def get_category():
 
 
 if __name__=='__main__':
+    print "hello"
     app.run(port=8001)
 
 """
