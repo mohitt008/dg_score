@@ -1,13 +1,5 @@
 {% extends "base_tagging.html" %}
 
-{% block head %}
-  {% if q == 'tag' %}
-    <script src="{{ url_for('bp.static', filename='js/taggify.js') }}"></script>
-  {% else %}
-    <script src="{{ url_for('bp.static', filename='js/verify.js') }}"></script>
-  {% endif %}
-{% endblock %}
-
 {% block content %}
 
 <li>Please select atleast one out of the following drop-downs.</li>

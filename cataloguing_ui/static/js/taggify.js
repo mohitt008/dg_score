@@ -35,10 +35,30 @@
       jq_name_obj.children().removeClass('ui-selected tagged').removeAttr('style').removeAttr('tag')
     }
 
+    function refreshTags() {
+      $.each($('.address_element'), function(index, val) {
+        var addr_elem = $(this)
+        var tooltip_obj = $(this).next()
+        if (addr_elem.attr('tag') != 'null') {
+          addr_elem.addClass('tagged')
+          addr_elem.css({'background-color':getRandomColor(addr_elem.attr('tag'))})
+          tooltip_obj.text(addr_elem.attr('tag'))
+          tooltip_obj.css({
+            'position':'absolute',
+            'display': 'block',
+            'left' : addr_elem.offset().left + addr_elem.outerWidth( false )/2 - tooltip_obj.outerWidth( false )/2 - 215,
+            'top' : addr_elem.offset().top - 10
+          });
+        }
+        else
+          addr_elem.removeAttr('tag')
+      });
+    }
+
     function setUpAddress() {
       var span_text = "<span class = 'address_element' tabindex='{0}' tag='{1}'><abc>{2}</abc></span>";
       total_string = "";
-
+      console.log('in setUpAddress tagged_data', tagged_data);
       if (tagged_data == "")
           for (i = 0; i < prod_seg.length; i++) {
             total_string += span_text.f(i+1, null, prod_seg[i])
@@ -98,17 +118,26 @@
     }
 
     function sendTagsAJAX(tags, dang, xray, dirty, skipped, undo) {
+      var url;
+      if (q != 'tag') {
+        url = '/cat-ui/set-verified-tags';
+        data_obj['tags'] = tags;
+      }
+      else {
+        url = '/cat-ui/set-tags';
+        data_obj['tags'] = tags;
+      }
+
       var date = new Date();
       data_obj.epoch = date.getTime();
       data_obj['id'] = id;
-      data_obj['tags'] = tags;
       data_obj['is_dang'] = dang;
       data_obj['is_xray'] = xray;
       data_obj['is_dirty'] = dirty;
       data_obj['is_skipped'] = skipped;
       data_obj['undo'] = undo;
       return $.ajax({
-        url: '/cat-ui/set-tags',
+        url: url,
         dataType: 'json',
         type: 'POST', //make query POST
         contentType: 'application/json',
@@ -127,10 +156,12 @@
         }
         else {
             resetTags();
-            if (undo) {
+
+            if (data['tags']) {
               tagged_data = data['tags'];
-              pid = data['id']
+              console.log('tagged_data', tagged_data);
             }
+
             update_html(data);
             $('.address').taggify();
         }
@@ -139,6 +170,11 @@
 
     function setUp() {
       setUpAddress();
+
+      if (q != 'tag' || is_undo) {
+        console.log("refreshTags called .. i m in verify")
+        refreshTags();
+      }
       bindMenuSnapping();
       $( "#selectable" ).selectable({ autoRefresh: true,filter:'span',selected: function( event, ui ) {
           showTag(event.pageX,event.pageY)
@@ -156,8 +192,7 @@
       });
 
       $('#submit-button').off().on('click', function() {
-        if ($("span[tag]").length == $("span .address_element").length || $('input[type=checkbox]').is(':checked')) {
-
+        if ($("span[tag][tag!=null]").length == $("span .address_element").length || $('input[type=checkbox]').is(':checked')) {
               var is_dang = $('#dangerous-goods').is(':checked');
               var is_xray = $('#x-ray').is(':checked');
               var is_dirty = $('#dirty-name').is(':checked');
@@ -170,6 +205,7 @@
                   }
                   tags.push([$(this).text(),$(this).attr('tag')])
               });
+              pid = id;
               sendTags(tags, is_dang, is_xray, is_dirty, is_skipped);
             $('#submit-button').notify('Tags saved, fetching new product name...', "success");
         } else {
@@ -179,14 +215,18 @@
 
       $('#skip-button').off().on('click', function() {
           var is_skipped = true
+          pid = id;
           sendTags(null, null, null, null, is_skipped);
           $('#skip-button').notify('Skipping product name', "info");
       });
+
       $('#undo-button').off().on('click', function() {
+          console.log('pid........................', pid);
           if (pid) {
-            var undo = true
-            sendTags(null, null, null, null, null, undo);
-            $('#undo-button').notify('Skipping product name', "info");
+            is_undo = true;
+            pid = null;
+            sendTags(null, null, null, null, null, is_undo);
+            $('#undo-button').notify('Getting previous product...', "info");
           }
           else
             $('#undo-button').notify('Pehle kuch tag toh karle!', "error");

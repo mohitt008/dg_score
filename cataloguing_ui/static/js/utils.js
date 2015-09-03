@@ -6,6 +6,7 @@ $(document).ready(function () {
       window.data_obj;
       window.tagged_data = "";
       window.pid = null;
+      window.is_undo = false;
 
       $(function () {
           $("input[type=submit], button").button()

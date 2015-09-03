@@ -210,7 +210,7 @@ def set_tags():
         db.products.update({'_id': ObjectId(id)}, {"$set": {'skip_count':skip_c}})
 
     if posted_data['tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
-        print('####id####data to be saved####', id, posted_data)
+        print('####id####data to be saved -- tagged -- ####', id, posted_data)
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id)
 
@@ -239,14 +239,19 @@ def set_verified_tags():
         if vendor != 'All':
             next_name['vendor'] = vendor
 
-    if posted_data['is_skipped']:
+    if posted_data.pop("undo", None):
+        print('i wanto see last product please........................................')
+        next_name.clear()
+        next_name['_id'] = ObjectId(session['pid'])
+        
+    session['pid'] = id
+    if posted_data.pop("is_skipped"):
         admin_skip_keys = ['verified_by', 'verified', 'admin_tags']
         admin_skip_data = dict(map(lambda key: (key, posted_data.get(key, None)), admin_skip_keys))
         admin_skip_data['dirty_by_admin'] = True
         db.products.update({'_id': ObjectId(id)}, {"$set": admin_skip_data})
     else:
-        posted_data.pop("is_skipped")
-        print('####id####data to be saved####', id, posted_data)
+        print('####id####data to be saved -- verified --####', id, posted_data)
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id, True)
 
@@ -290,5 +295,5 @@ def get_tags():
 
 app.register_blueprint(bp, url_prefix='/cat-ui')
 if __name__ == '__main__':
-    app.debug = False
+    app.debug = True
     app.run()
