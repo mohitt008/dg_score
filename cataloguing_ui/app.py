@@ -160,7 +160,7 @@ def get_products():
         tagging_info = get_product_tagging_details(posted_data, True)
     if q == '3-skips':
         tagging_info = get_product_tagging_details(posted_data, False, True)
-    session['pid'] = None
+    tagging_info['pid'] = None
     return json.dumps(tagging_info)
 
 @bp.route('/get-subcats', methods=['GET', 'POST'])
@@ -184,6 +184,7 @@ def set_tags():
     q = posted_data.pop('q', None)
     print('############posted_data###########', posted_data)
     id = posted_data.pop("id", None)
+    pid = posted_data.pop("pid", None)
     user_id = session['user']['id']
     posted_data['tagged_by'] = user_id
 
@@ -201,9 +202,8 @@ def set_tags():
     if posted_data.pop("undo", None):
         print('i wanto see last product please........................................')
         next_name.clear()
-        next_name['_id'] = ObjectId(session['pid'])
+        next_name['_id'] = ObjectId(pid)
 
-    session['pid'] = id
     if posted_data.pop("is_skipped"):
         skip_c = get_skip_count(id)
         skip_c += 1

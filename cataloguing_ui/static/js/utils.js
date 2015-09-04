@@ -32,7 +32,6 @@ $(document).ready(function () {
                     data_obj['category'] = cat;
                 q = sPageURL_split_list[1];
                 data_obj[sPageURL_split_list[0]] = q;
-                console.log(data_obj);
                 $.ajax({
                     url: '/cat-ui/get-products',
                     dataType: 'json',

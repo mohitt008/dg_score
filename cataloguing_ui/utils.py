@@ -81,6 +81,9 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
     if '_id' in query:
         product = db.products.find_one(query)
         print('----------------product_name------------', product)
+        # if 'admin_tags' in product:
+            # tag_info['tags'] = product['admin_tags']
+        # else:
         tag_info['tags'] = product['tags']
         tag_info['is_dang'] = product['is_dang']
         tag_info['is_xray'] = product['is_xray']
@@ -136,6 +139,7 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
         query['done'] = {'$exists': False}
         query['is_dirty'] = {'$exists': False}
         query['$or'] = [{'skip_count': {'$exists': False}}, {'skip_count': {'$lt': 3}}]
+
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)
