@@ -39,13 +39,15 @@ $(document).ready(function () {
                     contentType: 'application/json',
                     data: JSON.stringify(data_obj),
                     success: function (data) {
-                        console.log(data);
+                        console.log('get-products data:  ', data);
                         if (data['error'])
                             $("#get-products-button").notify(data['error']);
                         else {
                             update_html(data);
                             if ( q == 'verify' )
-                                tagged_data = data['tags']
+                                tagged_data = data['tags'];
+                            else
+                                tagged_data = "";
                             $('.address').taggify();
                         }
                     }
@@ -98,7 +100,7 @@ $(document).ready(function () {
                 contentType: 'application/json',
                 data: JSON.stringify({"category_id": cat_id}),
                 success: function (data) {
-                    console.log(data)
+                    console.log('update-subcategory data :  ', data);
                     $("#update-subcategory").prop('disabled', false);
                     if (jQuery.isEmptyObject(data)) {
                         $("#update-subcategory").html('<option value="-1">--- No Sub-Categories found ---</option>');
@@ -140,7 +142,6 @@ function update_html(data) {
         $('#verify-count').html(data.verify_count);
 
     attrs="";
-    console.log(data['taglist']);
     if (!jQuery.isEmptyObject(data['taglist'])) {
       $.each(data['taglist'], function (attr, code) {
           attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';

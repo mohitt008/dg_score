@@ -58,7 +58,6 @@
     function setUpAddress() {
       var span_text = "<span class = 'address_element' tabindex='{0}' tag='{1}'><abc>{2}</abc></span>";
       total_string = "";
-      console.log('tagged_data...', tagged_data);
       if (tagged_data == "")
           for (i = 0; i < prod_seg.length; i++) {
             total_string += span_text.f(i+1, null, prod_seg[i])
@@ -130,13 +129,12 @@
 
       var date = new Date();
       data_obj.epoch = date.getTime();
-      data_obj['id'] = id;
+      data_obj['id'] = (is_undo) ? pid : id;
       data_obj['is_dang'] = dang;
       data_obj['is_xray'] = xray;
       data_obj['is_dirty'] = dirty;
       data_obj['is_skipped'] = skipped;
       data_obj['undo'] = is_undo;
-      data_obj['pid'] = pid;
       return $.ajax({
         url: url,
         dataType: 'json',
@@ -164,9 +162,7 @@
               tagged_data = data['tags'];
             else
               tagged_data = "";
-
             update_html(data);
-            console.log('new taggify datails...', id, prod_seg);
             $('.address').taggify();
         }
       })
@@ -175,10 +171,8 @@
     function setUp() {
       setUpAddress();
       if (q != 'tag' || is_undo) {
-        console.log("refreshTags called .. im in verify or undo is clicked...q and is_undo", q, is_undo);
         refreshTags();
         is_undo = false;
-        console.log('unsetting is_undo.....', is_undo);
       }
       bindMenuSnapping();
       $( "#selectable" ).selectable({ autoRefresh: true,filter:'span',selected: function( event, ui ) {
@@ -210,7 +204,6 @@
                   tags.push([$(this).text(),$(this).attr('tag')])
               });
               pid = id;
-              console.log('updated pid------in submit-button------', pid)
               $('#submit-button').notify('Tags saved, fetching new product name...', "success");
               sendTags(tags, is_dang, is_xray, is_dirty, is_skipped);
         } else {
@@ -221,7 +214,6 @@
       $('#skip-button').off().on('click', function() {
           var is_skipped = true
           pid = id;
-          console.log('updated pid-------in skip-button------', pid)
           $('#skip-button').notify('Skipping product name', "info");
           sendTags(null, null, null, null, is_skipped);
       });
@@ -229,12 +221,9 @@
       $('#undo-button').off().on('click', function() {
           if (pid) {
             is_undo = true;
-            console.log('pid for which undo is called , is_undo..........', pid, is_undo);
             $('#undo-button').notify('Getting previous product...', "info");
             sendTags(null, null, null, null, null);
             pid = null
-            
-            console.log('after undo pid, is_undo: ... ', pid, is_undo)
           }
           else
             $('#undo-button').notify('Pehle kuch tag toh karle!', "error");
