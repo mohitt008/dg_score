@@ -200,7 +200,6 @@ def set_tags():
 
     undo = posted_data.pop("undo", None)
     if undo:
-        print('i want to see last product please........................................')
         next_name.clear()
         next_name['_id'] = ObjectId(id)
 
