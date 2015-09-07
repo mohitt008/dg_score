@@ -7,8 +7,8 @@ from flask_oauth2_login import GoogleLogin
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, get_skip_count
-from users import add_user, get_tag_count, inc_tag_count, get_users
+from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count
+from users import add_user, get_tag_count, inc_tag_count, dcr_tag_count, get_users
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
 app = Flask(__name__)
@@ -198,15 +198,14 @@ def set_tags():
         if vendor != 'All':
             next_name['vendor'] = vendor
 
-    if posted_data.pop("undo", None):
-        print('i wanto see last product please........................................')
+    undo = posted_data.pop("undo", None)
+    if undo:
+        print('i want to see last product please........................................')
         next_name.clear()
         next_name['_id'] = ObjectId(id)
 
     elif posted_data.pop("is_skipped"):
-        skip_c = get_skip_count(id)
-        skip_c += 1
-        db.products.update({'_id': ObjectId(id)}, {"$set": {'skip_count':skip_c}})
+        inc_skip_count(id)
 
     else:
         print('####id####data to be saved -- tagged -- ####', id, posted_data)
@@ -215,6 +214,12 @@ def set_tags():
 
     #fetching next product tagging info
     tagging_info = get_product_tagging_details(next_name)
+
+    if undo:
+        db.products.update({'_id': ObjectId(id)},{"$unset":{'is_dang':'','is_dirty':'','is_xray':'',
+                            'tags':'','tagged_by':'','epoch':'','done':''}})
+        dcr_tag_count(user_id)
+
     tag_count, verify_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
     tagging_info['verify_count'] = verify_count
@@ -238,17 +243,18 @@ def set_verified_tags():
         if vendor != 'All':
             next_name['vendor'] = vendor
 
-    if posted_data.pop("undo", None):
+    undo = posted_data.pop("undo", None)
+    if undo:
         print('i wanto see last product please........................................')
         next_name.clear()
-        next_name['_id'] = ObjectId(session['pid'])
+        next_name['_id'] = ObjectId(id)
         
-    session['pid'] = id
-    if posted_data.pop("is_skipped"):
+    elif posted_data.pop("is_skipped"):
         admin_skip_keys = ['verified_by', 'verified', 'admin_tags']
         admin_skip_data = dict(map(lambda key: (key, posted_data.get(key, None)), admin_skip_keys))
         admin_skip_data['dirty_by_admin'] = True
         db.products.update({'_id': ObjectId(id)}, {"$set": admin_skip_data})
+    
     else:
         print('####id####data to be saved -- verified --####', id, posted_data)
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
@@ -260,9 +266,14 @@ def set_verified_tags():
     elif q == '3-skips':
         tagging_info = get_product_tagging_details(next_name, False, True)
 
+    if undo:
+        db.products.update({'_id': ObjectId(id)},{"$unset":{'admin_tags':'','verified_by':'','verified':'','dirty_by_admin':''}})
+        dcr_tag_count(user_id, True)
+
     tag_count, verify_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
     tagging_info['verify_count'] = verify_count
+    print('----------------------------------------------',tagging_info)
     return json.dumps(tagging_info)
 
 @bp.route('/leaderboard')

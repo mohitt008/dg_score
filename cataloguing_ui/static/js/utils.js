@@ -122,6 +122,7 @@ $(document).ready(function () {
 });
 
 function update_html(data) {
+    $('input:checkbox').removeAttr('checked');
     $("#tag-products").css("display", "block");
     $("#org_prod_name").html(data['prod_name']);
     $("#vendor_name").html(data['vendor']);
@@ -131,11 +132,11 @@ function update_html(data) {
     $("#sub-category").html(data['prod_subcat']);
 
     if (data['is_dang'])
-        $('#dangerous-goods').attr('checked','checked');
+        $('#dangerous-goods').prop("checked", true);
     if (data['is_xray'])
-        $('#x-ray').attr('checked','checked');
+        $('#x-ray').prop("checked", true);
     if (data['is_dirty'])
-        $('#dirty-name').attr('checked','checked');
+        $('#dirty-name').prop("checked", true);
     if (data['tag_count'])
         $('#tag-count').html(data.tag_count);
     if (data['verify_count'])

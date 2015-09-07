@@ -81,13 +81,13 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
     if '_id' in query:
         product = db.products.find_one(query)
         print('----------------product_name------------', product)
-        # if 'admin_tags' in product:
-            # tag_info['tags'] = product['admin_tags']
-        # else:
-        tag_info['tags'] = product['tags']
-        tag_info['is_dang'] = product['is_dang']
-        tag_info['is_xray'] = product['is_xray']
-        tag_info['is_dirty'] = product['is_dirty']
+        if 'admin_tags' in product:
+            tag_info['tags'] = product['admin_tags']
+        else:
+            tag_info['tags'] = product['tags'] if 'tags' in product else None
+        tag_info['is_dang'] = product['is_dang'] if 'is_dang' in product else None
+        tag_info['is_xray'] = product['is_xray'] if 'is_xray' in product else None
+        tag_info['is_dirty'] = product['is_dirty'] if 'is_dirty' in product else None
     else:
         product = get_random_product(query, to_verify, skipped_thrice)
 
@@ -108,7 +108,10 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
         tag_info['prod_seg'] = json.dumps(prod_seg)
 
         if to_verify:
-            tag_info['tags'] = product['tags']
+            if 'admin_tags' in product:
+                tag_info['tags'] = product['admin_tags']
+            else:
+                tag_info['tags'] = product['tags']
             tag_info['is_dang'] = product['is_dang']
             tag_info['is_xray'] = product['is_xray']
             tag_info['is_dirty'] = product['is_dirty']
@@ -148,9 +151,5 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
     return prod_obj
 
 
-def get_skip_count(product_id):
-    temp_dict = db.products.find({"_id":ObjectId(product_id)},{"skip_count":1,"_id":0})
-    for items in temp_dict:
-        if 'skip_count' in items:
-            return int(items["skip_count"])
-        return 0
+def inc_skip_count(product_id):
+    db.products.update({'_id':ObjectId(product_id)},{'$inc':{'skip_count':1}})
