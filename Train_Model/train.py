@@ -21,6 +21,7 @@ from sklearn import feature_extraction
 from sklearn import naive_bayes
 from sklearn import metrics
 from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 from nltk.stem.porter import PorterStemmer
@@ -228,31 +229,20 @@ def root_training_prcoess():
     clf_chi.fit(train_x_vectorized, train_y)
 
     print "model 2 done"
-
-    clf_fpr = Pipeline([
-        ('feature_selection',SelectFpr(f_classif,0.05)),
-  ('classification', naive_bayes.MultinomialNB(fit_prior=False))])
-    clf_fpr.fit(train_x_vectorized, train_y)
-
+    
+    clf_rf = Pipeline([
+        ('feature_selection', LinearSVC(C=2, penalty="l1", dual=False)),
+  ('classification', RandomForestClassifier(n_estimators=100, max_depth=1000))])
+    clf_rf.fit(train_x_vectorized, train_y)
+   
     print "model 3 done"
-    
-    ## starting lda training##
-    model_lda = lda.LDA(n_topics=200, n_iter=1000, random_state=1)
-    model_lda.fit(train_x_vectorized)
-    doc_topic=model_lda.doc_topic_
-    
-    clf_lda_bayes=naive_bayes.MultinomialNB(fit_prior=False)
-    clf_lda_bayes.fit(doc_topic,train_y)
-    
-    print "naive bayes classification with lda representation done"
     
     print os.path.dirname(os.path.realpath('__file__'))+'/../Models/clf_bayes.pkl'
     joblib.dump(clf_bayes, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_bayes.pkl')
     joblib.dump(clf_chi, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_chi.pkl')
-    joblib.dump(clf_fpr, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_fpr.pkl')
+    joblib.dump(clf_rf, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_rf.pkl')
     joblib.dump(vectorizer,os.path.dirname(os.path.realpath('__file__'))+'/Models/vectorizer.pkl')
-    joblib.dump(clf_lda_bayes,os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_lda_bayes.pkl')
-    joblib.dump(model_lda,os.path.dirname(os.path.realpath('__file__'))+'/Models/model_lda.pkl')
+  
 
 
     # joblib.dump(second_level_cats,'../Models')
