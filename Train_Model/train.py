@@ -29,7 +29,7 @@ from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_selection import SelectPercentile, chi2, f_classif, SelectFpr
 from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
-import lda
+
 
 plural_dict = {}
 with open('Train_Model/word_list_verified.csv','rb') as f:
