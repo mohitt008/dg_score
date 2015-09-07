@@ -43,7 +43,7 @@ app.logger.info("Loading Process Started")
 vectorizer=joblib.load(PARENT_DIR_PATH+'/Models/vectorizer.pkl')
 clf_bayes=joblib.load(PARENT_DIR_PATH+'/Models/clf_bayes.pkl')
 clf_chi=joblib.load(PARENT_DIR_PATH+'/Models/clf_chi.pkl')
-clf_fpr=joblib.load(PARENT_DIR_PATH+'/Models/clf_fpr.pkl')
+clf_rf=joblib.load(PARENT_DIR_PATH+'/Models/clf_rf.pkl')
 
 second_level_vectorizer={}
 second_level_clf_bayes={}
@@ -62,16 +62,16 @@ def predict_category(product_name):
         l_product_name = product_name.lower()
         class1 = clf_bayes.predict(vectorizer.transform([l_product_name]))[0]
         class2_prob_vector = clf_chi.predict_proba(vectorizer.transform([l_product_name]))[0]
-        class3_prob_vector = clf_fpr.predict_proba(vectorizer.transform([l_product_name]))[0]
+        class3_prob_vector = clf_rf.predict_proba(vectorizer.transform([l_product_name]))[0]
 
         if len(np.unique(class2_prob_vector))==1:
-            class2 = "NA"
+            class2 = "Delhivery_Others"
         else:
             class2 = clf_bayes.classes_[np.argmax(class2_prob_vector)]
         if len(np.unique(class3_prob_vector))==1:
-            class3 = "NA"
+            class3 = "Delhivery_Others"
         else:
-            class3 = clf_bayes.classes_[np.argmax(class2_prob_vector)]
+            class3 = clf_bayes.classes_[np.argmax(class3_prob_vector)]
 
         if class3 == "Delhivery_Others":
             if class1 == class2:
