@@ -77,7 +77,7 @@ app.logger.info("Loading Process Started")
 vectorizer=joblib.load(PARENT_DIR_PATH+'/Models/vectorizer.pkl')
 clf_bayes=joblib.load(PARENT_DIR_PATH+'/Models/clf_bayes.pkl')
 clf_chi=joblib.load(PARENT_DIR_PATH+'/Models/clf_chi.pkl')
-clf_rf=joblib.load(PARENT_DIR_PATH+'/Models/clf_rf.pkl')
+clf_rf=joblib.load(PARENT_DIR_PATH+'/Models/clf_l1_rf.pkl')
 
 second_level_vectorizer={}
 second_level_clf_bayes={}
@@ -143,12 +143,12 @@ def predict_category(product_name):
                 dangerous_flag=True
                 break
 
-        if first_level in dangerous_cat_set:
+        if not dangerous_flag and first_level in dangerous_cat_set:
             for word in dangerous_ambi_set:
                 if word in clean_product_name:
                     dangerous_flag=True
                     break
-        if re.search("[0-9]+[\s]*ml",clean_product_name):
+        if not dangerous_flag and re.search("[0-9]+[\s]*ml",clean_product_name):
             dangerous_flag=True
 
 

@@ -240,7 +240,7 @@ def root_training_prcoess():
     print os.path.dirname(os.path.realpath('__file__'))+'/../Models/clf_bayes.pkl'
     joblib.dump(clf_bayes, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_bayes.pkl')
     joblib.dump(clf_chi, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_chi.pkl')
-    joblib.dump(clf_rf, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_rf.pkl')
+    joblib.dump(clf_rf, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_l1_rf.pkl')
     joblib.dump(vectorizer,os.path.dirname(os.path.realpath('__file__'))+'/Models/vectorizer.pkl')
   
 
