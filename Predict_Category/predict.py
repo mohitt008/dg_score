@@ -41,7 +41,7 @@ f_dang=open(PARENT_DIR_PATH+"/dangerous_words.csv")
 reader=csv.reader(f_dang)
 for row in reader:
     dangerous_word_set.add(row[0])
-print dangerous_word_set
+#print dangerous_word_set
 f_dang.close()
 
 dangerous_ambi_set=set()
@@ -49,7 +49,7 @@ f_dang=open(PARENT_DIR_PATH+"/dangerous_ambi.csv")
 reader=csv.reader(f_dang)
 for row in reader:
     dangerous_ambi_set.add(row[0])
-print dangerous_ambi_set
+#print dangerous_ambi_set
 f_dang.close()
 
 non_dangerous_set=set()
@@ -57,7 +57,7 @@ f_dang=open(PARENT_DIR_PATH+"/non_dangerous_words.csv")
 reader=csv.reader(f_dang)
 for row in reader:
     non_dangerous_set.add(row[0])
-print non_dangerous_set
+#print non_dangerous_set
 f_dang.close()
 
 
@@ -188,8 +188,7 @@ def get_category():
 
 
 if __name__=='__main__':
-    print "hello"
-    app.run(port=8001)
+    app.run()
 
 """
 if __name__=='__main__':
