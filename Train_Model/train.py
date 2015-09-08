@@ -21,6 +21,7 @@ from sklearn import feature_extraction
 from sklearn import naive_bayes
 from sklearn import metrics
 from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 from nltk.stem.porter import PorterStemmer
@@ -28,6 +29,7 @@ from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_selection import SelectPercentile, chi2, f_classif, SelectFpr
 from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
+
 
 plural_dict = {}
 with open('Train_Model/word_list_verified.csv','rb') as f:
@@ -227,18 +229,20 @@ def root_training_prcoess():
     clf_chi.fit(train_x_vectorized, train_y)
 
     print "model 2 done"
-
-    clf_fpr = Pipeline([
-        ('feature_selection',SelectFpr(f_classif,0.05)),
-  ('classification', naive_bayes.MultinomialNB(fit_prior=False))])
-    clf_fpr.fit(train_x_vectorized, train_y)
-
+    
+    clf_rf = Pipeline([
+        ('feature_selection', LinearSVC(C=2, penalty="l1", dual=False)),
+  ('classification', RandomForestClassifier(n_estimators=100, max_depth=1000))])
+    clf_rf.fit(train_x_vectorized, train_y)
+   
     print "model 3 done"
+    
     print os.path.dirname(os.path.realpath('__file__'))+'/../Models/clf_bayes.pkl'
     joblib.dump(clf_bayes, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_bayes.pkl')
     joblib.dump(clf_chi, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_chi.pkl')
-    joblib.dump(clf_fpr, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_fpr.pkl')
+    joblib.dump(clf_rf, os.path.dirname(os.path.realpath('__file__'))+'/Models/clf_rf.pkl')
     joblib.dump(vectorizer,os.path.dirname(os.path.realpath('__file__'))+'/Models/vectorizer.pkl')
+  
 
 
     # joblib.dump(second_level_cats,'../Models')
