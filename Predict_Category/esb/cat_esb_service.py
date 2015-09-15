@@ -58,6 +58,7 @@ class CategoryService(Service):
         for record in payload:
             data_ = {
                 'product_name': record.pop('product_name'),
+                'wbn': record.pop('waybill', '')
             }
             data.append(data_)
             extra.append(record)
@@ -81,8 +82,8 @@ class CategoryService(Service):
 
         except Exception as err:
             self.logger.error(
-                'Exception {} occurred against payload: {}'.format(
-                    err, payload))
+                'Exception {} occurred against payload: {} segments: {}'.format(
+                    err, payload, segments))
             self.logger.error(
                 'Traceback: {}'.format(traceback.format_exc()))
             self.logger.error(

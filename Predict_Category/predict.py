@@ -92,7 +92,6 @@ for cat_name in second_level_cat_names_set:
 app.logger.info("Loading Process Complete")
 
 def predict_category(product_name):
-    app.logger.info("Request received {}".format(product_name))
 
     try:
         l_product_name = product_name.lower()
@@ -156,9 +155,6 @@ def predict_category(product_name):
         # prob_vector= second_level_clf[class_name].predict_proba(
             #second_level_vectorizer[class_name].transform([product_name.lower()]))[0]
 
-        app.logger.info("Result produced {} --> {}. Dangerous: {}".format(
-            first_level, second_level, dangerous_flag))
-    
     except Exception as err:
         app.logger.error(
             'Traceback: {}'.format(traceback.format_exc()))
@@ -168,7 +164,7 @@ def predict_category(product_name):
             'Exception {} occurred against product: {}'.format(
                 err, product_name))
 
-    return (first_level,second_level,dangerous_flag)
+    return (first_level, second_level, dangerous_flag)
 
 @app.route('/get_category', methods = ['POST'])
 def get_category():
@@ -177,9 +173,20 @@ def get_category():
         output_list = []
 
         for product_name_dict in list_product_names:
+            app.logger.info("Request received {}".format(product_name_dict))
             result = {}
-            result['category'], result['sub_category'], result['dangerous'] = \
-                    predict_category(product_name_dict.get('product_name',"").encode('ascii','ignore'))
+            
+            product_name = product_name_dict.get('product_name', "")
+            if product_name:
+                result['category'], result['sub_category'], result['dangerous'] = \
+                        predict_category(product_name.encode('ascii','ignore'))
+            else:
+                result['invalid_product_name'] = True
+            
+            result['waybill'] = product_name_dict.get('wbn', None)
+            
+            app.logger.info("Result produced {}".format(result))
+    
             output_list.append(result)
 
         return Response(json.dumps(output_list),  mimetype='application/json')
