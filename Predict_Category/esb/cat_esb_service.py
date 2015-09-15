@@ -64,26 +64,31 @@ class CategoryService(Service):
             extra.append(record)
 
         try:
-
             outgoing = self.outgoing.plain_http.get('ProductCategory')
             headers = {'Content-type': 'application/json'}
+            
             segments = outgoing.conn.post(
                 self.cid,
                 data=json.dumps(data),
                 headers=headers)
-            segments = json.loads(segments.text)
+            
             response = []
+            
+            if segments.status_code == httplib.OK:
+                segments = json.loads(segments.text)
 
-            for record, extra_ in zip(segments, extra):
-                record.update(**extra_)
-                response.append(record)
+                for record, extra_ in zip(segments, extra):
+                    record.update(**extra_)
+                    response.append(record)
+            else:
+                self.response.status_code = segments.status_code
 
             self.response.payload = json.dumps(response)
 
         except Exception as err:
             self.logger.error(
                 'Exception {} occurred against payload: {} segments: {}'.format(
-                    err, payload, segments))
+                    err, data, segments))
             self.logger.error(
                 'Traceback: {}'.format(traceback.format_exc()))
             self.logger.error(
