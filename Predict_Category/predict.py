@@ -6,15 +6,16 @@ import json
 import traceback
 import csv
 import re
+
 from constants import second_level_cat_names, CLEAN_PRODUCT_NAME_REGEX, \
         VOLUME_ML_REGEX, ALPHA_NUM_REGEX, CACHE_EXPIRY
 
+from settings import r, sentry_client
+
 from flask import Flask, request,Response
 from sklearn.externals import joblib
-#from config_details import second_level_cat_names
 from logging.handlers import RotatingFileHandler
 
-#from Train_Model.train import ngrams
 PARENT_DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(PARENT_DIR_PATH)
 
@@ -157,6 +158,9 @@ def predict_category(product_name):
         app.logger.error(
             'Exception {} occurred against product: {}'.format(
                 err, product_name))
+    sentry_client.captureException(
+        message = "predict.py: Exception occured",
+        extra = {"error" : err, "product_name" : product_name})
 
 @app.route('/get_category', methods = ['POST'])
 def get_category():
@@ -198,6 +202,9 @@ def get_category():
             'Exception {} occurred against payload: {}'.format(
                 err, list_product_names))
 
+    sentry_client.captureException(
+        message = "predict.py: Exception occured",
+        extra = {"error" : err, "payload" : list_product_names})
 if __name__=='__main__':
     app.run()
 
