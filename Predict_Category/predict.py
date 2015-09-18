@@ -7,29 +7,17 @@ import traceback
 import csv
 import re
 
+from constants import second_level_cat_names, CLEAN_PRODUCT_NAME_REGEX, \
+        VOLUME_ML_REGEX, ALPHA_NUM_REGEX, CACHE_EXPIRY
+
+from settings import r, sentry_client
+
 from flask import Flask, request,Response
 from sklearn.externals import joblib
-#from config_details import second_level_cat_names
 from logging.handlers import RotatingFileHandler
 
-#from Train_Model.train import ngrams
-PARENT_DIR_PATH=os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+PARENT_DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(PARENT_DIR_PATH)
-
-second_level_cat_names = \
-            ["Beauty Products and Personal Care",
-                  "Camera and Photos",
-                  "Mobile Phone, Tablets and Accesories",
-                  "Apparel & Accessories",
-                  "Watches, Eyewear and Jewellery",
-                  "Electronics and Appliances",
-                  "Home and Kitchen",
-                  "Computers and Laptops",
-                  "Shoes and Footwear"
-            ]
-
-CLEAN_PRODUCT_NAME_REGEX = re.compile('[0-9.]+(?=[a-zA-Z]{1}[0-9]+)|[0-9.]+[a-zA-Z}{1}|[0-9.]+|[a-zA-Z]+')
-VOLUME_ML_REGEX = re.compile('[0-9]+[\s]*ml')
 
 dangerous_cat_set = set()
 f_dang = open(PARENT_DIR_PATH+"/dangerous_categories.csv")
@@ -153,7 +141,14 @@ def predict_category(product_name):
             dangerous_flag = True
 
         # prob_vector= second_level_clf[class_name].predict_proba(
-            #second_level_vectorizer[class_name].transform([product_name.lower()]))[0]
+
+        result = {}
+        result['category'] = first_level
+        result['sub_category'] = second_level
+        result['dangerous'] = dangerous_flag
+        return result
+
+        #second_level_vectorizer[class_name].transform([product_name.lower()]))[0]
 
     except Exception as err:
         app.logger.error(
@@ -163,8 +158,9 @@ def predict_category(product_name):
         app.logger.error(
             'Exception {} occurred against product: {}'.format(
                 err, product_name))
-
-    return (first_level, second_level, dangerous_flag)
+        sentry_client.captureException(
+            message = "predict.py: Exception occured",
+            extra = {"error" : err, "product_name" : product_name})
 
 @app.route('/get_category', methods = ['POST'])
 def get_category():
@@ -174,20 +170,30 @@ def get_category():
 
         for product_name_dict in list_product_names:
             app.logger.info("Request received {}".format(product_name_dict))
-            result = {}
+            results = {}
+            results_cache = ''
             
             product_name = product_name_dict.get('product_name', "")
             if product_name:
-                result['category'], result['sub_category'], result['dangerous'] = \
-                        predict_category(product_name.encode('ascii','ignore'))
+                product_name_clean = (re.sub(ALPHA_NUM_REGEX, '', product_name)).lower()
+                product_name_key = 'catfight:' +':' + product_name_clean
+                results_cache = r.get(product_name_key)
+                if not results_cache:
+                    results = predict_category(product_name.encode('ascii','ignore'))
+                    if results:
+                        r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
+                        results['cached'] = False
+                else:
+                    results = json.loads(results_cache)
+                    results['cached'] = True
             else:
-                result['invalid_product_name'] = True
+                results['invalid_product_name'] = True
             
-            result['waybill'] = product_name_dict.get('wbn', None)
+            results['waybill'] = product_name_dict.get('wbn', None)
             
-            app.logger.info("Result produced {}".format(result))
+            app.logger.info("Result produced {}".format(results))
     
-            output_list.append(result)
+            output_list.append(results)
 
         return Response(json.dumps(output_list),  mimetype='application/json')
     
@@ -195,6 +201,10 @@ def get_category():
         app.logger.error(
             'Exception {} occurred against payload: {}'.format(
                 err, list_product_names))
+
+        sentry_client.captureException(
+            message = "predict.py: Exception occured",
+            extra = {"error" : err, "payload" : list_product_names})
 
 if __name__=='__main__':
     app.run()
