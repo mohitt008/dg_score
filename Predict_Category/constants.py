@@ -18,6 +18,6 @@ VOLUME_ML_REGEX = re.compile('[0-9]+[\s]*ml')
 # Alpha-num. Remove all punctuation, spaces etc
 ALPHA_NUM_REGEX = re.compile('[\W_]+')
 
-# Redis cache expiry 15 days (in sec)
-CACHE_EXPIRY = 1296000
+# Redis cache expiry 7 days (in sec)
+CACHE_EXPIRY = 604800
 
