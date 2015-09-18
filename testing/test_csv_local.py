@@ -6,7 +6,7 @@ RESULT_ADDRESS_FILE = "output.csv"
 
 HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
-RESULTS_URL = 'http://127.0.0.1:5000/segment_address'
+RESULTS_URL = 'http://127.0.0.1:5000/get_category'
 
 f = open(INPUT_ADDRESS_FILE)
 reader = csv.reader(f)
