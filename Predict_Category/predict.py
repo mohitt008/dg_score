@@ -158,9 +158,9 @@ def predict_category(product_name):
         app.logger.error(
             'Exception {} occurred against product: {}'.format(
                 err, product_name))
-    sentry_client.captureException(
-        message = "predict.py: Exception occured",
-        extra = {"error" : err, "product_name" : product_name})
+        sentry_client.captureException(
+            message = "predict.py: Exception occured",
+            extra = {"error" : err, "product_name" : product_name})
 
 @app.route('/get_category', methods = ['POST'])
 def get_category():
@@ -202,9 +202,10 @@ def get_category():
             'Exception {} occurred against payload: {}'.format(
                 err, list_product_names))
 
-    sentry_client.captureException(
-        message = "predict.py: Exception occured",
-        extra = {"error" : err, "payload" : list_product_names})
+        sentry_client.captureException(
+            message = "predict.py: Exception occured",
+            extra = {"error" : err, "payload" : list_product_names})
+
 if __name__=='__main__':
     app.run()
 
