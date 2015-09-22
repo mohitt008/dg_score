@@ -89,7 +89,7 @@ def get_products():
             for queue_name, job_id, job in jobs:
                 job_data = json.loads(job)
                 vendor = job_data['vendor']
-                products = json.loads(job_data['products'])
+                products = json.loads(job_data['payload'])
 
                 logger.info("Request received for vendor {}".format(vendor))
                 results = get_category(products, job_id)
