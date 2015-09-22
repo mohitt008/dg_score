@@ -1,12 +1,26 @@
 import re
-from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY
+from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY, \
+        CLEAN_PRODUCT_NAME_REGEX, VOLUME_ML_REGEX
 from settings import r
 import json
+import numpy as np
+import copy
 
-def predict_category(product_name):
+# SK: TODO: Integrate new dang logic and breakdown into functions
+def predict_category(product_name, cat_model, dang_model):
     l_product_name = product_name.lower()
     product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
     clean_product_name = " ".join(product_words)
+    
+    vectorizer = cat_model.vectorizer
+    clf_bayes = cat_model.clf_bayes
+    clf_chi = cat_model.clf_chi
+    clf_rf = cat_model.clf_rf
+
+    second_level_vectorizer = cat_model.second_level_vectorizer
+    second_level_clf_bayes = cat_model.second_level_clf_bayes
+    second_level_clf_fpr = cat_model.second_level_clf_fpr
+
     class1 = clf_bayes.predict(vectorizer.transform([l_product_name]))[0]
     class2_prob_vector = clf_chi.predict_proba(vectorizer.transform([l_product_name]))[0]
     class3_prob_vector = clf_rf.predict_proba(vectorizer.transform([l_product_name]))[0]
@@ -34,7 +48,7 @@ def predict_category(product_name):
 
     second_level = ""
 
-    if first_level in second_level_cat_names_set:
+    if first_level in cat_model.second_level_cat_names_set:
         prob_vector = second_level_clf_fpr[first_level].predict_proba(
             second_level_vectorizer[first_level].transform([l_product_name]))[0]
         if len(np.unique(prob_vector)) == 1:
@@ -43,26 +57,25 @@ def predict_category(product_name):
         else:
             second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
 
-    for word in non_dangerous_set:
+    for word in dang_model.non_dangerous_set:
         if word in clean_product_name:
             clean_product_name = clean_product_name.replace(word, " ")
 
     dangerous_flag = False
-    for word in dangerous_word_set:
+    for word in dang_model.dangerous_word_set:
         if word in clean_product_name:
             dangerous_flag = True
             break
 
-    if not dangerous_flag and first_level in dangerous_cat_set:
-        for word in dangerous_ambi_set:
+    if not dangerous_flag and first_level in dang_model.dangerous_cat_set:
+        for word in dang_model.dangerous_ambi_set:
             if word in clean_product_name:
                 dangerous_flag = True
                 break
+    
     # TODO: false positives in kitchenware etc ...
     if not dangerous_flag and re.search(VOLUME_ML_REGEX, clean_product_name):
         dangerous_flag = True
-
-    # prob_vector= second_level_clf[class_name].predict_proba(
 
     result = {}
     result['category'] = first_level
@@ -70,22 +83,23 @@ def predict_category(product_name):
     result['dangerous'] = dangerous_flag
     return result
 
-    
-def process_product(product_name_dict, disque, model, log):
+# SK: TODO: Use log ?
+def process_product(product_name_dict, disque, cat_model, dang_model, log):
     results = {}
     results_cache = ''
     
-    product_name = product_name_dict.get('product_name', "")
+    product_name = product_name_dict.get('prd', "")
     if product_name:
         if disque:
             final_result = {}
-            original_dict = copy.deepcopy(address_dict)
+            original_dict = copy.deepcopy(product_name_dict)
 
         product_name_clean = (re.sub(ALPHA_NUM_REGEX, '', product_name)).lower()
         product_name_key = 'catfight:' +':' + product_name_clean
         results_cache = r.get(product_name_key)
         if not results_cache:
-            results = predict_category(product_name.encode('ascii','ignore'))
+            results = predict_category(product_name.encode('ascii','ignore'),
+                                       cat_model, dang_model)
             if results:
                 r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
                 results['cached'] = False
@@ -102,3 +116,4 @@ def process_product(product_name_dict, disque, model, log):
     else:
         results['waybill'] = product_name_dict.get('wbn', None)
         return results
+

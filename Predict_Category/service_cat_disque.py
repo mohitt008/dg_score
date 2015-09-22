@@ -1,52 +1,41 @@
-import os
-import sys
-import numpy as np
 import logging
-import json
-import traceback
-import csv
-import re
-
-from constants import second_level_cat_names, CLEAN_PRODUCT_NAME_REGEX, \
-        VOLUME_ML_REGEX, ALPHA_NUM_REGEX, CACHE_EXPIRY, CATFIGHT_LOGGING_PATH
-
-from settings import r, sentry_client
-
-from flask import Flask, request,Response
-from sklearn.externals import joblib
 from logging.handlers import RotatingFileHandler
+import json
 
+from constants import CATFIGHT_LOGGING_PATH
+from find_categories import process_product
+from settings import client, sentry_client, disque_input_queue, disque_output_queue
+from objects import categoryModel, dangerousModel
 
-logger = logging.getLogger('Addfix App')
-handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH,maxBytes=1000000000,backupCount=20)
+logger = logging.getLogger('Catfight App')
+handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000, backupCount=20)
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 logger.info("Loading Process Started")
 
-vectorizer = joblib.load(PARENT_DIR_PATH + '/Models/vectorizer.pkl')
-clf_bayes = joblib.load(PARENT_DIR_PATH + '/Models/clf_bayes.pkl')
-clf_chi = joblib.load(PARENT_DIR_PATH + '/Models/clf_chi.pkl')
-clf_rf = joblib.load(PARENT_DIR_PATH + '/Models/clf_l1_rf.pkl')
+try:
+    dang_model = dangerousModel()
+    cat_model = categoryModel()
+except Exception as err:
+    logger.error("Error {} while loading models".format(err))
+    sentry_client.captureException(
+        message = "service_category_disque : Failed to load models",
+        extra = {"error" : err})
 
-second_level_vectorizer = {}
-second_level_clf_bayes = {}
-second_level_clf_fpr = {}
-for cat_name in second_level_cat_names_set:
-    second_level_vectorizer[cat_name] = joblib.load(PARENT_DIR_PATH +
-                                                    '/Models/SubModels/Vectorizer_' + cat_name)
-    second_level_clf_bayes[cat_name] = joblib.load(PARENT_DIR_PATH +
-                                                   '/Models/SubModels/clf_bayes_' + cat_name)
-    second_level_clf_fpr[cat_name] = joblib.load(PARENT_DIR_PATH +
-                                                 '/Models/SubModels/clf_fpr_' + cat_name)
+logger.info("Loading Process Complete")
 
-app.logger.info("Loading Process Complete")
+ERROR_CODE = {
+    'MissingProductName' : 'MissingProduct',
+    'MissingProductList' : 'MissingProductList',
+    'MissingWBN' : 'MissingWBN'
+}
 
 def validate_product_args(record):
     value = True
     error_response = {}
-    if not record.get('product_name', None):
+    if not record.get('prd', None):
         error_response = {'error': ERROR_CODE['MissingProductName']}
         value = False
     if not record.get('wbn', None):
@@ -57,21 +46,30 @@ def validate_product_args(record):
 def get_category(list_product_names, job_id):
     try:
         output_list = []
-        app.logger.info("Request received {}".format(list_product_names))
+        logger.info("Request received {}".format(list_product_names))
         if list_product_names:
             for product_name_dict in list_product_names:
                 valid_record, error_response = validate_product_args(product_name_dict)
                 if valid_record:
-                    result = find_localities(product_name_dict,True,model,logger)
+                    result = process_product(product_name_dict,
+                                             True,
+                                             cat_model,
+                                             dang_model,
+                                             logger)
                     output_list.append(result)
                 else:
                     for key, value in product_name_dict.items():
                         error_response[key] = value
                         output_list.append(error_response)
-        app.logger.info("Result produced {}".format(output_list))
+            logger.info("Result produced {}".format(output_list))
+        else:
+            error_response = ERROR_CODE['MissingProductList']
+            output_list.append(error_response)
+        
+        return output_list
 
     except Exception as err:
-        app.logger.error(
+        logger.error(
             'Exception {} occurred against payload: {}'.format(
                 err, list_product_names))
 
@@ -87,23 +85,29 @@ def get_products():
     """
     while True:
         try:
-            jobs = client.get_job(['catfight_input'])
+            jobs = client.get_job([disque_input_queue])
             for queue_name, job_id, job in jobs:
                 job_data = json.loads(job)
                 vendor = job_data['vendor']
                 products = json.loads(job_data['products'])
 
                 logger.info("Request received for vendor {}".format(vendor))
-                results = get_category(products,job_id)
+                results = get_category(products, job_id)
                 if results:
-                    second_job_id = client.add_job('catfight_output', str(vendor) + '@' +json.dumps(results),retry = 5)
+                    second_job_id = client.add_job(disque_output_queue,
+                                                   str(vendor) + '@' + json.dumps(results),
+                                                   retry = 5)
                     client.ack_job(job_id)
-                    logger.info("Successfully fetched from Disque queue catfight_input GET Job ID {} with job {}".format(job_id,job))
-                    logger.info("Successfully added to Disque queue catfight_output with Job ID {} and job {}".format(job_id,job))
+                    logger.info("Successfully fetched from Disque queue catfight_input GET Job ID {} with job {}".
+                                format(job_id, job))
+                    logger.info("Successfully added to Disque queue catfight_output with Job ID {} and job {}".
+                                format(second_job_id, job))
                 else:
-                    logger.info("No results found for Job ID {} with job {}".format(job_id,job))
+                    logger.info("No results found for Job ID {} with job {}".
+                                format(job_id,job))
         except Exception as e:
-            logger.info("Function get_products failed for Job ID {} with job {} with error {}".format(job_id,job,e))
+            logger.info("Function get_products failed for Job ID {} with job {} with error {}".
+                        format(job_id,job,e))
             sentry_client.captureException(
                 message = "get_products failed", 
                 extra = {"error":e})
@@ -111,3 +115,4 @@ def get_products():
 
 if __name__=='__main__':
     get_products()
+

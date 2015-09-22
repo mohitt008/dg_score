@@ -13,7 +13,6 @@ from constants import second_level_cat_names, CLEAN_PRODUCT_NAME_REGEX, \
 from settings import r, sentry_client
 
 from flask import Flask, request,Response
-from sklearn.externals import joblib
 from logging.handlers import RotatingFileHandler
 
 PARENT_DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
