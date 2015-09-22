@@ -21,3 +21,11 @@ ALPHA_NUM_REGEX = re.compile('[\W_]+')
 # Redis cache expiry 7 days (in sec)
 CACHE_EXPIRY = 604800
 
+#logging file path
+LOGGING_PATH = '/var/log/cat_subcat_logs/cat_subcat.log'
+
+#GET Parent path
+PARENT_DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+
+#CAT Disque Path
+CATFIGHT_LOGGING_PATH = '/var/log/cat_subcat_logs/cat_subcat_disque.log'
