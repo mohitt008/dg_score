@@ -7,6 +7,8 @@ import traceback
 import csv
 import re
 
+from sklearn.externals import joblib
+
 from constants import second_level_cat_names, CLEAN_PRODUCT_NAME_REGEX, \
         VOLUME_ML_REGEX, ALPHA_NUM_REGEX, CACHE_EXPIRY
 
