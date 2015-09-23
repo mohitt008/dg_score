@@ -9,12 +9,11 @@ import re
 
 from flask import Flask, request,Response
 from logging.handlers import RotatingFileHandler
-from sklearn.externals import joblib
 
-from constants import second_level_cat_names, CLEAN_PRODUCT_NAME_REGEX, \
-        VOLUME_ML_REGEX, ALPHA_NUM_REGEX, CACHE_EXPIRY
-from settings import r, sentry_client
+from objects import categoryModel, dangerousModel
 from find_categories import predict_category
+from constants import CLEAN_PRODUCT_NAME_REGEX, VOLUME_ML_REGEX, ALPHA_NUM_REGEX, CACHE_EXPIRY
+from settings import r, sentry_client
 
 
 PARENT_DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
@@ -36,7 +35,7 @@ try:
     dang_model = dangerousModel()
     cat_model = categoryModel()
 except Exception as err:
-    logger.error("Error {} while loading models".format(err))
+    app.logger.error("Error {} while loading models".format(err))
     sentry_client.captureException(
         message = "service_category_disque : Failed to load models",
         extra = {"error" : err})
