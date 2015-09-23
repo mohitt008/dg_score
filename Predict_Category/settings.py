@@ -38,6 +38,6 @@ except Exception as disque_err:
 
 RESULTS_URL = {'express': 'http://localhost/done-services/output'}
 
-disque_input_queue = "catfight_input"
-disque_output_queue = "catfight_output"
+catfight_input = "catfight_input"
+catfight_output = "catfight_output"
 
