@@ -26,7 +26,8 @@ except Exception as redis_err:
     sys.exit()
 
 ## for disque connection
-client = Client(["127.0.0.1:7711", "127.0.0.1:7712", "127.0.0.1:7713"])
+#client = Client(["127.0.0.1:7711", "127.0.0.1:7712", "127.0.0.1:7713"])
+client = Client(["10.0.4.232:7711"])
 
 try:
     client.connect()
