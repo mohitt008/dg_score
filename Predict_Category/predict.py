@@ -1,10 +1,7 @@
 import os
 import sys
-import numpy as np
 import logging
 import json
-import traceback
-import csv
 import re
 
 from flask import Flask, request,Response
@@ -12,7 +9,7 @@ from logging.handlers import RotatingFileHandler
 
 from objects import categoryModel, dangerousModel
 from find_categories import predict_category
-from constants import CLEAN_PRODUCT_NAME_REGEX, VOLUME_ML_REGEX, ALPHA_NUM_REGEX, CACHE_EXPIRY
+from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY
 from settings import r, sentry_client
 
 
@@ -39,6 +36,7 @@ except Exception as err:
     sentry_client.captureException(
         message = "service_category_disque : Failed to load models",
         extra = {"error" : err})
+    sys.exit()
 
 app.logger.info("Loading Process Complete")
 
