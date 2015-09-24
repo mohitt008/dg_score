@@ -79,9 +79,9 @@ def predict_category(product_name, cat_model, dang_model):
             dangerous_flag = True
 
         result = {}
-        result['category'] = first_level
-        result['sub_category'] = second_level
-        result['dangerous'] = dangerous_flag
+        result['cat'] = first_level
+        result['scat'] = second_level
+        result['dg'] = dangerous_flag
         return result
 
     except Exception as err:
