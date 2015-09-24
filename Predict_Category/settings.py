@@ -1,7 +1,14 @@
+import os
+import csv
 import redis
 import raven
 import sys
+import ConfigParser
 from pydisque.client import Client
+
+config_parser = ConfigParser.RawConfigParser()
+curr_dir = os.path.abspath(os.path.dirname(__file__))
+config_parser.read(curr_dir+'/queues.conf')
 
 ## For sentry settings
 sentry_client = raven.Client(
@@ -17,11 +24,11 @@ config = {
     'db':0,
 }
 
-try:
-    r = redis.Redis(**config)
-except Exception as redis_err:
+#for redis connection
+r = redis.Redis(**config)
+if not r.ping():
     sentry_client.captureException(
-        message = "settings.py:: Failed to connect to redis",
+        message = "Settings.py:: Failed to connect to redis",
         extra = {"error":redis_err})
     sys.exit()
 
@@ -38,6 +45,5 @@ except Exception as disque_err:
 
 RESULTS_URL = {'express': 'http://localhost/done-services/output'}
 
-disque_input_queue = "catfight_input"
-disque_output_queue = "catfight_output"
-
+catfight_input = config_parser.get("Queues","catfight_input")
+catfight_output = config_parser.get("Queues","catfight_output")

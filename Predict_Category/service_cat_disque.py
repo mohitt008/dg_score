@@ -4,7 +4,7 @@ import json
 
 from constants import CATFIGHT_LOGGING_PATH
 from find_categories import process_product
-from settings import client, sentry_client, disque_input_queue, disque_output_queue
+from settings import client, sentry_client, catfight_input, catfight_output
 from objects import categoryModel, dangerousModel
 
 logger = logging.getLogger('Catfight App')
@@ -85,7 +85,7 @@ def get_products():
     """
     while True:
         try:
-            jobs = client.get_job([disque_input_queue])
+            jobs = client.get_job([catfight_input])
             for queue_name, job_id, job in jobs:
                 job_data = json.loads(job)
                 vendor = job_data['vendor']
@@ -94,7 +94,7 @@ def get_products():
                 logger.info("Request received for vendor {}".format(vendor))
                 results = get_category(products, job_id)
                 if results:
-                    second_job_id = client.add_job(disque_output_queue,
+                    second_job_id = client.add_job(catfight_output,
                                                    str(vendor) + '@' + json.dumps(results),
                                                    retry = 5)
                     client.ack_job(job_id)
