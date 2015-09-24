@@ -8,7 +8,8 @@ from settings import client, sentry_client, catfight_input, catfight_output
 from objects import categoryModel, dangerousModel
 
 logger = logging.getLogger('Catfight App')
-handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000, backupCount=20)
+handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000,
+                              backupCount=20)
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
@@ -44,38 +45,38 @@ def validate_product_args(record):
     return value, error_response
 
 def get_category(list_product_names, job_id):
-    try:
-        output_list = []
-        logger.info("Request received {}".format(list_product_names))
-        if list_product_names:
-            for product_name_dict in list_product_names:
+    output_list = []
+    logger.info("Request received {}".format(list_product_names))
+    if list_product_names:
+        for product_name_dict in list_product_names:
+            try:
                 valid_record, error_response = validate_product_args(product_name_dict)
                 if valid_record:
                     result = process_product(product_name_dict,
-                                             True,
-                                             cat_model,
-                                             dang_model,
-                                             logger)
+                                            True,
+                                            cat_model,
+                                            dang_model,
+                                            logger)
                     output_list.append(result)
                 else:
                     for key, value in product_name_dict.items():
                         error_response[key] = value
                         output_list.append(error_response)
-            logger.info("Result produced {}".format(output_list))
-        else:
-            error_response = ERROR_CODE['MissingProductList']
-            output_list.append(error_response)
-        
-        return output_list
+            except Exception as err:
+                logger.error(
+                    'get_category:Exception {} occurred against input: {} for job_id {}'.
+                    format(err, list_product_names, job_id))
+                sentry_client.captureException(
+                    message = "Exception occurred against input in get_category",
+                    extra = {"error" : err,"job_id" : job_id,
+                             "product_name_dict" : product_name_dict})
+    else:
+        error_response = ERROR_CODE['MissingProductList']
+        output_list.append(error_response)
 
-    except Exception as err:
-        logger.error(
-            'Exception {} occurred against payload: {}'.format(
-                err, list_product_names))
+    logger.info("Result produced {}".format(output_list))
 
-        sentry_client.captureException(
-            message = "predict.py: Exception occured",
-            extra = {"error" : err, "payload" : list_product_names})
+    return output_list
 
 def get_products():
     """
@@ -94,8 +95,11 @@ def get_products():
                 logger.info("Request received for vendor {}".format(vendor))
                 results = get_category(products, job_id)
                 if results:
+                    results_dict = {}
+                    results_dict['vendor'] = vendor
+                    results_dict['catfight_results'] = results
                     second_job_id = client.add_job(catfight_output,
-                                                   str(vendor) + '@' + json.dumps(results),
+                                                   json.dumps(results_dict),
                                                    retry = 5)
                     client.ack_job(job_id)
                     logger.info("Successfully fetched from Disque queue catfight_input GET Job ID {} with job {}".
@@ -104,13 +108,13 @@ def get_products():
                                 format(second_job_id, job))
                 else:
                     logger.info("No results found for Job ID {} with job {}".
-                                format(job_id,job))
+                                format(job_id, job))
         except Exception as e:
             logger.info("Function get_products failed for Job ID {} with job {} with error {}".
                         format(job_id,job,e))
             sentry_client.captureException(
                 message = "get_products failed", 
-                extra = {"error":e})
+                extra = {"error" : e})
             pass
 
 if __name__=='__main__':

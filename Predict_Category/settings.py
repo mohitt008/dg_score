@@ -8,7 +8,7 @@ from pydisque.client import Client
 
 config_parser = ConfigParser.RawConfigParser()
 curr_dir = os.path.abspath(os.path.dirname(__file__))
-config_parser.read(curr_dir+'/queues.conf')
+config_parser.read(curr_dir + '/queues.conf')
 
 ## For sentry settings
 sentry_client = raven.Client(
@@ -33,7 +33,8 @@ if not r.ping():
     sys.exit()
 
 ## for disque connection
-client = Client(["127.0.0.1:7711", "127.0.0.1:7712", "127.0.0.1:7713"])
+#client = Client(["127.0.0.1:7711", "127.0.0.1:7712", "127.0.0.1:7713"])
+client = Client(["10.0.4.232:7711"])
 
 try:
     client.connect()
