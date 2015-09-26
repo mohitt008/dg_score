@@ -1,5 +1,4 @@
 import os
-import csv
 import redis
 import raven
 import sys
@@ -19,6 +18,7 @@ sentry_client = raven.Client(
 ## for redis configuration
 config = {
     #'host': 'd1-redis-addfix.iqi3ba.ng.0001.apse1.cache.amazonaws.com',
+    #'host': 'data-prod-redis-002.iqi3ba.0001.apse1.cache.amazonaws.com',
     'host': 'localhost',
     'port':6379,
     'db':0,
@@ -28,13 +28,13 @@ config = {
 r = redis.Redis(**config)
 if not r.ping():
     sentry_client.captureException(
-        message = "Settings.py:: Failed to connect to redis",
-        extra = {"error":redis_err})
+        message = "settings.py: Failed to connect to redis",
+        extra = {"error" : 'ping failed'})
     sys.exit()
 
 ## for disque connection
-#client = Client(["127.0.0.1:7711", "127.0.0.1:7712", "127.0.0.1:7713"])
-client = Client(["10.0.4.232:7711"])
+client = Client(["127.0.0.1:7711"])
+#client = Client(["10.0.4.232:7711"])
 
 try:
     client.connect()
@@ -43,8 +43,6 @@ except Exception as disque_err:
                                    extra={"error" : disque_err})
     sys.exit()
 
-
-RESULTS_URL = {'express': 'http://localhost/done-services/output'}
-
 catfight_input = config_parser.get("Queues","catfight_input")
 catfight_output = config_parser.get("Queues","catfight_output")
+

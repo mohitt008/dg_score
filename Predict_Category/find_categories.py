@@ -1,13 +1,13 @@
 import re
 from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY, \
         CLEAN_PRODUCT_NAME_REGEX, VOLUME_ML_REGEX
-from settings import r
+from settings import r, sentry_client
 import json
 import numpy as np
 import copy
 
 # SK: TODO: Integrate new dang logic and breakdown into functions
-def predict_category(product_name, cat_model, dang_model):
+def predict_category(product_name, cat_model, dang_model, logger):
     try:
         l_product_name = product_name.lower()
         product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
@@ -85,20 +85,14 @@ def predict_category(product_name, cat_model, dang_model):
         return result
 
     except Exception as err:
-        app.logger.error(
-            'Traceback: {}'.format(traceback.format_exc()))
-        app.logger.error(
-            'Exec Info: {}'.format(sys.exc_info())[0])
-        app.logger.error(
+        logger.error(
             'Exception {} occurred against product: {}'.format(
                 err, product_name))
         sentry_client.captureException(
             message = "predict.py: Exception occured",
             extra = {"error" : err, "product_name" : product_name})
         
-
-# SK: TODO: Use log ?
-def process_product(product_name_dict, disque, cat_model, dang_model, log):
+def process_product(product_name_dict, disque, cat_model, dang_model, logger):
     results = {}
     results_cache = ''
     
@@ -113,7 +107,7 @@ def process_product(product_name_dict, disque, cat_model, dang_model, log):
         results_cache = r.get(product_name_key)
         if not results_cache:
             results = predict_category(product_name.encode('ascii','ignore'),
-                                       cat_model, dang_model)
+                                       cat_model, dang_model, logger)
             if results:
                 r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
                 results['cached'] = False

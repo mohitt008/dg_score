@@ -12,7 +12,6 @@ from find_categories import predict_category
 from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY
 from settings import r, sentry_client
 
-
 PARENT_DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(PARENT_DIR_PATH)
 
@@ -57,7 +56,8 @@ def get_category():
                 product_name_key = 'catfight:' +':' + product_name_clean
                 results_cache = r.get(product_name_key)
                 if not results_cache:
-                    results = predict_category(product_name.encode('ascii','ignore'), cat_model, dang_model)
+                    results = predict_category(product_name.encode('ascii','ignore'),
+                                               cat_model, dang_model, app.logger)
                     if results:
                         r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
                         results['cached'] = False
@@ -86,22 +86,4 @@ def get_category():
 
 if __name__=='__main__':
     app.run()
-
-"""
-if __name__=='__main__':
-    import csv
-    f=open('/home/delhivery/Downloads/products_demo.csv')
-    f2=open('/home/delhivery/Downloads/products_demo_results3.csv','w')
-    reader=csv.reader(f)
-    writer=csv.writer(f2)
-    firstrow=True
-    for row in reader:
-        if firstrow:
-            writer.writerow(['wbn','prod','cat','subcat'])
-            firstrow = False
-            continue
-        if row[1]:
-            first,second=predict_category(row[1], cat_model, dang_model)
-            writer.writerow([row[0],row[1],first,second])
-"""
 
