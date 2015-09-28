@@ -1,10 +1,10 @@
 import re
-from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY, \
-        CLEAN_PRODUCT_NAME_REGEX, VOLUME_ML_REGEX
+from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY, CLEAN_PRODUCT_NAME_REGEX
 from settings import r, sentry_client
 import json
 import numpy as np
 import copy
+from check_dg import predict_dangerous
 
 # SK: TODO: Integrate new dang logic and breakdown into functions
 def predict_category(product_name, cat_model, dang_model, logger):
@@ -58,30 +58,16 @@ def predict_category(product_name, cat_model, dang_model, logger):
             else:
                 second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
 
-        for word in dang_model.non_dangerous_set:
-            if word in clean_product_name:
-                clean_product_name = clean_product_name.replace(word, " ")
-
-        dangerous_flag = False
-        for word in dang_model.dangerous_word_set:
-            if word in clean_product_name:
-                dangerous_flag = True
-                break
-
-        if not dangerous_flag and first_level in dang_model.dangerous_cat_set:
-            for word in dang_model.dangerous_ambi_set:
-                if word in clean_product_name:
-                    dangerous_flag = True
-                    break
+        dg_report = predict_dangerous(clean_product_name, first_level,
+                                      dang_model.dg_keywords)
         
-        # TODO: false positives in kitchenware etc ...
-        if not dangerous_flag and re.search(VOLUME_ML_REGEX, clean_product_name):
-            dangerous_flag = True
+        logger.info('Check DG: Product Name: {} Report: {}'.format(clean_product_name,
+                                                                   dg_report))
 
         result = {}
         result['cat'] = first_level
         result['scat'] = second_level
-        result['dg'] = dangerous_flag
+        result['dg'] = dg_report['dangerous']
         return result
 
     except Exception as err:

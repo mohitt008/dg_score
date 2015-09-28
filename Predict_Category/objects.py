@@ -26,32 +26,20 @@ class categoryModel(object):
 
 class dangerousModel(object):
     def __init__(self):
-        self.dangerous_cat_set = set()
-        f_dang = open(PARENT_DIR_PATH + "/dangerous_categories.csv")
-        reader = csv.DictReader(f_dang)
+        file_dg_csv = open(PARENT_DIR_PATH + "/DG_keywords.csv")
+        reader = csv.reader(file_dg_csv)
+        # Skip keys
+        reader.next()
+        self.dg_keywords = []
         for row in reader:
-            if row['dang'] == "1":
-                self.dangerous_cat_set.add(row['cat_name'])
-        f_dang.close()
-
-        self.dangerous_word_set = set()
-        f_dang = open(PARENT_DIR_PATH + "/dangerous_words.csv")
-        reader = csv.reader(f_dang)
-        for row in reader:
-            self.dangerous_word_set.add(row[0])
-        f_dang.close()
-
-        self.dangerous_ambi_set = set()
-        f_dang = open(PARENT_DIR_PATH + "/dangerous_ambi.csv")
-        reader = csv.reader(f_dang)
-        for row in reader:
-            self.dangerous_ambi_set.add(row[0])
-        f_dang.close()
-
-        self.non_dangerous_set = set()
-        f_dang = open(PARENT_DIR_PATH + "/non_dangerous_words.csv")
-        reader = csv.reader(f_dang)
-        for row in reader:
-            self.non_dangerous_set.add(row[0])
-        f_dang.close()
+            tmp = []
+            tmp.append(row[0].lower()) #store dangerous/ Non dangerous
+            tmp.append(row[1].lower()) #store keyword
+            tmp.append(row[2].lower()) #store CONTAIN list
+            tmp.append(row[3].lower()) #store CONTAIN category
+            tmp.append(row[4].lower()) #store EXCEPT list
+            tmp.append(row[5].lower()) #store EXCEPT category
+            tup = tuple(tmp)
+            self.dg_keywords.append(tup)
+        file_dg_csv.close()
 
