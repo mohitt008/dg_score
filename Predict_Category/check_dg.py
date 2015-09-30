@@ -1,6 +1,6 @@
 from pandas import isnull
 
-def predict_dangerous(clean_product_name, category, dg_keywords):
+def predict_dangerous(clean_product_name, wbn, category, dg_keywords):
     keyword = "No keyword matched"
     contain_list = ""
     contain_cat = ""
@@ -103,6 +103,8 @@ def predict_dangerous(clean_product_name, category, dg_keywords):
     if keyword == "No keyword matched":
         flag = False
 
+    dg_report["name"] = clean_product_name
+    dg_report["wbn"] = wbn
     dg_report["dangerous"] = flag
     dg_report["keyword"] = keyword
     dg_report["contain_list"] = contain_list

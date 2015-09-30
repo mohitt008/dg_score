@@ -6,8 +6,7 @@ import numpy as np
 import copy
 from check_dg import predict_dangerous
 
-# SK: TODO: Integrate new dang logic and breakdown into functions
-def predict_category(product_name, cat_model, dang_model, logger):
+def predict_category(product_name, wbn, cat_model, dang_model, logger):
     try:
         l_product_name = product_name.lower()
         product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
@@ -58,7 +57,7 @@ def predict_category(product_name, cat_model, dang_model, logger):
             else:
                 second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
 
-        dg_report = predict_dangerous(clean_product_name, first_level,
+        dg_report = predict_dangerous(clean_product_name, wbn, first_level,
                                       dang_model.dg_keywords)
         
         logger.info('Check DG: Product Name: {} Report: {}'.format(clean_product_name,
@@ -78,22 +77,22 @@ def predict_category(product_name, cat_model, dang_model, logger):
             message = "predict.py: Exception occured",
             extra = {"error" : err, "product_name" : product_name})
         
-def process_product(product_name_dict, disque, cat_model, dang_model, logger):
+def process_product(product_name_dict, cat_model, dang_model, logger):
     results = {}
     results_cache = ''
     
     product_name = product_name_dict.get('prd', "")
     if product_name:
-        if disque:
-            final_result = {}
-            original_dict = copy.deepcopy(product_name_dict)
+        final_result = {}
+        original_dict = copy.deepcopy(product_name_dict)
 
         product_name_clean = (re.sub(ALPHA_NUM_REGEX, '', product_name)).lower()
         product_name_key = 'catfight:' +':' + product_name_clean
         results_cache = r.get(product_name_key)
         if not results_cache:
+            wbn = product_name_dict.get('wbn', "")
             results = predict_category(product_name.encode('ascii','ignore'),
-                                       cat_model, dang_model, logger)
+                                       wbn, cat_model, dang_model, logger)
             if results:
                 r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
                 results['cached'] = False
@@ -103,11 +102,7 @@ def process_product(product_name_dict, disque, cat_model, dang_model, logger):
     else:
         results['invalid_product_name'] = True
     
-    if disque:
-        final_result = original_dict
-        final_result['result'] = results
-        return final_result
-    else:
-        results['waybill'] = product_name_dict.get('wbn', None)
-        return results
+    final_result = original_dict
+    final_result['result'] = results
+    return final_result
 

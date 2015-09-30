@@ -53,7 +53,6 @@ def get_category(list_product_names, job_id):
                 valid_record, error_response = validate_product_args(product_name_dict)
                 if valid_record:
                     result = process_product(product_name_dict,
-                                            True,
                                             cat_model,
                                             dang_model,
                                             logger)
@@ -92,7 +91,6 @@ def get_products():
                 vendor = job_data['vendor']
                 products = json.loads(job_data['payload'])
 
-                logger.info("Request received for vendor {}".format(vendor))
                 results = get_category(products, job_id)
                 if results:
                     results_dict = {}
