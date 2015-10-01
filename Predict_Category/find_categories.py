@@ -104,6 +104,7 @@ def process_product(product_name_dict, cat_model, dang_model, logger):
             first_level = results['cat']
             dg_report = predict_dangerous(clean_product_name, wbn, first_level,
                                       dang_model.dg_keywords)
+            dg_report['wbn'] = wbn
 
             logger.info('Check DG: Product Name: {} Report: {}'.format(clean_product_name,
                                                                    dg_report))
