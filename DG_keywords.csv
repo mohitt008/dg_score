@@ -7,15 +7,15 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 0,Condition,,"""Beauty Products and Personal Care"", ""Baby Care"", ""Health and Wellness""",,
 1,Deo,,,Video,"""Movies, Music and Video Games"", ""Electronics and Appliances"", ""Camera and photos"""
 0,Face,,"""Beauty Products and Personal Care"", ""Health and Wellness""",,
-0,Facial,,"""Beauty Products and Personal Care"", ""Health and Wellness""",,
+0,Facial,,"""Beauty Products and Personal Care"", ""Health and Wellness""",Steamer,
 1,Extinguisher,,,,
 0,Fresh,,"""Beauty Products and Personal Care"", ""Baby Care"", ""Health and Wellness""",,
-1,Gel,,,"Silicon, Cover, Bag, Angel, Bar","""Sports and Outdoors"", ""Shoes and footwear"""
+1,Gel,,,"Silicon, Cover, Bag, Angel, Bar, Softgels","""Sports and Outdoors"", ""Shoes and footwear"""
 0,Health,,"""Beauty Products and Personal Care"", ""Health and Wellness""",,
 1,Lotion,,,,
 1,Mah,,,"Maha, Mahi","""Automotive"", ""Kitchenware"""
-1,Ml,,,"Bottle, Container, Bag, Jug, Casserole, Thermosteel, Milton, Tupperware, Storage, Dispenser, Amla, Asus","""Home and Kitchen"""
-1,Oil,,,"Boiler, Dispenser, Pastel","""Home and Kitchen"", ""Office Products"""
+1,Ml,,,"Container, Bag, Jug, Casserole, Thermosteel, Milton, Tupperware, Storage, Dispenser, Amla, Watch, Shaker, Jar Set","""Home and Kitchen"", ""KitchenWare"", ""Sports and Outdoors"""
+1,Oil,,,"Boiler, Dispenser, Pastel, Tupperware","""Home and Kitchen"", ""KitchenWare"", ""Office Products"""
 1,Paint,,,,
 1,Parfum,,,,
 1,Perfum,,,,
@@ -36,3 +36,5 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 0,Wash,,"""Beauty Products and Personal Care"", ""Baby Care""",,
 0,Cream,,"""Beauty Products and Personal Care"", ""Baby Care"", ""Health and Wellness""",,
 1,General Good,,,,
+1,Lighter,,,,
+0,Hair,,,"Styler, Straightener",
