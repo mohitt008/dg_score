@@ -1,6 +1,6 @@
 from pandas import isnull
 
-def predict_dangerous(clean_product_name, wbn, category, dg_keywords):
+def predict_dangerous(clean_product_name, wbn, category, dg_keywords, logger):
     keyword = "No keyword matched"
     contain_list = ""
     contain_cat = ""
@@ -112,5 +112,8 @@ def predict_dangerous(clean_product_name, wbn, category, dg_keywords):
     dg_report["except_list"]  = except_list
     dg_report["except_cat"]   = except_cat
     
+    logger.info('Check DG: Product Name: {} Report: {}'.format(
+        clean_product_name, dg_report))
+
     return dg_report
 

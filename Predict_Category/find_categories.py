@@ -58,11 +58,8 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
                 second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
 
         dg_report = predict_dangerous(clean_product_name, wbn, first_level,
-                                      dang_model.dg_keywords)
+                                      dang_model.dg_keywords, logger)
         
-        logger.info('Check DG: Product Name: {} Report: {}'.format(clean_product_name,
-                                                                   dg_report))
-
         result = {}
         result['cat'] = first_level
         result['scat'] = second_level
@@ -103,11 +100,9 @@ def process_product(product_name_dict, cat_model, dang_model, logger):
             clean_product_name = " ".join(product_words)
             first_level = results['cat']
             dg_report = predict_dangerous(clean_product_name, wbn, first_level,
-                                      dang_model.dg_keywords)
+                                      dang_model.dg_keywords, logger)
             dg_report['wbn'] = wbn
 
-            logger.info('Check DG: Product Name: {} Report: {}'.format(clean_product_name,
-                                                                   dg_report))
             results['dg'] = dg_report['dangerous']
             results['cached'] = True
     else:
