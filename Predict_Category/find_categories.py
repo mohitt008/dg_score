@@ -101,7 +101,6 @@ def process_product(product_name_dict, cat_model, dang_model, logger):
             first_level = results['cat']
             dg_report = predict_dangerous(clean_product_name, wbn, first_level,
                                       dang_model.dg_keywords, logger)
-            dg_report['wbn'] = wbn
 
             results['dg'] = dg_report['dangerous']
             results['cached'] = True
