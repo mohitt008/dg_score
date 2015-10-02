@@ -9,7 +9,7 @@ from objects import categoryModel, dangerousModel
 
 logger = logging.getLogger('Catfight App')
 handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000,
-                              backupCount=20)
+                              backupCount=10)
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
