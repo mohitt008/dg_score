@@ -35,9 +35,14 @@ def redirect_google():
 
 @google_login.login_success
 def login_success(token, profile):
-    add_user(profile)
-    session['is_admin'] = False
-    if profile['id'] and profile['name']:
+    if profile:
+        domain = profile['email'].split('@')[1]
+        if domain not in config.ALLOWED_DOMAINS:
+            flash('Invalid credentials', 'error')
+            return redirect(url_for('bp.login'))
+
+        add_user(profile)
+        session['is_admin'] = False
         session['user'] = profile
         if profile['email'] in config.ADMINS:
             session['is_admin'] = True
@@ -52,57 +57,57 @@ def login_failure(e):
 
 ############################------Facebook Login------##################################
 
-facebook = oauth.remote_app('facebook',
-                            base_url='https://graph.facebook.com/',
-                            request_token_url=None,
-                            access_token_url='/oauth/access_token',
-                            authorize_url='https://www.facebook.com/dialog/oauth',
-                            consumer_key=config.FB_CONSUMER_KEY,
-                            consumer_secret=config.FB_CONSUMER_SECRET,
-                            request_token_params={'scope': 'email'})
+# facebook = oauth.remote_app('facebook',
+#                             base_url='https://graph.facebook.com/',
+#                             request_token_url=None,
+#                             access_token_url='/oauth/access_token',
+#                             authorize_url='https://www.facebook.com/dialog/oauth',
+#                             consumer_key=config.FB_CONSUMER_KEY,
+#                             consumer_secret=config.FB_CONSUMER_SECRET,
+#                             request_token_params={'scope': 'email'})
 
 
-@bp.route('/login/fbauthorized')
-@facebook.authorized_handler
-def facebook_authorized(resp):
-    if resp is None:
-        return 'Access denied: reason=%s error=%s' % (
-            request.args['error_reason'],
-            request.args['error_description']
-        )
-    print('access_token')
-    print(resp['access_token'])
-    session['oauth_token'] = (resp['access_token'], '')
+# @bp.route('/login/fbauthorized')
+# @facebook.authorized_handler
+# def facebook_authorized(resp):
+#     if resp is None:
+#         return 'Access denied: reason=%s error=%s' % (
+#             request.args['error_reason'],
+#             request.args['error_description']
+#         )
+#     print('access_token')
+#     print(resp['access_token'])
+#     session['oauth_token'] = (resp['access_token'], '')
 
-    me = facebook.get('/me')
-    print(me.data)
-    add_user(me.data)
-    session['is_admin'] = False
-    if me.data['id'] and me.data['name'] and me.data['email']:
-        session['user'] = me.data
-        if me.data['email'] in config.ADMINS:
-            session['is_admin'] = True
-        return redirect(url_for('bp.tag', q='tag'))
-    else:
-        return "Login failed"
-
-
-@facebook.tokengetter
-def get_facebook_oauth_token():
-    return session.get('oauth_token')
+#     me = facebook.get('/me')
+#     print(me.data)
+#     add_user(me.data)
+#     session['is_admin'] = False
+#     if me.data['id'] and me.data['name'] and me.data['email']:
+#         session['user'] = me.data
+#         if me.data['email'] in config.ADMINS:
+#             session['is_admin'] = True
+#         return redirect(url_for('bp.tag', q='tag'))
+#     else:
+#         return "Login failed"
 
 
-@bp.route('/fb-login')
-def fb_login():
-    """
-    The facebook login page. Clears the session before allowing a new user to authenticate.
-    """
-    print("login attempt")
-    session.clear()
-    print(request.args.get('next'))
-    return facebook.authorize(callback=url_for('bp.facebook_authorized',
-                                               next=request.args.get('next') or request.referrer or None,
-                                               _external=True))
+# @facebook.tokengetter
+# def get_facebook_oauth_token():
+#     return session.get('oauth_token')
+
+
+# @bp.route('/fb-login')
+# def fb_login():
+#     """
+#     The facebook login page. Clears the session before allowing a new user to authenticate.
+#     """
+#     print("login attempt")
+#     session.clear()
+#     print(request.args.get('next'))
+#     return facebook.authorize(callback=url_for('bp.facebook_authorized',
+#                                                next=request.args.get('next') or request.referrer or None,
+#                                                _external=True))
 
 ###########################------Facebook Login Ends Here------#################################
 
