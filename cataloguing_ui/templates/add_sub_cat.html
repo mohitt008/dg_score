@@ -1,0 +1,35 @@
+{% extends "base_tagging.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-4">
+			<select id="select-cat" style="height:30px">
+				<option value='-1'>----------- Select Category -----------</option>
+				{% for cat in available_cats1 %}
+				<option value='{{cat._id}}'>{{cat.category_name}}</option>
+				{% endfor %}
+			</select>
+        </div>
+        <div class="col-xs-4">
+        	<form>
+        		<input id="new-sub-cat" type="text" name="sub-cat" size="30" style="height:32px" disabled></input>
+        	</form>
+        	<p id="add-sub-cat-message" style="color:purple" disabled></p>
+        </div>
+        <div class="col-xs-4">
+            <input type="submit" class="btn btn-primary" style="height:32px" value="Submit" id="add-sub-cat-button">
+        </div>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(category_filter=["error"]) %}
+  {% if messages %}
+    {% for message in messages %}
+        <script>$.notify("Access denied. Please login as Admin.", {clickToHide: true});</script>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% endblock %}

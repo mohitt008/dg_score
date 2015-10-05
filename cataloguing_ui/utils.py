@@ -120,6 +120,8 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
     else:
         return {'error': 'No untagged products for this vendor.'}
 
+def add_new_subcat( cat, subcat ):
+    return json.dumps({'message': 'Sub-Category Added Successfully.'})
 
 def update_category(id, cat, subcat):
     res = db.products.update({'_id': ObjectId(id)}, {"$set": {"category": cat,

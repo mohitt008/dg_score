@@ -7,7 +7,7 @@ from flask_oauth2_login import GoogleLogin
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count
+from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat
 from users import add_user, get_tag_count, inc_tag_count, dcr_tag_count, get_users
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
@@ -169,6 +169,14 @@ def get_subcats():
     print(posted_data)
     return get_subcategories(posted_data['category_id'])
 
+@bp.route('/new-sub-cat', methods=['GET', 'POST'])
+def new_sub_cat():
+    posted_data = request.get_json()
+    print(posted_data)
+    add_new_subcat( posted_data['category'], posted_data['subcat'] )
+    return redirect(url_for('bp.add_sub_cat'))
+    #return json.dumps({'success':True})
+
 @bp.route('/change-category', methods=['GET', 'POST'])
 def change_category():
     posted_data = request.get_json()
@@ -274,6 +282,22 @@ def set_verified_tags():
     tagging_info['verify_count'] = verify_count
     print('----------------------------------------------',tagging_info)
     return json.dumps(tagging_info)
+
+@bp.route('/add-sub-cat')
+def add_sub_cat():
+    print('-------------------------------------------------')
+    if 'user' in session and session['is_admin']:
+        user_id = session['user']['id']
+        tag_count, verify_count = get_tag_count(user_id)
+        return render_template("add_sub_cat.html",
+                               username=session['user']['name'],
+                               tag_count=tag_count,
+                               verify_count=verify_count,
+                               available_cats=get_categories(),
+                               available_cats1=get_categories())
+    else:
+        flash('Invalid credentials', 'error')
+        return redirect(url_for('bp.login'))
 
 @bp.route('/leaderboard')
 def view_leaderboard():

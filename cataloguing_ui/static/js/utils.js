@@ -119,6 +119,40 @@ $(document).ready(function () {
         });
     });
 
+    $(function () {
+        $('#select-cat').on("change", function () {
+            var cat_id = $(this).find(':selected').val();
+            if (cat_id != '-1') {
+                $("#new-sub-cat").prop('disabled', false);
+                $("#add-sub-cat-message").prop('disabled', false);
+                $("#new-sub-cat").html('');
+                $("#add-sub-cat-message").html('(Enter new sub-category)');
+            }
+        });
+    });
+
+    $(function () {
+        $("#add-sub-cat-button").click(function () {
+            var cat_id = $("#select-cat").find(":selected").val();
+            if (cat_id == '-1')
+                $("#update-button").notify('Please select a category first.');
+            else {
+                var cat = $("#select-cat").find(":selected").text();
+                var subcat = $("#new-sub-cat").val();
+                $.ajax({
+                    url: '/cat-ui/new-sub-cat',
+                    dataType: 'json',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ "category": cat, "subcat": subcat }),
+                    success: function (data) {
+                        $('#add-sub-cat-button').notify('Sub-Category Added Successfully!', "success");
+                    }
+                });
+            }
+        });
+    });
+
 });
 
 function update_html(data) {
