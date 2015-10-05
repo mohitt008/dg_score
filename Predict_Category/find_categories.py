@@ -58,11 +58,8 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
                 second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
 
         dg_report = predict_dangerous(clean_product_name, wbn, first_level,
-                                      dang_model.dg_keywords)
+                                      dang_model.dg_keywords, logger)
         
-        logger.info('Check DG: Product Name: {} Report: {}'.format(clean_product_name,
-                                                                   dg_report))
-
         result = {}
         result['cat'] = first_level
         result['scat'] = second_level
@@ -89,8 +86,8 @@ def process_product(product_name_dict, cat_model, dang_model, logger):
         product_name_clean = (re.sub(ALPHA_NUM_REGEX, '', product_name)).lower()
         product_name_key = 'catfight:' +':' + product_name_clean
         results_cache = r.get(product_name_key)
+        wbn = product_name_dict.get('wbn', "")
         if not results_cache:
-            wbn = product_name_dict.get('wbn', "")
             results = predict_category(product_name.encode('ascii','ignore'),
                                        wbn, cat_model, dang_model, logger)
             if results:
@@ -98,6 +95,14 @@ def process_product(product_name_dict, cat_model, dang_model, logger):
                 results['cached'] = False
         else:
             results = json.loads(results_cache)
+            l_product_name = product_name.lower()
+            product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
+            clean_product_name = " ".join(product_words)
+            first_level = results['cat']
+            dg_report = predict_dangerous(clean_product_name, wbn, first_level,
+                                      dang_model.dg_keywords, logger)
+
+            results['dg'] = dg_report['dangerous']
             results['cached'] = True
     else:
         results['invalid_product_name'] = True
