@@ -122,6 +122,16 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
 
 def add_new_subcat( cat, subcat ):
     #db.products.update()
+    cat_cur = db.categories.find_one({'category_name':cat})
+    db.categories.insert({'category_name':subcat,'par_category':cat_cur['_id']})
+    subcat_cur = db.categories.find_one({'category_name':subcat})
+    if 'children' in cat_cur:
+        children_list = cat_cur['children']
+    else:
+        children_list = []
+    if subcat_cur['_id'] not in children_list:
+        children_list.append(subcat_cur['_id'])
+    db.categories.update({'_id':cat_cur['_id']},{'$set':{'children':children_list}})
     return json.dumps({'message': 'Sub-Category Added Successfully.'})
 
 def update_category(id, cat, subcat):
