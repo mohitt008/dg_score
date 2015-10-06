@@ -121,7 +121,7 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
         return {'error': 'No untagged products for this vendor.'}
 
 def add_new_subcat( cat, subcat ):
-    #db.products.update()
+    subcat = subcat.title()
     cat_cur = db.categories.find_one({'category_name':cat})
     db.categories.insert({'category_name':subcat,'par_category':cat_cur['_id']})
     subcat_cur = db.categories.find_one({'category_name':subcat})

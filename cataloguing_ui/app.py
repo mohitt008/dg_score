@@ -37,7 +37,7 @@ def redirect_google():
 def login_success(token, profile):
     if profile:
         domain = profile['email'].split('@')[1]
-        if domain not in config.ALLOWED_DOMAINS:
+        if not (domain in config.ALLOWED_DOMAINS or profile['email'] in config.WHITELIST):
             flash('Invalid credentials', 'error')
             return redirect(url_for('bp.login'))
 
