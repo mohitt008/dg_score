@@ -104,6 +104,7 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
         tag_info['prod_cat'] = product['category']
         tag_info['prod_subcat'] = product['sub_category']
         tag_info['prod_url'] = product['product_url']
+        tag_info['price'] = product['price']
         tag_info['taglist'] = tag_list
         tag_info['prod_seg'] = json.dumps(prod_seg)
 

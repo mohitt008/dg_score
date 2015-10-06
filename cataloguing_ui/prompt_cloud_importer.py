@@ -147,11 +147,14 @@ def get_category(products):
 
             if 'product_url' not in product_name_dict:
                 product_name_dict['product_url'] = None
+            if 'retail_price' not in product_name_dict:
+                product_name_dict['retail_price'] = None
 
             db.products.insert({'product_name': product_name_dict['product_name'],
-                                "vendor": 'HQ-Data',
+                                "vendor": 'Amazon',
                                 "category": response['category'],
                                 "sub_category": subcat,
+                                "price": product_name_dict['retail_price'],
                                 "product_url": product_name_dict['product_url']})
 
        
@@ -178,7 +181,7 @@ def create_pool(records, start, end, diff):
 
 
 if __name__ == "__main__":
-    path_to_json = os.path.join(os.path.dirname(__file__), 'data/may/')
+    path_to_json = os.path.join(os.path.dirname(__file__), 'data/amazon_sep/')
     json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
     print(json_files, len(json_files))
 

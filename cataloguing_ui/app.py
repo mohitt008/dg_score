@@ -1,5 +1,6 @@
 import json
 import config
+import ast
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
@@ -140,10 +141,15 @@ def tag():
             flash('Invalid credentials', 'error')
             return redirect(url_for('bp.login'))
         
+        price_range_text_list = config.PRICE_RANGE_TEXT_LIST
+        price_range_value_list = config.PRICE_RANGE_VALUE_LIST
+
         return render_template('tag_product.html',
                                vendors=get_vendors(),
                                available_cats=get_categories(),
                                available_cats1=get_categories(),
+                               price_range_text_list=price_range_text_list,
+                               price_range_value_list=price_range_value_list,
                                username=session['user']['name'],
                                tag_count=tag_count,
                                verify_count=verify_count,
@@ -155,6 +161,8 @@ def tag():
 @bp.route('/get-products', methods=['GET', 'POST'])
 def get_products():
     posted_data = request.get_json()
+    if 'price' in posted_data:
+        posted_data['price'] = ast.literal_eval(posted_data['price'])
     q = posted_data.pop('q', None)
 
     if 'vendor' in posted_data and posted_data['vendor'] == 'All':
@@ -209,6 +217,8 @@ def set_tags():
         vendor = posted_data.pop("vendor")
         if vendor != 'All':
             next_name['vendor'] = vendor
+    if 'price' in posted_data:
+        next_name['price'] = ast.literal_eval(posted_data.pop('price'))
 
     undo = posted_data.pop("undo", None)
     if undo:
@@ -219,7 +229,7 @@ def set_tags():
         inc_skip_count(id)
 
     else:
-        print('####id####data to be saved -- tagged -- ####', id, posted_data)
+        print('####id####data to be saved -- tagged -- ####', id, posted_data)        
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id)
 
@@ -253,6 +263,8 @@ def set_verified_tags():
         vendor = posted_data.pop("vendor")
         if vendor != 'All':
             next_name['vendor'] = vendor
+    if 'price' in posted_data:
+        next_name['price'] = ast.literal_eval(posted_data.pop('price'))
 
     undo = posted_data.pop("undo", None)
     if undo:

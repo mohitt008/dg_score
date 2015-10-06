@@ -25,6 +25,13 @@
   {% endfor %}
 </select>
 
+<select id="select-price-range">
+  <option value='-1'>----------- Select Price Range -----------</option>
+  {% for i in range(6) %}
+    <option value='{{price_range_value_list[i]}}'>{{price_range_text_list[i]}}</option>
+  {% endfor %}
+</select>
+
 <input type="submit" class="btn btn-primary" value="Get Products" id="verify-button">
 
 <div id="tag-products" style="display:none">

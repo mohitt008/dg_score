@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<li>Please select atleast one out of the following drop-downs. If you select both, the result will be an intersection of the selected drop-downs.</li>
+<li>Please select atleast one out of the following drop-downs. If you select more than one, the result will be an intersection of the selected drop-downs.</li>
 <p></p>
 
 <select id="select-vendor">
@@ -20,6 +20,13 @@
   {% endfor %}
 </select>
 
+<select id="select-price-range">
+  <option value='-1'>----------- Select Price Range -----------</option>
+  {% for i in range(6) %}
+    <option value='{{price_range_value_list[i]}}'>{{price_range_text_list[i]}}</option>
+  {% endfor %}
+</select>
+
 <input type="submit" class="btn btn-primary" value="Get Products" id="get-products-button">
 
 <div id="tag-products" style="display:none">
@@ -30,6 +37,7 @@
           <tr><td>Vendor</td><td><a href="#" target="_blank" id='vendor_name'></a></td></tr>
           <tr><td>Category Identified</td><td><span id='category'></span></td></tr>
           <tr><td>Sub-Category Identified</td><td><span id='sub-category'></span></td></tr>
+          <tr><td>Price</td><td><span id='price'></span></td></tr>
       </tbody>
   </table>
 
