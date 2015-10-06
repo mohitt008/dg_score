@@ -9,7 +9,7 @@ from objects import categoryModel, dangerousModel
 
 logger = logging.getLogger('Catfight App')
 handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000,
-                              backupCount=10)
+                              backupCount=20)
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
@@ -27,22 +27,6 @@ except Exception as err:
 
 logger.info("Loading Process Complete")
 
-ERROR_CODE = {
-    'MissingProductName' : 'MissingProduct',
-    'MissingProductList' : 'MissingProductList',
-    'MissingWBN' : 'MissingWBN'
-}
-
-def validate_product_args(record):
-    value = True
-    error_response = {}
-    if not record.get('prd', None):
-        error_response = {'error': ERROR_CODE['MissingProductName']}
-        value = False
-    if not record.get('wbn', None):
-        error_response = {'error': ERROR_CODE['MissingWBN']}
-        value = False
-    return value, error_response
 
 def get_category(list_product_names, job_id):
     output_list = []
@@ -50,17 +34,11 @@ def get_category(list_product_names, job_id):
     if list_product_names:
         for product_name_dict in list_product_names:
             try:
-                valid_record, error_response = validate_product_args(product_name_dict)
-                if valid_record:
-                    result = process_product(product_name_dict,
-                                            cat_model,
-                                            dang_model,
-                                            logger)
-                    output_list.append(result)
-                else:
-                    for key, value in product_name_dict.items():
-                        error_response[key] = value
-                        output_list.append(error_response)
+                result = process_product(product_name_dict,
+                                        cat_model,
+                                        dang_model,
+                                        logger)
+                output_list.append(result)
             except Exception as err:
                 logger.error(
                     'get_category:Exception {} occurred against input: {} for job_id {}'.
