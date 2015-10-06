@@ -174,8 +174,8 @@ def new_sub_cat():
     posted_data = request.get_json()
     print(posted_data)
     add_new_subcat( posted_data['category'], posted_data['subcat'] )
-    return redirect(url_for('bp.add_sub_cat'))
-    #return json.dumps({'success':True})
+    #return redirect(url_for('bp.add_sub_cat'))
+    return json.dumps({'success':True})
 
 @bp.route('/change-category', methods=['GET', 'POST'])
 def change_category():

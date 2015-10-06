@@ -146,7 +146,8 @@ $(document).ready(function () {
                     contentType: 'application/json',
                     data: JSON.stringify({ "category": cat, "subcat": subcat }),
                     success: function (data) {
-                        $('#add-sub-cat-button').notify('Sub-Category Added Successfully!', "success");
+                        window.setTimeout(function(){location.reload()},1000)
+                        $('#add-sub-cat-button').notify('Sub-Category Added Successfully!', "success", {clickToHide: true});
                     }
                 });
             }
