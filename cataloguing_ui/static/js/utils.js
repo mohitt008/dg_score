@@ -139,17 +139,22 @@ $(document).ready(function () {
             else {
                 var cat = $("#select-cat").find(":selected").text();
                 var subcat = $("#new-sub-cat").val();
-                $.ajax({
-                    url: '/cat-ui/new-sub-cat',
-                    dataType: 'json',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ "category": cat, "subcat": subcat }),
-                    success: function (data) {
-                        window.setTimeout(function(){location.reload()},1000)
-                        $('#add-sub-cat-button').notify('Sub-Category Added Successfully!', "success", {clickToHide: true});
-                    }
-                });
+                if( subcat ) {
+                    $.ajax({
+                        url: '/cat-ui/new-sub-cat',
+                        dataType: 'json',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ "category": cat, "subcat": subcat }),
+                        success: function (data) {
+                            window.setTimeout(function(){location.reload()},1000)
+                            $('#add-sub-cat-button').notify('Sub-Category Added Successfully!', "success", {clickToHide: true});
+                        }
+                    });
+                }
+                else {
+                    $('#add-sub-cat-button').notify('Please enter a valid string!', "error", {clickToHide: true});                    
+                }
             }
         });
     });
