@@ -4,28 +4,19 @@
 
 <li>Please select a category and then enter the name of desired sub-category in the text-box.</li>
 <p></p>
-
-<div class="container">
-    <div class="row">
-        <div class="col-xs-4">
-			<select id="select-cat" style="height:30px">
-				<option value='-1'>----------- Select Category -----------</option>
-				{% for cat in available_cats1 %}
-				<option value='{{cat._id}}'>{{cat.category_name}}</option>
-				{% endfor %}
-			</select>
-        </div>
-        <div class="col-xs-4">
-        	<form>
-        		<input id="new-sub-cat" type="text" name="sub-cat" size="30" style="height:32px" disabled></input>
-        	</form>
-        	<p id="add-sub-cat-message" style="color:purple" disabled></p>
-        </div>
-        <div class="col-xs-4">
-            <input type="submit" class="btn btn-primary" style="height:33px" value="Submit" id="add-sub-cat-button">
-        </div>
-    </div>
-</div>
+{%if msg%}
+    {{msg}}
+{%endif%}
+<form method="post" action="">
+    <select name="category" >
+        <option value='-1'>----------- Select Category -----------</option>
+        {% for cat in available_cats %}
+            <option value='{{cat._id}}'>{{cat.category_name}}</option>
+        {% endfor %}
+    </select>
+    <input type="text" name="subcat" size="30"></input>
+    <input type="submit" class="btn btn-primary" value="Submit">
+</form>
 
 {% with messages = get_flashed_messages(category_filter=["error"]) %}
   {% if messages %}

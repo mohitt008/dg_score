@@ -8,12 +8,12 @@ $(document).ready(function () {
       window.pid = null;
       window.is_undo = false;
 
-      $(function () {
-          $("input[type=submit], button").button()
-                  .click(function (event) {
-                      event.preventDefault();
-                  });
-      });
+      // $(function () {
+      //     $("input[type=submit], button").button()
+      //             .click(function (event) {
+      //                 event.preventDefault();
+      //             });
+      // });
     $(function() {
         $( "#get-products-button" ).click(function() {
             var vendor = $("#select-vendor").find(":selected").val();
@@ -121,47 +121,6 @@ $(document).ready(function () {
             });
         });
     });
-
-    $(function () {
-        $('#select-cat').on("change", function () {
-            var cat_id = $(this).find(':selected').val();
-            if (cat_id != '-1') {
-                $("#new-sub-cat").prop('disabled', false);
-                $("#add-sub-cat-message").prop('disabled', false);
-                $("#new-sub-cat").html('');
-                $("#add-sub-cat-message").html('(Enter new sub-category)');
-            }
-        });
-    });
-
-    $(function () {
-        $("#add-sub-cat-button").click(function () {
-            var cat_id = $("#select-cat").find(":selected").val();
-            if (cat_id == '-1')
-                $("#update-button").notify('Please select a category first.');
-            else {
-                var cat = $("#select-cat").find(":selected").text();
-                var subcat = $("#new-sub-cat").val();
-                if( subcat ) {
-                    $.ajax({
-                        url: '/cat-ui/new-sub-cat',
-                        dataType: 'json',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ "category": cat, "subcat": subcat }),
-                        success: function (data) {
-                            window.setTimeout(function(){location.reload()},1000)
-                            $('#add-sub-cat-button').notify('Sub-Category Added Successfully!', "success", {clickToHide: true});
-                        }
-                    });
-                }
-                else {
-                    $('#add-sub-cat-button').notify('Please enter a valid string!', "error", {clickToHide: true});                    
-                }
-            }
-        });
-    });
-
 });
 
 function update_html(data) {

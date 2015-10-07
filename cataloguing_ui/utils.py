@@ -121,19 +121,14 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
     else:
         return {'error': 'No untagged products for this vendor.'}
 
-def add_new_subcat( cat, subcat ):
+
+def add_new_subcat( cat_id, subcat ):
+    category_id = ObjectId(cat_id)
     subcat = subcat.title()
-    cat_cur = db.categories.find_one({'category_name':cat})
-    db.categories.insert({'category_name':subcat,'par_category':cat_cur['_id']})
-    subcat_cur = db.categories.find_one({'category_name':subcat})
-    if 'children' in cat_cur:
-        children_list = cat_cur['children']
-    else:
-        children_list = []
-    if subcat_cur['_id'] not in children_list:
-        children_list.append(subcat_cur['_id'])
-    db.categories.update({'_id':cat_cur['_id']},{'$set':{'children':children_list}})
+    subcat_id = db.categories.insert({'category_name':subcat, 'par_category':category_id})
+    db.categories.update({'_id':category_id}, {'$addToSet':{'children':ObjectId(subcat_id)}})
     return json.dumps({'message': 'Sub-Category Added Successfully.'})
+
 
 def update_category(id, cat, subcat):
     res = db.products.update({'_id': ObjectId(id)}, {"$set": {"category": cat,

@@ -37,17 +37,21 @@ def redirect_google():
 @google_login.login_success
 def login_success(token, profile):
     if profile:
+
         domain = profile['email'].split('@')[1]
-        if not (domain in config.ALLOWED_DOMAINS or profile['email'] in config.WHITELIST):
+        if domain in config.ALLOWED_DOMAINS or profile['email'] in config.WHITELIST:
+            add_user(profile)
+            session['is_admin'] = False
+            session['user'] = profile
+            
+            if profile['email'] in config.ADMINS:
+                session['is_admin'] = True
+            return redirect(url_for('bp.tag', q='tag'))
+
+        else:
             flash('Invalid credentials', 'error')
             return redirect(url_for('bp.login'))
 
-        add_user(profile)
-        session['is_admin'] = False
-        session['user'] = profile
-        if profile['email'] in config.ADMINS:
-            session['is_admin'] = True
-        return redirect(url_for('bp.tag', q='tag'))
     else:
         print('Login failed.')
         return "Login failed"
@@ -182,13 +186,6 @@ def get_subcats():
     print(posted_data)
     return get_subcategories(posted_data['category_id'])
 
-@bp.route('/new-sub-cat', methods=['GET', 'POST'])
-def new_sub_cat():
-    posted_data = request.get_json()
-    print(posted_data)
-    add_new_subcat( posted_data['category'], posted_data['subcat'] )
-    return json.dumps({'success':True})
-
 @bp.route('/change-category', methods=['GET', 'POST'])
 def change_category():
     posted_data = request.get_json()
@@ -299,9 +296,12 @@ def set_verified_tags():
     print('----------------------------------------------',tagging_info)
     return json.dumps(tagging_info)
 
-@bp.route('/add-sub-cat')
-def add_sub_cat():
+@bp.route('/add-subcat', methods=['GET', 'POST'])
+def add_subcat():
     print('-------------------------------------------------')
+    if request.form:
+        print('*******************************************************')
+        add_new_subcat( request.form['category'], request.form['subcat'] )
     if 'user' in session and session['is_admin']:
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
@@ -310,7 +310,7 @@ def add_sub_cat():
                                tag_count=tag_count,
                                verify_count=verify_count,
                                available_cats=get_categories(),
-                               available_cats1=get_categories())
+                               msg='asasad')
     else:
         flash('Invalid credentials', 'error')
         return redirect(url_for('bp.login'))

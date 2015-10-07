@@ -147,14 +147,14 @@ def get_category(products):
 
             if 'product_url' not in product_name_dict:
                 product_name_dict['product_url'] = None
-            if 'retail_price' not in product_name_dict:
-                product_name_dict['retail_price'] = None
+            #if 'retail_price' not in product_name_dict:
+            #    product_name_dict['retail_price'] = None
 
             db.products.insert({'product_name': product_name_dict['product_name'],
                                 "vendor": 'Amazon',
                                 "category": response['category'],
                                 "sub_category": subcat,
-                                "price": product_name_dict['retail_price'],
+                                #"price": product_name_dict['retail_price'],
                                 "product_url": product_name_dict['product_url']})
 
        
