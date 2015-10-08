@@ -4,9 +4,7 @@
 
 <li>Please select a category and then enter the name of desired sub-category in the text-box.</li>
 <p></p>
-{%if msg%}
-    {{msg}}
-{%endif%}
+
 <form method="post" action="">
     <select name="category" >
         <option value='-1'>----------- Select Category -----------</option>
@@ -15,8 +13,22 @@
         {% endfor %}
     </select>
     <input type="text" name="subcat" size="30"></input>
-    <input type="submit" class="btn btn-primary" value="Submit">
+    <input id="add-button" type="submit" class="btn btn-primary" value="Add Sub-Category">
 </form>
+
+<br>
+{% if subcat_status == 'Added' %}
+    <div class="btn alert alert-success">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      <strong>Sub-Category Added Successfully!&nbsp&nbsp</strong>
+    </div>
+{% endif %}
+{% if subcat_status == 'Error' %}
+    <div class="btn alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Please enter a valid string!&nbsp&nbsp</strong>
+    </div>
+{% endif %}
 
 {% with messages = get_flashed_messages(category_filter=["error"]) %}
   {% if messages %}

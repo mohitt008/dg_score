@@ -16,13 +16,13 @@ client = MongoClient()
 db = client.products_db
 
 result_file = "/data/cat_multi/results_"
-from flask import Flask, request,Response
+from flask import Flask, request, Response
 from sklearn.externals import joblib
 #from config_details import second_level_cat_names
 #from logging.handlers import RotatingFileHandler
 
 #from Train_Model.train import ngrams
-PARENT_DIR_PATH=os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+PARENT_DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(PARENT_DIR_PATH)
 
 second_level_cat_names=\

@@ -298,11 +298,13 @@ def set_verified_tags():
 
 @bp.route('/add-subcat', methods=['GET', 'POST'])
 def add_subcat():
-    print('-------------------------------------------------')
-    if request.form:
-        print('*******************************************************')
-        add_new_subcat( request.form['category'], request.form['subcat'] )
     if 'user' in session and session['is_admin']:
+        subcat_status = 'Not Added'
+        if request.form:
+            if len(request.form['subcat']):
+                subcat_status = add_new_subcat( request.form['category'], request.form['subcat'] )
+            else:
+                subcat_status = 'Error'
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
         return render_template("add_sub_cat.html",
@@ -310,7 +312,7 @@ def add_subcat():
                                tag_count=tag_count,
                                verify_count=verify_count,
                                available_cats=get_categories(),
-                               msg='asasad')
+                               subcat_status=subcat_status)
     else:
         flash('Invalid credentials', 'error')
         return redirect(url_for('bp.login'))

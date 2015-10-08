@@ -127,7 +127,7 @@ def add_new_subcat( cat_id, subcat ):
     subcat = subcat.title()
     subcat_id = db.categories.insert({'category_name':subcat, 'par_category':category_id})
     db.categories.update({'_id':category_id}, {'$addToSet':{'children':ObjectId(subcat_id)}})
-    return json.dumps({'message': 'Sub-Category Added Successfully.'})
+    return 'Added'
 
 
 def update_category(id, cat, subcat):
