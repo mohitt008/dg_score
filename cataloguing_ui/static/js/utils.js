@@ -8,28 +8,31 @@ $(document).ready(function () {
       window.pid = null;
       window.is_undo = false;
 
-      $(function () {
-          $("input[type=submit], button").button()
-                  .click(function (event) {
-                      event.preventDefault();
-                  });
-      });
+      // $(function () {
+      //     $("input[type=submit], button").button()
+      //             .click(function (event) {
+      //                 event.preventDefault();
+      //             });
+      // });
     $(function() {
         $( "#get-products-button" ).click(function() {
             var vendor = $("#select-vendor").find(":selected").val();
             var cat_val = $("#select-category").find(":selected").val();
             var cat = $("#select-category").find(":selected").text();
+            var price_range_value = $("#select-price-range").find(":selected").val();
             var sPageURL = window.location.search.substring(1);
             sPageURL_split_list = sPageURL.split('=');
 
-            if( vendor=='-1' && cat_val=='-1' )
-                $("#get-products-button").notify('Please select a vendor or category first.');
+            if( vendor=='-1' && cat_val=='-1' && price_range_value=='-1' )
+                $("#get-products-button").notify('Please select a vendor or category or price range first.');
             else {
                 data_obj = {}
                 if( vendor != '-1' )
                     data_obj['vendor'] = vendor;
                 if( cat_val != '-1' )
                     data_obj['category'] = cat;
+                if( price_range_value != '-1' )
+                    data_obj['price'] = price_range_value;
                 q = sPageURL_split_list[1];
                 data_obj[sPageURL_split_list[0]] = q;
                 $.ajax({
@@ -118,7 +121,6 @@ $(document).ready(function () {
             });
         });
     });
-
 });
 
 function update_html(data) {
@@ -130,6 +132,7 @@ function update_html(data) {
     $("#selectable").html(data['prod_name']);
     $("#category").html(data['prod_cat']);
     $("#sub-category").html(data['prod_subcat']);
+    $("#price").html(data['price']);
 
     if (data['is_dang'])
         $('#dangerous-goods').prop("checked", true);

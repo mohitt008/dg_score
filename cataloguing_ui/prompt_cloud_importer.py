@@ -1,8 +1,9 @@
 '''
 Reads product_name from .json files, identifies their cat/sub_cat and populates mongodb
-Note: Make sure you change vendor name before running this file. Default vendor name is : 'HQ-Data'
+Note: Make sure you change vendor name and path before running this file. Default vendor name is : 'HQ-Data'
 '''
 import os
+import re
 import sys
 import numpy as np
 #import logging
@@ -16,13 +17,13 @@ client = MongoClient()
 db = client.products_db
 
 result_file = "/data/cat_multi/results_"
-from flask import Flask, request,Response
+from flask import Flask, request, Response
 from sklearn.externals import joblib
 #from config_details import second_level_cat_names
 #from logging.handlers import RotatingFileHandler
 
 #from Train_Model.train import ngrams
-PARENT_DIR_PATH=os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+PARENT_DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(PARENT_DIR_PATH)
 
 second_level_cat_names=\
@@ -147,11 +148,17 @@ def get_category(products):
 
             if 'product_url' not in product_name_dict:
                 product_name_dict['product_url'] = None
+            if 'retail_price' in product_name_dict:
+                product_name_dict['retail_price'] = re.findall(r'\d+',product_name_dict['retail_price'])
+                product_name_dict['retail_price'] = int(product_name_dict['retail_price'][0])
+            else:
+                product_name_dict['retail_price'] = None
 
             db.products.insert({'product_name': product_name_dict['product_name'],
-                                "vendor": 'HQ-Data',
+                                "vendor": 'Snapdeal',
                                 "category": response['category'],
                                 "sub_category": subcat,
+                                "price": product_name_dict['retail_price'],
                                 "product_url": product_name_dict['product_url']})
 
        
@@ -178,7 +185,7 @@ def create_pool(records, start, end, diff):
 
 
 if __name__ == "__main__":
-    path_to_json = os.path.join(os.path.dirname(__file__), 'data/may/')
+    path_to_json = os.path.join(os.path.dirname(__file__), 'data/outsource_data/snapdeal/sep/')
     json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
     print(json_files, len(json_files))
 
@@ -193,7 +200,10 @@ if __name__ == "__main__":
     for i in data:
         for j in i:
             try:
-                records.append({'product_name': j['record']['product_name'], 'product_url': j['record']['product_url']})
+                records.append({'product_name': j['record']['product_name'],
+                                'product_url': j['record']['product_url'],
+                                'retail_price': j['record']['retail_price']
+                                })
             except Exception as e:
                 pass
     start = 0

@@ -9,13 +9,13 @@ db = client.products_db
 
 data = []
 bulk = db.products.initialize_ordered_bulk_op()
-with open('data/HQSUBCAT.csv','rt') as f:
+with open('data/outsource_data/hq-data/wbn_prd_3month.csv','rt') as f:
 	tempreader = csv.reader(f, delimiter=',')
 	next(tempreader, None)
 	for row in tempreader:
-		if row[1] and row[2] and row[1] not in data:
-				data.append(row[1])
-				bulk.insert({'product_name':row[1], 'vendor':'HQSUBCAT',
+		if row[2] not in data:
+				data.append(row[2])
+				bulk.insert({'product_name':row[2], 'vendor':'HQ-Data',
 									'category':row[2], 'sub_category': None, 'product_url': None})
 
 bulk.execute()

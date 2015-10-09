@@ -104,6 +104,7 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
         tag_info['prod_cat'] = product['category']
         tag_info['prod_subcat'] = product['sub_category']
         tag_info['prod_url'] = product['product_url']
+        tag_info['price'] = product['price']
         tag_info['taglist'] = tag_list
         tag_info['prod_seg'] = json.dumps(prod_seg)
 
@@ -119,6 +120,14 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
         return tag_info
     else:
         return {'error': 'No untagged products for this vendor.'}
+
+
+def add_new_subcat( cat_id, subcat ):
+    category_id = ObjectId(cat_id)
+    subcat = subcat.title()
+    subcat_id = db.categories.insert({'category_name':subcat, 'par_category':category_id})
+    db.categories.update({'_id':category_id}, {'$addToSet':{'children':ObjectId(subcat_id)}})
+    return 'Added'
 
 
 def update_category(id, cat, subcat):
