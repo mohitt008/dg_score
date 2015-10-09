@@ -1,5 +1,6 @@
 import json
 import config
+import ast
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
@@ -7,8 +8,8 @@ from flask_oauth2_login import GoogleLogin
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, get_skip_count
-from users import add_user, get_tag_count, inc_tag_count, get_users
+from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat
+from users import add_user, get_tag_count, inc_tag_count, dcr_tag_count, get_users
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
 app = Flask(__name__)
@@ -35,13 +36,22 @@ def redirect_google():
 
 @google_login.login_success
 def login_success(token, profile):
-    add_user(profile)
-    session['is_admin'] = False
-    if profile['id'] and profile['name']:
-        session['user'] = profile
-        if profile['email'] in config.ADMINS:
-            session['is_admin'] = True
-        return redirect(url_for('bp.tag', q='tag'))
+    if profile:
+
+        domain = profile['email'].split('@')[1]
+        if domain in config.ALLOWED_DOMAINS or profile['email'] in config.WHITELIST:
+            add_user(profile)
+            session['is_admin'] = False
+            session['user'] = profile
+            
+            if profile['email'] in config.ADMINS:
+                session['is_admin'] = True
+            return redirect(url_for('bp.tag', q='tag'))
+
+        else:
+            flash('Invalid credentials', 'error')
+            return redirect(url_for('bp.login'))
+
     else:
         print('Login failed.')
         return "Login failed"
@@ -52,57 +62,57 @@ def login_failure(e):
 
 ############################------Facebook Login------##################################
 
-facebook = oauth.remote_app('facebook',
-                            base_url='https://graph.facebook.com/',
-                            request_token_url=None,
-                            access_token_url='/oauth/access_token',
-                            authorize_url='https://www.facebook.com/dialog/oauth',
-                            consumer_key=config.FB_CONSUMER_KEY,
-                            consumer_secret=config.FB_CONSUMER_SECRET,
-                            request_token_params={'scope': 'email'})
+# facebook = oauth.remote_app('facebook',
+#                             base_url='https://graph.facebook.com/',
+#                             request_token_url=None,
+#                             access_token_url='/oauth/access_token',
+#                             authorize_url='https://www.facebook.com/dialog/oauth',
+#                             consumer_key=config.FB_CONSUMER_KEY,
+#                             consumer_secret=config.FB_CONSUMER_SECRET,
+#                             request_token_params={'scope': 'email'})
 
 
-@bp.route('/login/fbauthorized')
-@facebook.authorized_handler
-def facebook_authorized(resp):
-    if resp is None:
-        return 'Access denied: reason=%s error=%s' % (
-            request.args['error_reason'],
-            request.args['error_description']
-        )
-    print('access_token')
-    print(resp['access_token'])
-    session['oauth_token'] = (resp['access_token'], '')
+# @bp.route('/login/fbauthorized')
+# @facebook.authorized_handler
+# def facebook_authorized(resp):
+#     if resp is None:
+#         return 'Access denied: reason=%s error=%s' % (
+#             request.args['error_reason'],
+#             request.args['error_description']
+#         )
+#     print('access_token')
+#     print(resp['access_token'])
+#     session['oauth_token'] = (resp['access_token'], '')
 
-    me = facebook.get('/me')
-    print(me.data)
-    add_user(me.data)
-    session['is_admin'] = False
-    if me.data['id'] and me.data['name'] and me.data['email']:
-        session['user'] = me.data
-        if me.data['email'] in config.ADMINS:
-            session['is_admin'] = True
-        return redirect(url_for('bp.tag', q='tag'))
-    else:
-        return "Login failed"
-
-
-@facebook.tokengetter
-def get_facebook_oauth_token():
-    return session.get('oauth_token')
+#     me = facebook.get('/me')
+#     print(me.data)
+#     add_user(me.data)
+#     session['is_admin'] = False
+#     if me.data['id'] and me.data['name'] and me.data['email']:
+#         session['user'] = me.data
+#         if me.data['email'] in config.ADMINS:
+#             session['is_admin'] = True
+#         return redirect(url_for('bp.tag', q='tag'))
+#     else:
+#         return "Login failed"
 
 
-@bp.route('/fb-login')
-def fb_login():
-    """
-    The facebook login page. Clears the session before allowing a new user to authenticate.
-    """
-    print("login attempt")
-    session.clear()
-    print(request.args.get('next'))
-    return facebook.authorize(callback=url_for('bp.facebook_authorized',
-                                               next=request.args.get('next') or request.referrer or None,
-                                               _external=True))
+# @facebook.tokengetter
+# def get_facebook_oauth_token():
+#     return session.get('oauth_token')
+
+
+# @bp.route('/fb-login')
+# def fb_login():
+#     """
+#     The facebook login page. Clears the session before allowing a new user to authenticate.
+#     """
+#     print("login attempt")
+#     session.clear()
+#     print(request.args.get('next'))
+#     return facebook.authorize(callback=url_for('bp.facebook_authorized',
+#                                                next=request.args.get('next') or request.referrer or None,
+#                                                _external=True))
 
 ###########################------Facebook Login Ends Here------#################################
 
@@ -135,10 +145,15 @@ def tag():
             flash('Invalid credentials', 'error')
             return redirect(url_for('bp.login'))
         
+        price_range_text_list = config.PRICE_RANGE_TEXT_LIST
+        price_range_value_list = config.PRICE_RANGE_VALUE_LIST
+
         return render_template('tag_product.html',
                                vendors=get_vendors(),
                                available_cats=get_categories(),
                                available_cats1=get_categories(),
+                               price_range_text_list=price_range_text_list,
+                               price_range_value_list=price_range_value_list,
                                username=session['user']['name'],
                                tag_count=tag_count,
                                verify_count=verify_count,
@@ -150,6 +165,8 @@ def tag():
 @bp.route('/get-products', methods=['GET', 'POST'])
 def get_products():
     posted_data = request.get_json()
+    if 'price' in posted_data:
+        posted_data['price'] = ast.literal_eval(posted_data['price'])
     q = posted_data.pop('q', None)
 
     if 'vendor' in posted_data and posted_data['vendor'] == 'All':
@@ -160,7 +177,7 @@ def get_products():
         tagging_info = get_product_tagging_details(posted_data, True)
     if q == '3-skips':
         tagging_info = get_product_tagging_details(posted_data, False, True)
-    session['pid'] = None
+
     return json.dumps(tagging_info)
 
 @bp.route('/get-subcats', methods=['GET', 'POST'])
@@ -197,25 +214,30 @@ def set_tags():
         vendor = posted_data.pop("vendor")
         if vendor != 'All':
             next_name['vendor'] = vendor
+    if 'price' in posted_data:
+        next_name['price'] = ast.literal_eval(posted_data.pop('price'))
 
-    if posted_data.pop("undo", None):
-        print('i wanto see last product please........................................')
+    undo = posted_data.pop("undo", None)
+    if undo:
         next_name.clear()
-        next_name['_id'] = ObjectId(session['pid'])
+        next_name['_id'] = ObjectId(id)
 
-    session['pid'] = id
-    if posted_data.pop("is_skipped"):
-        skip_c = get_skip_count(id)
-        skip_c += 1
-        db.products.update({'_id': ObjectId(id)}, {"$set": {'skip_count':skip_c}})
+    elif posted_data.pop("is_skipped"):
+        inc_skip_count(id)
 
-    if posted_data['tags'] or posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']:
-        print('####id####data to be saved -- tagged -- ####', id, posted_data)
+    else:
+        print('####id####data to be saved -- tagged -- ####', id, posted_data)        
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id)
 
     #fetching next product tagging info
     tagging_info = get_product_tagging_details(next_name)
+
+    if undo:
+        db.products.update({'_id': ObjectId(id)},{"$unset":{'is_dang':'','is_dirty':'','is_xray':'',
+                            'tags':'','tagged_by':'','epoch':'','done':''}})
+        dcr_tag_count(user_id)
+
     tag_count, verify_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
     tagging_info['verify_count'] = verify_count
@@ -238,18 +260,21 @@ def set_verified_tags():
         vendor = posted_data.pop("vendor")
         if vendor != 'All':
             next_name['vendor'] = vendor
+    if 'price' in posted_data:
+        next_name['price'] = ast.literal_eval(posted_data.pop('price'))
 
-    if posted_data.pop("undo", None):
+    undo = posted_data.pop("undo", None)
+    if undo:
         print('i wanto see last product please........................................')
         next_name.clear()
-        next_name['_id'] = ObjectId(session['pid'])
+        next_name['_id'] = ObjectId(id)
         
-    session['pid'] = id
-    if posted_data.pop("is_skipped"):
+    elif posted_data.pop("is_skipped"):
         admin_skip_keys = ['verified_by', 'verified', 'admin_tags']
         admin_skip_data = dict(map(lambda key: (key, posted_data.get(key, None)), admin_skip_keys))
         admin_skip_data['dirty_by_admin'] = True
         db.products.update({'_id': ObjectId(id)}, {"$set": admin_skip_data})
+    
     else:
         print('####id####data to be saved -- verified --####', id, posted_data)
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
@@ -261,10 +286,36 @@ def set_verified_tags():
     elif q == '3-skips':
         tagging_info = get_product_tagging_details(next_name, False, True)
 
+    if undo:
+        db.products.update({'_id': ObjectId(id)},{"$unset":{'admin_tags':'','verified_by':'','verified':'','dirty_by_admin':''}})
+        dcr_tag_count(user_id, True)
+
     tag_count, verify_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
     tagging_info['verify_count'] = verify_count
+    print('----------------------------------------------',tagging_info)
     return json.dumps(tagging_info)
+
+@bp.route('/add-subcat', methods=['GET', 'POST'])
+def add_subcat():
+    if 'user' in session and session['is_admin']:
+        subcat_status = 'Not Added'
+        if request.form:
+            if len(request.form['subcat']) and request.form['category'] != '-1':
+                subcat_status = add_new_subcat( request.form['category'], request.form['subcat'] )
+            else:
+                subcat_status = 'Error'
+        user_id = session['user']['id']
+        tag_count, verify_count = get_tag_count(user_id)
+        return render_template("add_sub_cat.html",
+                               username=session['user']['name'],
+                               tag_count=tag_count,
+                               verify_count=verify_count,
+                               available_cats=get_categories(),
+                               subcat_status=subcat_status)
+    else:
+        flash('Invalid credentials', 'error')
+        return redirect(url_for('bp.login'))
 
 @bp.route('/leaderboard')
 def view_leaderboard():

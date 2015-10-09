@@ -81,10 +81,13 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
     if '_id' in query:
         product = db.products.find_one(query)
         print('----------------product_name------------', product)
-        tag_info['tags'] = product['tags']
-        tag_info['is_dang'] = product['is_dang']
-        tag_info['is_xray'] = product['is_xray']
-        tag_info['is_dirty'] = product['is_dirty']
+        if 'admin_tags' in product:
+            tag_info['tags'] = product['admin_tags']
+        else:
+            tag_info['tags'] = product['tags'] if 'tags' in product else None
+        tag_info['is_dang'] = product['is_dang'] if 'is_dang' in product else None
+        tag_info['is_xray'] = product['is_xray'] if 'is_xray' in product else None
+        tag_info['is_dirty'] = product['is_dirty'] if 'is_dirty' in product else None
     else:
         product = get_random_product(query, to_verify, skipped_thrice)
 
@@ -101,11 +104,15 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
         tag_info['prod_cat'] = product['category']
         tag_info['prod_subcat'] = product['sub_category']
         tag_info['prod_url'] = product['product_url']
+        tag_info['price'] = product['price']
         tag_info['taglist'] = tag_list
         tag_info['prod_seg'] = json.dumps(prod_seg)
 
         if to_verify:
-            tag_info['tags'] = product['tags']
+            if 'admin_tags' in product:
+                tag_info['tags'] = product['admin_tags']
+            else:
+                tag_info['tags'] = product['tags']
             tag_info['is_dang'] = product['is_dang']
             tag_info['is_xray'] = product['is_xray']
             tag_info['is_dirty'] = product['is_dirty']
@@ -113,6 +120,14 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
         return tag_info
     else:
         return {'error': 'No untagged products for this vendor.'}
+
+
+def add_new_subcat( cat_id, subcat ):
+    category_id = ObjectId(cat_id)
+    subcat = subcat.title()
+    subcat_id = db.categories.insert({'category_name':subcat, 'par_category':category_id})
+    db.categories.update({'_id':category_id}, {'$addToSet':{'children':ObjectId(subcat_id)}})
+    return 'Added'
 
 
 def update_category(id, cat, subcat):
@@ -136,6 +151,7 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
         query['done'] = {'$exists': False}
         query['is_dirty'] = {'$exists': False}
         query['$or'] = [{'skip_count': {'$exists': False}}, {'skip_count': {'$lt': 3}}]
+
     untagged_count = db.products.find(query).count()
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)
@@ -144,9 +160,5 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
     return prod_obj
 
 
-def get_skip_count(product_id):
-    temp_dict = db.products.find({"_id":ObjectId(product_id)},{"skip_count":1,"_id":0})
-    for items in temp_dict:
-        if 'skip_count' in items:
-            return int(items["skip_count"])
-        return 0
+def inc_skip_count(product_id):
+    db.products.update({'_id':ObjectId(product_id)},{'$inc':{'skip_count':1}})
