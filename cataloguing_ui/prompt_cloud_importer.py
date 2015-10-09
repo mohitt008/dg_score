@@ -3,6 +3,7 @@ Reads product_name from .json files, identifies their cat/sub_cat and populates 
 Note: Make sure you change vendor name before running this file. Default vendor name is : 'HQ-Data'
 '''
 import os
+import re
 import sys
 import numpy as np
 #import logging
@@ -147,14 +148,17 @@ def get_category(products):
 
             if 'product_url' not in product_name_dict:
                 product_name_dict['product_url'] = None
-            #if 'retail_price' not in product_name_dict:
-            #    product_name_dict['retail_price'] = None
+            if 'retail_price' in product_name_dict:
+                product_name_dict['retail_price'] = re.findall(r'\d+',product_name_dict['retail_price'])
+                product_name_dict['retail_price'] = int(product_name_dict['retail_price'][0])
+            else:
+                product_name_dict['retail_price'] = None
 
             db.products.insert({'product_name': product_name_dict['product_name'],
-                                "vendor": 'Amazon',
+                                "vendor": 'Snapdeal',
                                 "category": response['category'],
                                 "sub_category": subcat,
-                                #"price": product_name_dict['retail_price'],
+                                "price": product_name_dict['retail_price'],
                                 "product_url": product_name_dict['product_url']})
 
        
@@ -181,7 +185,7 @@ def create_pool(records, start, end, diff):
 
 
 if __name__ == "__main__":
-    path_to_json = os.path.join(os.path.dirname(__file__), 'data/amazon_sep/')
+    path_to_json = os.path.join(os.path.dirname(__file__), 'data/outsource_data/snapdeal/sep/')
     json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
     print(json_files, len(json_files))
 
@@ -196,7 +200,10 @@ if __name__ == "__main__":
     for i in data:
         for j in i:
             try:
-                records.append({'product_name': j['record']['product_name'], 'product_url': j['record']['product_url']})
+                records.append({'product_name': j['record']['product_name'],
+                                'product_url': j['record']['product_url'],
+                                'retail_price': j['record']['retail_price']
+                                })
             except Exception as e:
                 pass
     start = 0
