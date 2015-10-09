@@ -301,7 +301,7 @@ def add_subcat():
     if 'user' in session and session['is_admin']:
         subcat_status = 'Not Added'
         if request.form:
-            if len(request.form['subcat']):
+            if len(request.form['subcat']) and request.form['category'] != '-1':
                 subcat_status = add_new_subcat( request.form['category'], request.form['subcat'] )
             else:
                 subcat_status = 'Error'
