@@ -27,6 +27,17 @@ except Exception as err:
 
 logger.info("Loading Process Complete")
 
+ERROR_CODE = {
+    'MissingProductName' : 'MissingProductName'
+}
+
+def validate_product_args(record):
+    value = True
+    error_response = {}
+    if not record.get('prd', None):
+        error_response = {'prd': ERROR_CODE['MissingProductName']}
+        value = False
+    return value, error_response
 
 def get_category(list_product_names, job_id):
     output_list = []
@@ -34,11 +45,17 @@ def get_category(list_product_names, job_id):
     if list_product_names:
         for product_name_dict in list_product_names:
             try:
-                result = process_product(product_name_dict,
-                                        cat_model,
-                                        dang_model,
-                                        logger)
-                output_list.append(result)
+                valid_record, error_response = validate_product_args(product_name_dict)
+                if valid_record:
+                    result = process_product(product_name_dict,
+                                            cat_model,
+                                            dang_model,
+                                            logger)
+                    output_list.append(result)
+                else:
+                    for key, value in product_name_dict.items():
+                        error_response[key] = value
+                        output_list.append(error_response)
             except Exception as err:
                 logger.error(
                     'get_category:Exception {} occurred against input: {} for job_id {}'.
@@ -66,13 +83,16 @@ def get_products():
             jobs = client.get_job([catfight_input])
             for queue_name, job_id, job in jobs:
                 job_data = json.loads(job)
+                logger.info(job_data)
                 vendor = job_data['vendor']
+                username = job_data['username']
                 products = json.loads(job_data['payload'])
 
                 results = get_category(products, job_id)
                 if results:
                     results_dict = {}
-                    results_dict['vendor'] = vendor
+                    results_dict['vendor'] = str(vendor)
+                    results_dict['username'] = str(username)
                     results_dict['catfight_results'] = results
                     second_job_id = client.add_job(catfight_output,
                                                    json.dumps(results_dict),
