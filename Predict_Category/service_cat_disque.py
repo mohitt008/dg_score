@@ -83,7 +83,6 @@ def get_products():
             jobs = client.get_job([catfight_input])
             for queue_name, job_id, job in jobs:
                 job_data = json.loads(job)
-                logger.info(job_data)
                 vendor = job_data['vendor']
                 username = job_data['username']
                 products = json.loads(job_data['payload'])
@@ -106,7 +105,7 @@ def get_products():
                     logger.info("No results found for Job ID {} with job {}".
                                 format(job_id, job))
         except Exception as e:
-            logger.info("Function get_products failed for Job ID {} with job {} with error {}".
+            logger.error("Function get_products failed for Job ID {} with job {} with error {}".
                         format(job_id,job,e))
             sentry_client.captureException(
                 message = "get_products failed", 
