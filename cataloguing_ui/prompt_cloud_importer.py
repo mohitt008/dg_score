@@ -154,10 +154,12 @@ def get_category(products):
             else:
                 product_name_dict['retail_price'] = None
 
-            db.products.insert({'product_name': product_name_dict['product_name'],
-                                "vendor": 'Snapdeal',
+            db.products.insert({"product_name": product_name_dict['product_name'],
+                                "vendor": 'HQ-Data',
                                 "category": response['category'],
+                                "vendor_cat": response['category'],
                                 "sub_category": subcat,
+                                "vendor_subcat": subcat,
                                 "price": product_name_dict['retail_price'],
                                 "product_url": product_name_dict['product_url']})
 
