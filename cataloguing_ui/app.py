@@ -15,7 +15,7 @@ bp = Blueprint('bp', __name__, static_folder='static', template_folder='template
 app = Flask(__name__)
 app.secret_key = config.APP_SECRET_KEY
 
-client = MongoClient(connect=False)
+client = MongoClient(config.MONGO_IP, 27017, connect=False)
 db = client.products_db
 oauth = OAuth()
 
