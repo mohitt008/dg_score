@@ -9,7 +9,7 @@ from objects import categoryModel, dangerousModel
 
 logger = logging.getLogger('Catfight App')
 handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000,
-                              backupCount=20)
+                              backupCount=10)
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
@@ -27,19 +27,16 @@ except Exception as err:
 
 logger.info("Loading Process Complete")
 
-ERROR_CODE = {
-    'MissingProductName' : 'MissingProductName'
-}
 
 def validate_product_args(record):
     value = True
     error_response = {}
     if type(record) is not dict:
-        error_response['type'] = "MissingDict"
+        error_response['type'] = 'MissingDict'
         value = False
     else:
         if not record.get('prd', None):
-            error_response = {'prd': ERROR_CODE['MissingProductName']}
+            error_response = {'prd': 'MissingProductName'}
             value = False
     return value, error_response
 
@@ -57,8 +54,9 @@ def get_category(list_product_names, job_id):
                                             logger)
                     output_list.append(result)
                 else:
-                    for key, value in product_name_dict.items():
-                        error_response[key] = value
+                    if type(product_name_dict) is dict:
+                        for key, value in product_name_dict.items():
+                            error_response[key] = value
                     error_response["error"] = "BAD REQUEST"
                     output_list.append(error_response)
             except Exception as err:
@@ -71,7 +69,7 @@ def get_category(list_product_names, job_id):
                              "product_name_dict" : product_name_dict})
                 pass
     else:
-        error_response = ERROR_CODE['MissingProductList']
+        error_response = 'MissingProductList'
         output_list.append(error_response)
 
     logger.info("Result produced {}".format(output_list))
