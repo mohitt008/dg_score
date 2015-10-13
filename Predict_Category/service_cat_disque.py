@@ -34,9 +34,13 @@ ERROR_CODE = {
 def validate_product_args(record):
     value = True
     error_response = {}
-    if not record.get('prd', None):
-        error_response = {'prd': ERROR_CODE['MissingProductName']}
+    if type(record) is not dict:
+        error_response['type'] = "MissingDict"
         value = False
+    else:
+        if not record.get('prd', None):
+            error_response = {'prd': ERROR_CODE['MissingProductName']}
+            value = False
     return value, error_response
 
 def get_category(list_product_names, job_id):
@@ -55,7 +59,8 @@ def get_category(list_product_names, job_id):
                 else:
                     for key, value in product_name_dict.items():
                         error_response[key] = value
-                        output_list.append(error_response)
+                    error_response["error"] = "BAD REQUEST"
+                    output_list.append(error_response)
             except Exception as err:
                 logger.error(
                     'get_category:Exception {} occurred against input: {} for job_id {}'.
@@ -64,6 +69,7 @@ def get_category(list_product_names, job_id):
                     message = "Exception occurred against input in get_category",
                     extra = {"error" : err,"job_id" : job_id,
                              "product_name_dict" : product_name_dict})
+                pass
     else:
         error_response = ERROR_CODE['MissingProductList']
         output_list.append(error_response)
