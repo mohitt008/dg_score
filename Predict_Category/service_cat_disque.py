@@ -69,7 +69,7 @@ def get_category(list_product_names, job_id):
                              "product_name_dict" : product_name_dict})
                 pass
     else:
-        error_response = 'MissingProductList'
+        error_response = {'error':'MissingProductList'}
         output_list.append(error_response)
 
     logger.info("Result produced {}".format(output_list))
