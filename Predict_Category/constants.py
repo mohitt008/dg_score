@@ -10,6 +10,8 @@ second_level_cat_names = \
                   "Electronics and Appliances",
                   "Home and Kitchen",
                   "Computers and Laptops",
+                  "Sports and Outdoors",
+                  "Health and Wellness",
                   "Shoes and Footwear"
             ]
 
