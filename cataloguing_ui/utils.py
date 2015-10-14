@@ -86,8 +86,6 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
             tag_info['tags'] = product['admin_tags']
         else:
             tag_info['tags'] = product['tags'] if 'tags' in product else None
-        tag_info['is_dang'] = product['is_dang'] if 'is_dang' in product else None
-        tag_info['is_xray'] = product['is_xray'] if 'is_xray' in product else None
         tag_info['is_dirty'] = product['is_dirty'] if 'is_dirty' in product else None
     else:
         product = get_random_product(query, to_verify, skipped_thrice)
@@ -114,8 +112,6 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
                 tag_info['tags'] = product['admin_tags']
             else:
                 tag_info['tags'] = product['tags']
-            tag_info['is_dang'] = product['is_dang']
-            tag_info['is_xray'] = product['is_xray']
             tag_info['is_dirty'] = product['is_dirty']
 
         return tag_info

@@ -116,7 +116,7 @@
       })
     }
 
-    function sendTagsAJAX(tags, dang, xray, dirty, skipped) {
+    function sendTagsAJAX(tags, dirty, skipped) {
       var url;
       if (q != 'tag') {
         url = '/cat-ui/set-verified-tags';
@@ -130,8 +130,6 @@
       var date = new Date();
       data_obj.epoch = date.getTime();
       data_obj['id'] = (is_undo) ? pid : id;
-      data_obj['is_dang'] = dang;
-      data_obj['is_xray'] = xray;
       data_obj['is_dirty'] = dirty;
       data_obj['is_skipped'] = skipped;
       data_obj['undo'] = is_undo;
@@ -144,9 +142,9 @@
       });
     }
 
-    function sendTags(tags, is_dang, is_xray, is_dirty, is_skipped) {
+    function sendTags(tags, is_dirty, is_skipped) {
 
-      sendTagsAJAX(tags, is_dang, is_xray, is_dirty, is_skipped).done(function(data) {
+      sendTagsAJAX(tags, is_dirty, is_skipped).done(function(data) {
         console.log('next product-name data:  ', data);
         if(data.error) {
             $.notify(data.error, { position:"bottom-right" });
@@ -191,8 +189,6 @@
 
       $('#submit-button').off().on('click', function() {
         if ($("span[tag][tag!=null]").length == $("span .address_element").length || $('input[type=checkbox]').is(':checked')) {
-              var is_dang = $('#dangerous-goods').is(':checked');
-              var is_xray = $('#x-ray').is(':checked');
               var is_dirty = $('#dirty-name').is(':checked');
               var is_skipped = false
               var tags = [];
@@ -205,7 +201,7 @@
               });
               pid = id;
               $('#submit-button').notify('Tags saved, fetching new product name...', "success");
-              sendTags(tags, is_dang, is_xray, is_dirty, is_skipped);
+              sendTags(tags, is_dirty, is_skipped);
         } else {
             $.notify('Please tag everything or Skip this name.', { position:"bottom-right" });
         }
@@ -215,14 +211,14 @@
           var is_skipped = true
           pid = id;
           $('#skip-button').notify('Skipping product name', "info");
-          sendTags(null, null, null, null, is_skipped);
+          sendTags(null, null, is_skipped);
       });
 
       $('#undo-button').off().on('click', function() {
           if (pid) {
             is_undo = true;
             $('#undo-button').notify('Getting previous product...', "info");
-            sendTags(null, null, null, null, null);
+            sendTags(null, null, null);
             pid = null
           }
           else
