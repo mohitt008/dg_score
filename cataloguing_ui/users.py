@@ -1,7 +1,9 @@
+import config
+
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-client = MongoClient()
+client = MongoClient(config.MONGO_IP, 27017)
 db = client.products_db
 
 
@@ -16,14 +18,19 @@ def add_user(user_dict):
         if key in user_dict:
             data_dict[key] = user_dict[key]
     print(data_dict)
-    user_c = db.users.find({'id': data_dict['id']}).count()
-    if user_c < 1:
-        data_dict.update({'tags':0, 'tags_verified':0})
-        a = db.users.update({'id': data_dict['id']}, data_dict, upsert=True)
-        print('update result...', a)
-        return a
-    else:
-        return 0
+    try:
+        user_c = db.users.find({'id': data_dict['id']}).count()
+        print('******************success*********************')
+        if user_c < 1:
+            data_dict.update({'tags':0, 'tags_verified':0})
+            a = db.users.update({'id': data_dict['id']}, data_dict, upsert=True)
+            print('update result...', a)
+            return a
+        else:
+            return 0
+    except Exception as e:
+        print('##################error#######################')
+        print(str(e))
 
 
 def get_tag_count(user_id):

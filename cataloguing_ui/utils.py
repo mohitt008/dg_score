@@ -1,12 +1,13 @@
 import re
 import json
+import config
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import randint
 from bson import json_util
 
-client = MongoClient()
+client = MongoClient(config.MONGO_IP, 27017)
 db = client.products_db
 
 
