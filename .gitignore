@@ -13,3 +13,4 @@ cataloguing_ui/config.py
 *.css~
 *.py~
 cataloguing_ui/flask_oauth2_login/__pycache__/*
+settings.py
