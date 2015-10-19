@@ -1,2 +1,0 @@
-Models/ filter=lfs diff=lfs merge=lfs -text
-Models/SubModels/ filter=lfs diff=lfs merge=lfs -text
