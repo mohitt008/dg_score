@@ -13,6 +13,22 @@ second_level_cat_names=\
      "Shoes and Footwear"
     ]
 
+second_level_cat_names_nb=\
+    ["Beauty Products and Personal Care",
+                  "Camera and Photos",
+                  "Apparel & Accessories",
+                  "Watches, Eyewear and Jewellery",
+                  "Electronics and Appliances",
+                  "Home and Kitchen",
+                  "Computers and Laptops",
+                  "Sports and Outdoors",
+                  "Health and Wellness",
+                  "Shoes and Footwear"
+    ]
+
+
+second_level_cat_names_rf=\
+    [ "Mobile Phone, Tablets and Accesories"]
 
 
 """
