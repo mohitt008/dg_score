@@ -27,21 +27,17 @@ except Exception as err:
 
 logger.info("Loading Process Complete")
 
-ERROR_CODE = {
-    'MissingProductName' : 'MissingProduct',
-    'MissingProductList' : 'MissingProductList',
-    'MissingWBN' : 'MissingWBN'
-}
 
 def validate_product_args(record):
     value = True
     error_response = {}
-    if not record.get('prd', None):
-        error_response = {'error': ERROR_CODE['MissingProductName']}
+    if type(record) is not dict:
+        error_response['type'] = 'MissingDict'
         value = False
-    if not record.get('wbn', None):
-        error_response = {'error': ERROR_CODE['MissingWBN']}
-        value = False
+    else:
+        if not record.get('prd', None):
+            error_response = {'prd': 'MissingProductName'}
+            value = False
     return value, error_response
 
 def get_category(list_product_names, job_id):
@@ -58,9 +54,11 @@ def get_category(list_product_names, job_id):
                                             logger)
                     output_list.append(result)
                 else:
-                    for key, value in product_name_dict.items():
-                        error_response[key] = value
-                        output_list.append(error_response)
+                    if type(product_name_dict) is dict:
+                        for key, value in product_name_dict.items():
+                            error_response[key] = value
+                    error_response["error"] = "BAD REQUEST"
+                    output_list.append(error_response)
             except Exception as err:
                 logger.error(
                     'get_category:Exception {} occurred against input: {} for job_id {}'.
@@ -69,8 +67,9 @@ def get_category(list_product_names, job_id):
                     message = "Exception occurred against input in get_category",
                     extra = {"error" : err,"job_id" : job_id,
                              "product_name_dict" : product_name_dict})
+                pass
     else:
-        error_response = ERROR_CODE['MissingProductList']
+        error_response = {'error':'MissingProductList'}
         output_list.append(error_response)
 
     logger.info("Result produced {}".format(output_list))
@@ -89,12 +88,14 @@ def get_products():
             for queue_name, job_id, job in jobs:
                 job_data = json.loads(job)
                 vendor = job_data['vendor']
+                username = job_data['username']
                 products = json.loads(job_data['payload'])
 
                 results = get_category(products, job_id)
                 if results:
                     results_dict = {}
-                    results_dict['vendor'] = vendor
+                    results_dict['vendor'] = str(vendor)
+                    results_dict['username'] = str(username)
                     results_dict['catfight_results'] = results
                     second_job_id = client.add_job(catfight_output,
                                                    json.dumps(results_dict),
@@ -108,7 +109,7 @@ def get_products():
                     logger.info("No results found for Job ID {} with job {}".
                                 format(job_id, job))
         except Exception as e:
-            logger.info("Function get_products failed for Job ID {} with job {} with error {}".
+            logger.error("Function get_products failed for Job ID {} with job {} with error {}".
                         format(job_id,job,e))
             sentry_client.captureException(
                 message = "get_products failed", 
