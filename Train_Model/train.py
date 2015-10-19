@@ -327,7 +327,7 @@ def second_training_process():
         elif parent_category in second_level_cat_names_rf:
             clf_rf = Pipeline([
             ('feature_selection', LinearSVC(C=2, penalty="l1", dual=False)),
-            ('classification', RandomForestClassifier(n_estimators=100, max_depth=5000))])
+            ('classification', RandomForestClassifier(n_estimators=500, max_depth=1000))])
             clf_rf.fit(train_x_vectorized, train_y)
             
             joblib.dump(clf_rf,PARENT_DIR+"/Models/SubModels/clf_rf_"+parent_category)
