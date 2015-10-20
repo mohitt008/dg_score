@@ -188,8 +188,8 @@
       });
 
       $('#submit-button').off().on('click', function() {
-        if ($("span[tag][tag!=null]").length == $("span .address_element").length || $('input[type=checkbox]').is(':checked')) {
-              var is_dirty = $('#dirty-name').is(':checked');
+        var is_dirty = $('#dirty-name').is(':checked');
+        if ($("span[tag][tag!=null]").length == $("span .address_element").length || is_dirty) {
               var is_skipped = false
               var tags = [];
               $.each($( "span .address_element"),function() {
