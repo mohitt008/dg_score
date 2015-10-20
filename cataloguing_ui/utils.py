@@ -145,8 +145,7 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
         query['verified'] = {'$exists': False}
         query['skip_count'] = {'$exists': True, '$gt': 2}
     else:
-        query['done'] = {'$exists': False}
-        query['is_dirty'] = {'$exists': False}
+        query['tagged_by'] = {'$exists': False}
         query['$or'] = [{'skip_count': {'$exists': False}}, {'skip_count': {'$lt': 3}}]
 
     untagged_count = db.products.find(query).count()
