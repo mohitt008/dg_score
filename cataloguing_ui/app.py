@@ -204,9 +204,6 @@ def set_tags():
     user_id = session['user']['id']
     posted_data['tagged_by'] = user_id
 
-    if posted_data['tags'] and (posted_data['is_dang'] or posted_data['is_xray'] or posted_data['is_dirty']):
-        posted_data['done'] = True
-
     next_name = {}
     if 'category' in posted_data:
         next_name['category'] = posted_data.pop("category")
@@ -234,8 +231,8 @@ def set_tags():
     tagging_info = get_product_tagging_details(next_name)
 
     if undo:
-        db.products.update({'_id': ObjectId(id)},{"$unset":{'is_dang':'','is_dirty':'','is_xray':'',
-                            'tags':'','tagged_by':'','epoch':'','done':''}})
+        db.products.update({'_id': ObjectId(id)},{"$unset":{'is_dirty':'', 'tags':'',
+                                                    'tagged_by':'','epoch':''}})
         dcr_tag_count(user_id)
 
     tag_count, verify_count = get_tag_count(user_id)
