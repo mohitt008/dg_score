@@ -6,7 +6,7 @@ import numpy as np
 import copy
 from check_dg import predict_dangerous
 
-def predict_category(product_name, wbn, cat_model, dang_model, logger):
+def predict_category(product_name, wbn, cat_model, dang_model, logger, username):
     try:
         l_product_name = product_name.lower()
         product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
@@ -69,7 +69,7 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
             
             
         dg_report = predict_dangerous(clean_product_name, wbn, first_level,
-                                      dang_model.dg_keywords, logger)
+                                      dang_model.dg_keywords, logger, username)
         
         result = {}
         result['cat'] = first_level
@@ -85,7 +85,7 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
             message = "predict.py: Exception occured",
             extra = {"error" : err, "product_name" : product_name})
         
-def process_product(product_name_dict, cat_model, dang_model, logger):
+def process_product(product_name_dict, cat_model, dang_model, logger, username):
     results = {}
     results_cache = ''
     
@@ -111,7 +111,7 @@ def process_product(product_name_dict, cat_model, dang_model, logger):
             clean_product_name = " ".join(product_words)
             first_level = results['cat']
             dg_report = predict_dangerous(clean_product_name, wbn, first_level,
-                                      dang_model.dg_keywords, logger)
+                                      dang_model.dg_keywords, logger, username)
 
             results['dg'] = dg_report['dangerous']
             results['cached'] = True
