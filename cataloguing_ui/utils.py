@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import randint
 from bson import json_util
+from users import find_user
 
 client = MongoClient(config.MONGO_IP, 27017)
 db = client.products_db
@@ -113,6 +114,8 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
             else:
                 tag_info['tags'] = product['tags']
             tag_info['is_dirty'] = product['is_dirty']
+            found_user = find_user(product['tagged_by'])
+            tag_info['tagged_by'] = found_user+" - "+product['tagged_by']
 
         return tag_info
     else:
