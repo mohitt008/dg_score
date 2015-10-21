@@ -134,10 +134,6 @@ function update_html(data) {
     $("#sub-category").html(data['prod_subcat']);
     $("#price").html(data['price']);
 
-    if (data['is_dang'])
-        $('#dangerous-goods').prop("checked", true);
-    if (data['is_xray'])
-        $('#x-ray').prop("checked", true);
     if (data['is_dirty'])
         $('#dirty-name').prop("checked", true);
     if (data['tag_count'])
