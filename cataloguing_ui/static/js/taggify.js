@@ -222,7 +222,7 @@
             pid = null
           }
           else
-            $('#undo-button').notify('Pehle kuch tag toh karle!', "error");
+            $('#undo-button').notify('Allowed only once after tagging atleast one product.', "error");
       });
       
     }
