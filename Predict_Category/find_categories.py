@@ -89,7 +89,7 @@ def process_product(product_name_dict, cat_model, dang_model, logger, username):
         wbn = product_name_dict.get('wbn', "")
         if not results_cache:
             results = predict_category(product_name.encode('ascii','ignore'),
-                                       wbn, cat_model, dang_model, logger)
+                                       wbn, cat_model, dang_model, logger, username)
             if results:
                 r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
                 results['cached'] = False
