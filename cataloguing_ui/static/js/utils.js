@@ -133,6 +133,8 @@ function update_html(data) {
     $("#category").html(data['prod_cat']);
     $("#sub-category").html(data['prod_subcat']);
     $("#price").html(data['price']);
+    if (data['tagged_by'])
+        $("#tagged-by").html(data['tagged_by']);
 
     if (data['is_dirty'])
         $('#dirty-name').prop("checked", true);

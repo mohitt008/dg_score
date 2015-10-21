@@ -38,6 +38,9 @@
           <tr><td>Category Identified</td><td><span id='category'></span></td></tr>
           <tr><td>Sub-Category Identified</td><td><span id='sub-category'></span></td></tr>
           <tr><td>Price</td><td>Rs. <span id='price'></span></td></tr>
+          {% if q == 'verify' %}
+            <tr><td>Tagged By</td><td><span id='tagged-by'></span></td></tr>
+          {% endif %}
       </tbody>
   </table>
 
