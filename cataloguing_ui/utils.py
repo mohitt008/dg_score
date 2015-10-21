@@ -114,8 +114,8 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
             else:
                 tag_info['tags'] = product['tags']
             tag_info['is_dirty'] = product['is_dirty']
-            tagged_by = find_user({ 'id': product['tagged_by'] })
-            tag_info['tagged_by'] = tagged_by['name']+" - "+tagged_by['id']
+            found_user = find_user(product['tagged_by'])
+            tag_info['tagged_by'] = found_user+" - "+product['tagged_by']
 
         return tag_info
     else:
