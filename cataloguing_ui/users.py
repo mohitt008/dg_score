@@ -56,5 +56,6 @@ def get_users():
     return db.users.find({},{'name':1, 'tags':1, 'tags_verified':1, 'email':1, 'id':1, '_id':0}).sort([('tags', -1)])
 
 
-def find_user(query):
-    return db.users.find_one(query)
+def find_user(id):
+    found_user = db.users.find_one({'id':id})
+    return found_user['name']
