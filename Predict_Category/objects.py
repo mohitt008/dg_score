@@ -2,9 +2,11 @@ import sys
 import csv
 from sklearn.externals import joblib
 from constants import PARENT_DIR_PATH
-from config_details import second_level_cat_names, second_level_cat_names_nb, second_level_cat_names_rf
 
 sys.path.append(PARENT_DIR_PATH)
+
+from config_details import second_level_cat_names, second_level_cat_names_nb, second_level_cat_names_rf
+
 
 class categoryModel(object):
     def __init__(self):
