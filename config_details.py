@@ -9,7 +9,9 @@ second_level_cat_names=\
      "Watches, Eyewear and Jewellery",
      "Electronics and Appliances",
      "Home and Kitchen",
+     "Sports and Outdoors",
      "Computers and Laptops",
+     "Health and Wellness",
      "Shoes and Footwear"
     ]
 
