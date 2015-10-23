@@ -20,6 +20,7 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
         second_level_vectorizer = cat_model.second_level_vectorizer
         second_level_clf_bayes = cat_model.second_level_clf_bayes
         second_level_clf_fpr = cat_model.second_level_clf_fpr
+        second_level_clf_rf = cat_model.second_level_clf_rf
 
         class1 = clf_bayes.predict(vectorizer.transform([l_product_name]))[0]
         class2_prob_vector = clf_chi.predict_proba(vectorizer.transform([l_product_name]))[0]
@@ -48,7 +49,7 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
 
         second_level = ""
 
-        if first_level in cat_model.second_level_cat_names_set:
+        if first_level in cat_model.second_level_cat_names_set_nb:
             prob_vector = second_level_clf_fpr[first_level].predict_proba(
                 second_level_vectorizer[first_level].transform([l_product_name]))[0]
             if len(np.unique(prob_vector)) == 1:
@@ -56,7 +57,17 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
                     second_level_vectorizer[first_level].transform([l_product_name]))[0]
             else:
                 second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
-
+        
+        elif first_level in cat_model.second_level_cat_names_set_rf:
+            prob_vector = second_level_clf_rf[first_level].predict_proba(
+                second_level_vectorizer[first_level].transform([l_product_name]))[0]
+            if len(np.unique(prob_vector)) == 1:
+                second_level = second_level_clf_bayes[first_level].predict(
+                    second_level_vectorizer[first_level].transform([l_product_name]))[0]
+            else:
+                second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
+            
+            
         dg_report = predict_dangerous(clean_product_name, wbn, first_level,
                                       dang_model.dg_keywords, logger)
         
