@@ -119,6 +119,8 @@ def process_product(product_name_dict, cat_model, dang_model, logger, username):
         results['invalid_product_name'] = True
     
     final_result = original_dict
+    if not results:
+        results = "Not Found"
     final_result['result'] = results
     return final_result
 
