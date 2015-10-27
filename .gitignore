@@ -13,3 +13,4 @@ cataloguing_ui/flask_oauth2_login/__pycache__/*
 Models/*
 Models/SubModels/*
 *.bz2
+settings.py
