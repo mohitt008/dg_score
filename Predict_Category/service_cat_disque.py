@@ -9,7 +9,7 @@ from objects import categoryModel, dangerousModel
 
 logger = logging.getLogger('Catfight App')
 handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000,
-                              backupCount=10)
+                              backupCount=5)
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
@@ -40,9 +40,9 @@ def validate_product_args(record):
             value = False
     return value, error_response
 
-def get_category(list_product_names, job_id):
+def get_category(list_product_names, job_id, username):
     output_list = []
-    logger.info("Request received {}".format(list_product_names))
+    logger.info("Request received {0} for username {1}".format(list_product_names,username))
     if list_product_names:
         for product_name_dict in list_product_names:
             try:
@@ -51,7 +51,8 @@ def get_category(list_product_names, job_id):
                     result = process_product(product_name_dict,
                                             cat_model,
                                             dang_model,
-                                            logger)
+                                            logger,
+                                            username)
                     output_list.append(result)
                 else:
                     if type(product_name_dict) is dict:
@@ -61,18 +62,20 @@ def get_category(list_product_names, job_id):
                     output_list.append(error_response)
             except Exception as err:
                 logger.error(
-                    'get_category:Exception {} occurred against input: {} for job_id {}'.
-                    format(err, list_product_names, job_id))
+                    'get_category:Exception {} occurred against input: {} for job_id {} for username {}'.
+                    format(err, list_product_names, job_id, username))
                 sentry_client.captureException(
                     message = "Exception occurred against input in get_category",
                     extra = {"error" : err,"job_id" : job_id,
-                             "product_name_dict" : product_name_dict})
+                             "product_name_dict" : product_name_dict,
+                             "username" : username
+                             })
                 pass
     else:
         error_response = {'error':'MissingProductList'}
         output_list.append(error_response)
 
-    logger.info("Result produced {}".format(output_list))
+    logger.info("Result produced {} for username {}".format(output_list, username))
 
     return output_list
 
@@ -91,7 +94,7 @@ def get_products():
                 username = job_data['username']
                 products = json.loads(job_data['payload'])
 
-                results = get_category(products, job_id)
+                results = get_category(products, job_id, username)
                 if results:
                     results_dict = {}
                     results_dict['vendor'] = str(vendor)

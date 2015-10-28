@@ -6,7 +6,7 @@ import numpy as np
 import copy
 from check_dg import predict_dangerous
 
-def predict_category(product_name, wbn, cat_model, dang_model, logger):
+def predict_category(product_name, wbn, cat_model, dang_model, logger, username):
     try:
         l_product_name = product_name.lower()
         product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
@@ -20,6 +20,7 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
         second_level_vectorizer = cat_model.second_level_vectorizer
         second_level_clf_bayes = cat_model.second_level_clf_bayes
         second_level_clf_fpr = cat_model.second_level_clf_fpr
+        second_level_clf_rf = cat_model.second_level_clf_rf
 
         class1 = clf_bayes.predict(vectorizer.transform([l_product_name]))[0]
         class2_prob_vector = clf_chi.predict_proba(vectorizer.transform([l_product_name]))[0]
@@ -48,7 +49,7 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
 
         second_level = ""
 
-        if first_level in cat_model.second_level_cat_names_set:
+        if first_level in cat_model.second_level_cat_names_set_nb:
             prob_vector = second_level_clf_fpr[first_level].predict_proba(
                 second_level_vectorizer[first_level].transform([l_product_name]))[0]
             if len(np.unique(prob_vector)) == 1:
@@ -56,9 +57,19 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
                     second_level_vectorizer[first_level].transform([l_product_name]))[0]
             else:
                 second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
-
+        
+        elif first_level in cat_model.second_level_cat_names_set_rf:
+            prob_vector = second_level_clf_rf[first_level].predict_proba(
+                second_level_vectorizer[first_level].transform([l_product_name]))[0]
+            if len(np.unique(prob_vector)) == 1:
+                second_level = second_level_clf_bayes[first_level].predict(
+                    second_level_vectorizer[first_level].transform([l_product_name]))[0]
+            else:
+                second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
+            
+            
         dg_report = predict_dangerous(clean_product_name, wbn, first_level,
-                                      dang_model.dg_keywords, logger)
+                                      dang_model.dg_keywords, logger, username)
         
         result = {}
         result['cat'] = first_level
@@ -74,7 +85,7 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger):
             message = "predict.py: Exception occured",
             extra = {"error" : err, "product_name" : product_name})
         
-def process_product(product_name_dict, cat_model, dang_model, logger):
+def process_product(product_name_dict, cat_model, dang_model, logger, username):
     results = {}
     results_cache = ''
     
@@ -89,7 +100,7 @@ def process_product(product_name_dict, cat_model, dang_model, logger):
         wbn = product_name_dict.get('wbn', "")
         if not results_cache:
             results = predict_category(product_name.encode('ascii','ignore'),
-                                       wbn, cat_model, dang_model, logger)
+                                       wbn, cat_model, dang_model, logger, username)
             if results:
                 r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
                 results['cached'] = False
@@ -100,7 +111,7 @@ def process_product(product_name_dict, cat_model, dang_model, logger):
             clean_product_name = " ".join(product_words)
             first_level = results['cat']
             dg_report = predict_dangerous(clean_product_name, wbn, first_level,
-                                      dang_model.dg_keywords, logger)
+                                      dang_model.dg_keywords, logger, username)
 
             results['dg'] = dg_report['dangerous']
             results['cached'] = True
@@ -108,6 +119,8 @@ def process_product(product_name_dict, cat_model, dang_model, logger):
         results['invalid_product_name'] = True
     
     final_result = original_dict
+    if not results:
+        results = "Not Found"
     final_result['result'] = results
     return final_result
 
