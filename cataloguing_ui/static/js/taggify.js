@@ -190,7 +190,7 @@
       $('#submit-button').off().on('click', function() {
         var is_dirty = $('#dirty-name').is(':checked');
         if ($("span[tag][tag!=null]").length == $("span .address_element").length || is_dirty) {
-              var is_skipped = false
+              var is_skipped = false;
               var tags = [];
               $.each($( "span .address_element"),function() {
                   if($(this).attr('tag') === undefined) {
@@ -222,7 +222,7 @@
             pid = null
           }
           else
-            $('#undo-button').notify('Pehle kuch tag toh karle!', "error");
+            $('#undo-button').notify('Allowed only once after tagging atleast one product', "error");
       });
       
     }
