@@ -10,7 +10,7 @@ sys.path.append(PARENT_DIR)
 import re
 from removeColor import removeColor
 from Load_Data.get_products import get_categories, get_delhivery_products, get_vendor_category_products, get_delhivery_vendor_products
-from config_details import second_level_cat_names
+from config_details import second_level_cat_names, second_level_cat_names_nb, second_level_cat_names_rf
 
 import csv
 import json
@@ -313,19 +313,26 @@ def second_training_process():
         clf_bayes=naive_bayes.MultinomialNB(fit_prior=False)
         clf_bayes.fit(train_x_vectorized,train_y)
 
-        clf_fpr = Pipeline([
-        ('feature_selection',SelectFpr(f_classif,0.05)),
-  ('classification', naive_bayes.MultinomialNB(fit_prior=False))])
-        clf_fpr.fit(train_x_vectorized, train_y)
-  #
-  #       clf_chi = Pipeline([
-  #       ('feature_selection',SelectPercentile(chi2,20)),
-  # ('classification', naive_bayes.MultinomialNB(fit_prior=False))])
-  #       clf_chi.fit(train_x_vectorized, train_y)
-
         joblib.dump(vectorizer,PARENT_DIR+"/Models/SubModels/Vectorizer_"+parent_category)
-        joblib.dump(clf_fpr,PARENT_DIR+"/Models/SubModels/clf_fpr_"+parent_category)
         joblib.dump(clf_bayes,PARENT_DIR+"/Models/SubModels/clf_bayes_"+parent_category)
+        
+        if parent_category in second_level_cat_names_nb:
+            clf_fpr = Pipeline([
+            ('feature_selection',SelectFpr(f_classif,0.05)),
+            ('classification', naive_bayes.MultinomialNB(fit_prior=False))])
+            clf_fpr.fit(train_x_vectorized, train_y)
+            
+            joblib.dump(clf_fpr,PARENT_DIR+"/Models/SubModels/clf_fpr_"+parent_category)
+            
+        elif parent_category in second_level_cat_names_rf:
+            clf_rf = Pipeline([
+            ('feature_selection', LinearSVC(C=2, penalty="l1", dual=False)),
+            ('classification', RandomForestClassifier(n_estimators=500, max_depth=1000))])
+            clf_rf.fit(train_x_vectorized, train_y)
+            
+            joblib.dump(clf_rf,PARENT_DIR+"/Models/SubModels/clf_rf_"+parent_category)
+
+        
 
 
 

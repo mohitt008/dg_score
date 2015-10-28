@@ -222,7 +222,7 @@
             pid = null
           }
           else
-            $('#undo-button').notify('Allowed only once after tagging atleast one product', "error");
+            $('#undo-button').notify('Allowed only once after tagging atleast one product.', "error");
       });
       
     }

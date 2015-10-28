@@ -3,6 +3,7 @@ import config
 import ast
 
 from config import my_logger
+
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
 from flask_oauth2_login import GoogleLogin
@@ -127,13 +128,11 @@ def login():
     my_logger.info("Login page hit with session data {}".format(session))
     if 'user' in session:
         return redirect(url_for('bp.tag', q='tag'))
-
     return render_template('login.htm')
 
 @bp.route('/logout')
 def logout():
     session.clear()
-    my_logger.info("Logged Out")
     return redirect(url_for('bp.login'))
 
 @bp.route('/tagging', methods=['POST', 'GET'])
@@ -141,18 +140,15 @@ def tag():
     if 'user' in session:
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
-        q = request.args.get('q')
-        my_logger.info("User on tagging page with q = {}".format(q))
+        q = request.args.get('q') 
         
         if (not session['is_admin']) and (q == 'verify' or q == '3-skips'):
-            my_logger.error("User is not admin error")
             flash('Invalid credentials', 'error')
             return redirect(url_for('bp.login'))
         
         price_range_text_list = config.PRICE_RANGE_TEXT_LIST
         price_range_value_list = config.PRICE_RANGE_VALUE_LIST
 
-        my_logger.info("Rendered template tag_product.html")
         return render_template('tag_product.html',
                                vendors=get_vendors(),
                                available_cats=get_categories(),
