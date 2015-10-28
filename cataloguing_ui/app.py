@@ -2,14 +2,7 @@ import json
 import config
 import ast
 
-import logging
-import logging.handlers
-LOG_FILENAME = 'taggify_logs.out'
-my_logger = logging.getLogger('MyLogger')
-my_logger.setLevel(logging.INFO)
-handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=2048)
-my_logger.addHandler(handler)
-
+from config import my_logger
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
 from flask_oauth2_login import GoogleLogin
@@ -57,11 +50,12 @@ def login_success(token, profile):
             return redirect(url_for('bp.tag', q='tag'))
 
         else:
+            my_logger.error("Invalid credentials error")
             flash('Invalid credentials', 'error')
             return redirect(url_for('bp.login'))
 
     else:
-        print('Login failed.')
+        my_logger.error("Login failed")
         return "Login failed"
         
 @google_login.login_failure
@@ -130,9 +124,6 @@ def index():
 
 @bp.route('/login', methods=['POST', 'GET'])
 def login():
-    '''
-    Render the simple login page having signin icons
-    '''
     my_logger.info("Login page hit with session data {}".format(session))
     if 'user' in session:
         return redirect(url_for('bp.tag', q='tag'))
@@ -179,6 +170,7 @@ def tag():
 @bp.route('/get-products', methods=['GET', 'POST'])
 def get_products():
     posted_data = request.get_json()
+    my_logger.info("Get products view hit with posted data = {}".format(posted_data))
     if 'price' in posted_data:
         posted_data['price'] = ast.literal_eval(posted_data['price'])
     q = posted_data.pop('q', None)
@@ -192,28 +184,30 @@ def get_products():
     if q == '3-skips':
         tagging_info = get_product_tagging_details(posted_data, False, True)
 
+    my_logger.info("Fetched product tagging info = {}".format(tagging_info))
     return json.dumps(tagging_info)
 
 @bp.route('/get-subcats', methods=['GET', 'POST'])
 def get_subcats():
     posted_data = request.get_json()
-    print(posted_data)
+    my_logger.info("Posted data for get sub-categories = {}".format(posted_data))
     return get_subcategories(posted_data['category_id'])
 
 @bp.route('/change-category', methods=['GET', 'POST'])
 def change_category():
     posted_data = request.get_json()
-    print(posted_data)
+    my_logger.info("Posted data for change category = {}".format(posted_data))
     update_category(posted_data['id'], posted_data['category'], posted_data['subcat'])
     tag_list = get_taglist(posted_data['category'])
     tag_list.update(get_taglist(posted_data['subcat']))
+    my_logger.info("Tag list after change category = {}".format(tag_list))
     return json.dumps(tag_list)
 
 @bp.route('/set-tags', methods=['GET', 'POST'])
 def set_tags():
     posted_data = request.get_json()
+    my_logger.info("Posted data for setting tags = {}".format(posted_data))
     q = posted_data.pop('q', None)
-    print('############posted_data###########', posted_data)
     id = posted_data.pop("id", None)
     user_id = session['user']['id']
     posted_data['tagged_by'] = user_id
@@ -230,14 +224,16 @@ def set_tags():
 
     undo = posted_data.pop("undo", None)
     if undo:
+        my_logger.info("Undo clicked")
         next_name.clear()
         next_name['_id'] = ObjectId(id)
 
     elif posted_data.pop("is_skipped"):
+        my_logger.info("Skip button clicked")
         inc_skip_count(id)
 
     else:
-        print('####id####data to be saved -- tagged -- ####', id, posted_data)        
+        my_logger.info("Tagged data to be saved after successful submit click = {}".format(posted_data))        
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id)
 
@@ -252,13 +248,14 @@ def set_tags():
     tag_count, verify_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
     tagging_info['verify_count'] = verify_count
+    my_logger.info("Next product tagging info = {}".format(tagging_info))
     return json.dumps(tagging_info)
 
 @bp.route('/set-verified-tags', methods=['GET', 'POST'])
 def set_verified_tags():
     posted_data = request.get_json()
+    my_logger.info("Posted data for setting verified tags = {}".format(posted_data))
     q = posted_data.pop('q', None)
-    print('############posted_data###########', posted_data)
     id = posted_data.pop("id", None)
     user_id = session['user']['id']
     posted_data['verified_by'] = user_id
@@ -276,18 +273,19 @@ def set_verified_tags():
 
     undo = posted_data.pop("undo", None)
     if undo:
-        print('i wanto see last product please........................................')
+        my_logger.info("Undo clicked")
         next_name.clear()
         next_name['_id'] = ObjectId(id)
         
     elif posted_data.pop("is_skipped"):
+        my_logger.info("Skip button clicked")
         admin_skip_keys = ['verified_by', 'verified', 'admin_tags']
         admin_skip_data = dict(map(lambda key: (key, posted_data.get(key, None)), admin_skip_keys))
         admin_skip_data['dirty_by_admin'] = True
         db.products.update({'_id': ObjectId(id)}, {"$set": admin_skip_data})
     
     else:
-        print('####id####data to be saved -- verified --####', id, posted_data)
+        my_logger.info("Verified data to be saved after successful submit click = {}".format(posted_data))
         db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
         inc_tag_count(user_id, True)
 
@@ -304,7 +302,7 @@ def set_verified_tags():
     tag_count, verify_count = get_tag_count(user_id)
     tagging_info['tag_count'] = tag_count
     tagging_info['verify_count'] = verify_count
-    print('----------------------------------------------',tagging_info)
+    my_logger.info("Next product tagging info = {}".format(tagging_info))
     return json.dumps(tagging_info)
 
 @bp.route('/add-subcat', methods=['GET', 'POST'])
@@ -314,9 +312,11 @@ def add_subcat():
         if request.form:
             if len(request.form['subcat']) and request.form['category'] != '-1':
                 subcat_status = add_new_subcat( request.form['category'], request.form['subcat'] )
+                my_logger.info("Sub-category = {} added successfully for category = {}".format(request.form['subcat'], request.form['category']))
             else:
                 subcat_status = 'Error'
         user_id = session['user']['id']
+        my_logger.info("New sub-category adding status = {}".format(subcat_status))
         tag_count, verify_count = get_tag_count(user_id)
         return render_template("add_sub_cat.html",
                                username=session['user']['name'],
@@ -325,12 +325,14 @@ def add_subcat():
                                available_cats=get_categories(),
                                subcat_status=subcat_status)
     else:
+        my_logger.error("User is not admin error")
         flash('Invalid credentials', 'error')
         return redirect(url_for('bp.login'))
 
 @bp.route('/leaderboard')
 def view_leaderboard():
     if 'user' in session:
+        my_logger.info("Leaderboard page hit")
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
         return render_template("leaderboard.html",
@@ -344,6 +346,7 @@ def view_leaderboard():
 @bp.route('/tag-list')
 def get_tags():
     if 'user' in session:
+        my_logger.info("Tag-list page hit")
         user_id = session['user']['id']
         tag_count, verify_count = get_tag_count(user_id)
         return render_template("tag_list.html",

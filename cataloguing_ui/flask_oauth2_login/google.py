@@ -1,5 +1,7 @@
 from .base import OAuth2Login
+from config import my_logger
 
+my_logger.info("Inside google.py")
 
 class GoogleLogin(OAuth2Login):
 
@@ -19,12 +21,13 @@ class GoogleLogin(OAuth2Login):
 
   def get_profile(self, sess):
     try:
+        my_logger.info("Getting profile with sess = {}".format(sess))
         resp = sess.get(self.profile_url)
         # FIXME: Check `error` key
         resp.raise_for_status()
         return resp.json()
     except Exception as err:
-        print ('Exception: {} sess: {}'.format(err, sess))
+        my_logger.error("Error with exception = {} and sess = {}".format(err, sess))
 
 
 
