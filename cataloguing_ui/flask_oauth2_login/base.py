@@ -1,6 +1,6 @@
 from flask import request, session, url_for
 from requests_oauthlib import OAuth2Session
-
+from config import my_logger
 
 class OAuth2Login(object):
 
@@ -43,6 +43,7 @@ class OAuth2Login(object):
     sess = self.session()
     auth_url, state = sess.authorization_url(self.auth_url, **kwargs)
     session[self.state_session_key] = state
+    my_logger.info("Auth Url = {}".format(auth_url))
     return auth_url
 
   def login(self):
@@ -60,12 +61,14 @@ class OAuth2Login(object):
       # Ignore warnings
       pass
     except Exception as e:
+      my_logger.error("Exception while fetching token = {}".format(e))
       return self.login_failure_func(e)
 
     # Get profile
     try:
       profile = self.get_profile(sess)
     except Exception as e:
+      my_logger.error("Exception while getting profile = {}".format(e))
       return self.login_failure_func(e)
 
     return self.login_success_func(sess.token, profile)
