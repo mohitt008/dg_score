@@ -1,5 +1,6 @@
 (function ($) {
   $.fn.taggify = function () {
+
     jq_name_obj = this;
     var color_dict = {}
     
@@ -161,6 +162,8 @@
             else
               tagged_data = "";
             update_html(data);
+            $("#submit-button").removeAttr("disabled")
+            $("#skip-button").removeAttr("disabled")
             $('.address').taggify();
         }
       })
@@ -190,6 +193,7 @@
       $('#submit-button').off().on('click', function() {
         var is_dirty = $('#dirty-name').is(':checked');
         if ($("span[tag][tag!=null]").length == $("span .address_element").length || is_dirty) {
+              $("#submit-button").attr("disabled", "disabled")
               var is_skipped = false;
               var tags = [];
               $.each($( "span .address_element"),function() {
@@ -200,29 +204,52 @@
                   tags.push([$(this).text(),$(this).attr('tag')])
               });
               pid = id;
-              $('#submit-button').notify('Tags saved, fetching new product name...', "success");
+              $('#submit-button').notify("Tags saved, fetching new product name...", {
+                className:"success",
+                autoHide: true,
+                autoHideDelay: 1000
+              });
               sendTags(tags, is_dirty, is_skipped);
-        } else {
-            $.notify('Please tag everything or Skip this name.', { position:"bottom-right" });
+        }
+        else {
+            $.notify("Please tag everything or Skip this name.", {
+                className:"error",
+                position:"bottom-right",
+                autoHide: true,
+                autoHideDelay: 1500
+            });
         }
       });
 
       $('#skip-button').off().on('click', function() {
+          $("#skip-button").attr("disabled", "disabled")
           var is_skipped = true
           pid = id;
-          $('#skip-button').notify('Skipping product name', "info");
+          $('#skip-button').notify("Skipping product name", {
+            className:"info",
+            autoHide: true,
+            autoHideDelay: 1000
+          });
           sendTags(null, null, is_skipped);
       });
 
       $('#undo-button').off().on('click', function() {
           if (pid) {
             is_undo = true;
-            $('#undo-button').notify('Getting previous product...', "info");
+            $('#undo-button').notify("Getting previous product...", {
+              className:"info",
+              autoHide: true,
+              autoHideDelay: 1000
+            });
             sendTags(null, null, null);
             pid = null
           }
           else
-            $('#undo-button').notify('Allowed only once after tagging atleast one product.', "error");
+            $('#undo-button').notify("Allowed only once after tagging atleast one product.", {
+              className:"error",
+              autoHide: true,
+              autoHideDelay: 1500
+            });
       });
       
     }

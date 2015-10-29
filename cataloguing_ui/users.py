@@ -1,12 +1,19 @@
 import config
 
-from config import my_logger
+from config import my_logger, sentry_client
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-client = MongoClient(config.MONGO_IP, 27017)
-db = client.products_db
-
+try:
+    client = MongoClient(config.MONGO_IP, 27017)
+    db = client.products_db
+    db.products.find().limit(1)
+except Exception as e:
+    my_logger.error("MongoClient Exception in users.py = {}".format(e))
+    sentry_client.captureException(
+        message = "MongoClient Exception in users.py",
+        extra = {"Exception":e}
+        )
 
 def add_user(user_dict):
     my_logger.info("Inside add_user function")
@@ -29,6 +36,10 @@ def add_user(user_dict):
             return 0
     except Exception as e:
         my_logger.error("Error in adding user = {}".format(str(e)))
+        sentry_client.captureException(
+            message = "Exception while adding user",
+            extra = {"Exception":e}
+            )
 
 
 def get_tag_count(user_id):
