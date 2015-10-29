@@ -2,15 +2,23 @@ import re
 import json
 import config
 
-from config import my_logger
+from config import my_logger, sentry_client
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import randint
 from bson import json_util
 from users import find_user
 
-client = MongoClient(config.MONGO_IP, 27017)
-db = client.products_db
+try:
+    client = MongoClient(config.MONGO_IP, 27017)
+    db = client.products_db
+    db.products.find().limit(1)
+except Exception as e:
+    my_logger.error("MongoClient Exception in utils.py = {}".format(e))
+    sentry_client.captureException(
+        message = "MongoClient Exception in utils.py",
+        extra = {"Exception":e}
+        )
 
 def segment_product(prod_name):
     prod_name = str(prod_name).replace(" ,", ",")
@@ -18,9 +26,10 @@ def segment_product(prod_name):
     prod_name = str(prod_name).replace(",", ", ")
     prod_name = str(prod_name).replace(".", ". ")
     prod_name = str(prod_name).replace("-", " - ")
-    prod_name = str(prod_name).replace("^", "^ ")
     prod_name = str(prod_name).replace("(", " ( ")
     prod_name = str(prod_name).replace(")", " ) ")
+    prod_name = str(prod_name).replace("|", " | ")
+    prod_name = str(prod_name).replace(";", " ; ")
     prod_name = str(prod_name).replace("\n", " ")
     prod_name = re.sub("[\s]+", " ", prod_name)
     prod_name = str(prod_name).strip()
@@ -39,7 +48,14 @@ def segment_product(prod_name):
 
 def to_json(data):
     """Convert Mongo object(s) to JSON"""
-    return json.dumps(data, default=json_util.default)
+    try:
+        return json.dumps(data, default=json_util.default)
+    except Exception as e:
+        my_logger.error("Exception in to_json function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in to_json function",
+            extra = {"Exception":e}
+            )
 
 
 def get_categories():
@@ -47,15 +63,21 @@ def get_categories():
 
 
 def get_subcategories(cat_id):
-    cursor = db.categories.find({'par_category': ObjectId(cat_id)},
-                                {'par_category': 0}).sort([('category_name', 1)])
+    try:
+        cursor = db.categories.find({'par_category': ObjectId(cat_id)},
+                                    {'par_category': 0}).sort([('category_name', 1)])
 
-    json_results = []
-    for result in cursor:
-        json_results.append(result)
-    my_logger.info("Result for get sub-categories = {}".format(json_results))
-    return to_json(json_results)
-
+        json_results = []
+        for result in cursor:
+            json_results.append(result)
+        my_logger.info("Result for get sub-categories = {}".format(json_results))
+        return to_json(json_results)
+    except Exception as e:
+        my_logger.error("Exception in get_subcategories function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in get_subcategories function",
+            extra = {"Exception":e}
+            )
 
 def get_vendors():
     return db.products.distinct('vendor')
@@ -158,7 +180,8 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)
     prod_obj = next(cur, None)
-    print("Random product name object = {}".format(prod_obj))
+    print("------------------Random product name object------------------")
+    print("{}".format(prod_obj))
     my_logger.info("Random product name object = {}".format(prod_obj))
     return prod_obj
 

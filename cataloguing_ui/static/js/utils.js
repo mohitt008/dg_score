@@ -80,6 +80,11 @@ $(document).ready(function () {
                     data: JSON.stringify({ "category": cat, "subcat": subcat, "id": id }),
                     success: function (data) {
                         $('#update-button').notify('Category Updated Successfully!', "success");
+                        $('#update-button').notify("Category Updated Successfully!", {
+                            className:"success",
+                            autoHide: true,
+                            autoHideDelay: 1500
+                        });
                         attrs="";
                         $.each(data, function (attr, code) {
                           attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';

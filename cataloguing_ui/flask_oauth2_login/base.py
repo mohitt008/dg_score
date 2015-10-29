@@ -1,6 +1,6 @@
 from flask import request, session, url_for
 from requests_oauthlib import OAuth2Session
-from config import my_logger
+from config import my_logger, sentry_client
 
 class OAuth2Login(object):
 
@@ -62,6 +62,10 @@ class OAuth2Login(object):
       pass
     except Exception as e:
       my_logger.error("Exception while fetching token = {}".format(e))
+      sentry_client.captureException(
+          message = "Exception while fetching token",
+          extra = {"Exception":e}
+          )
       return self.login_failure_func(e)
 
     # Get profile
@@ -69,6 +73,10 @@ class OAuth2Login(object):
       profile = self.get_profile(sess)
     except Exception as e:
       my_logger.error("Exception while getting profile = {}".format(e))
+      sentry_client.captureException(
+          message = "Exception while getting profile",
+          extra = {"Exception":e}
+          )
       return self.login_failure_func(e)
 
     return self.login_success_func(sess.token, profile)
