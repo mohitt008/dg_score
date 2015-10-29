@@ -2,7 +2,7 @@ import json
 import config
 import ast
 
-from config import my_logger
+from config import my_logger, sentry_client
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
@@ -17,8 +17,19 @@ bp = Blueprint('bp', __name__, static_folder='static', template_folder='template
 app = Flask(__name__)
 app.secret_key = config.APP_SECRET_KEY
 
-client = MongoClient(config.MONGO_IP, 27017)
-db = client.products_db
+my_logger.info("Logging starts here")
+
+try:
+    client = MongoClient(config.MONGO_IP, 27017)
+    db = client.products_db
+    db.products.find().limit(1)
+except Exception as e:
+    my_logger.error("MongoClient Exception in app.py = {}".format(e))
+    sentry_client.captureException(
+        message = "MongoClient Exception in app.py",
+        extra = {"Exception":e}
+        )
+
 oauth = OAuth()
 
 ############################------Google Login------####################################
@@ -51,13 +62,13 @@ def login_success(token, profile):
             return redirect(url_for('bp.tag', q='tag'))
 
         else:
-            my_logger.error("Invalid credentials error")
+            my_logger.error("Invalid credentials error with profile = {}".format(profile))
             flash('Invalid credentials', 'error')
-            return redirect(url_for('bp.login'))
-
     else:
-        my_logger.error("Login failed")
-        return "Login failed"
+        my_logger.error("User login failed, No data returned by Google")
+        flash('Login failed', 'error')
+
+    return redirect(url_for('bp.login'))
         
 @google_login.login_failure
 def login_failure(e):
@@ -165,165 +176,207 @@ def tag():
 
 @bp.route('/get-products', methods=['GET', 'POST'])
 def get_products():
-    posted_data = request.get_json()
-    my_logger.info("Get products view hit with posted data = {}".format(posted_data))
-    if 'price' in posted_data:
-        posted_data['price'] = ast.literal_eval(posted_data['price'])
-    q = posted_data.pop('q', None)
+    try:
+        posted_data = request.get_json()
+        my_logger.info("Get products view hit with posted data = {}".format(posted_data))
+        if 'price' in posted_data:
+            posted_data['price'] = ast.literal_eval(posted_data['price'])
+        q = posted_data.pop('q', None)
 
-    if 'vendor' in posted_data and posted_data['vendor'] == 'All':
-        posted_data.pop('vendor', None)
-    if q == 'tag':
-        tagging_info = get_product_tagging_details(posted_data)
-    if q == 'verify':
-        tagging_info = get_product_tagging_details(posted_data, True)
-    if q == '3-skips':
-        tagging_info = get_product_tagging_details(posted_data, False, True)
+        if 'vendor' in posted_data and posted_data['vendor'] == 'All':
+            posted_data.pop('vendor', None)
+        if q == 'tag':
+            tagging_info = get_product_tagging_details(posted_data)
+        if q == 'verify':
+            tagging_info = get_product_tagging_details(posted_data, True)
+        if q == '3-skips':
+            tagging_info = get_product_tagging_details(posted_data, False, True)
 
-    my_logger.info("Fetched product tagging info = {}".format(tagging_info))
-    return json.dumps(tagging_info)
+        my_logger.info("Fetched product tagging info = {}".format(tagging_info))
+        return json.dumps(tagging_info)
+    except Exception as e:
+        my_logger.error("Exception in get_products function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in get_products function",
+            extra = {"Exception":e}
+            )
 
 @bp.route('/get-subcats', methods=['GET', 'POST'])
 def get_subcats():
-    posted_data = request.get_json()
-    my_logger.info("Posted data for get sub-categories = {}".format(posted_data))
-    return get_subcategories(posted_data['category_id'])
+    try:
+        posted_data = request.get_json()
+        my_logger.info("Posted data for get sub-categories = {}".format(posted_data))
+        return get_subcategories(posted_data['category_id'])
+    except Exception as e:
+        my_logger.error("Exception in get_subcats function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in get_subcats function",
+            extra = {"Exception":e}
+            )
 
 @bp.route('/change-category', methods=['GET', 'POST'])
 def change_category():
-    posted_data = request.get_json()
-    my_logger.info("Posted data for change category = {}".format(posted_data))
-    update_category(posted_data['id'], posted_data['category'], posted_data['subcat'])
-    tag_list = get_taglist(posted_data['category'])
-    tag_list.update(get_taglist(posted_data['subcat']))
-    my_logger.info("Tag list after change category = {}".format(tag_list))
-    return json.dumps(tag_list)
+    try:
+        posted_data = request.get_json()
+        my_logger.info("Posted data for change category = {}".format(posted_data))
+        update_category(posted_data['id'], posted_data['category'], posted_data['subcat'])
+        tag_list = get_taglist(posted_data['category'])
+        tag_list.update(get_taglist(posted_data['subcat']))
+        my_logger.info("Tag list after change category = {}".format(tag_list))
+        return json.dumps(tag_list)
+    except Exception as e:
+        my_logger.error("Exception in change_category function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in change_category function",
+            extra = {"Exception":e}
+            )
 
 @bp.route('/set-tags', methods=['GET', 'POST'])
 def set_tags():
-    posted_data = request.get_json()
-    my_logger.info("Posted data for setting tags = {}".format(posted_data))
-    q = posted_data.pop('q', None)
-    id = posted_data.pop("id", None)
-    user_id = session['user']['id']
-    posted_data['tagged_by'] = user_id
+    try:
+        posted_data = request.get_json()
+        my_logger.info("Posted data for setting tags = {}".format(posted_data))
+        q = posted_data.pop('q', None)
+        id = posted_data.pop("id", None)
+        user_id = session['user']['id']
+        posted_data['tagged_by'] = user_id
 
-    next_name = {}
-    if 'category' in posted_data:
-        next_name['category'] = posted_data.pop("category")
-    if 'vendor' in posted_data:
-        vendor = posted_data.pop("vendor")
-        if vendor != 'All':
-            next_name['vendor'] = vendor
-    if 'price' in posted_data:
-        next_name['price'] = ast.literal_eval(posted_data.pop('price'))
+        next_name = {}
+        if 'category' in posted_data:
+            next_name['category'] = posted_data.pop("category")
+        if 'vendor' in posted_data:
+            vendor = posted_data.pop("vendor")
+            if vendor != 'All':
+                next_name['vendor'] = vendor
+        if 'price' in posted_data:
+            next_name['price'] = ast.literal_eval(posted_data.pop('price'))
 
-    undo = posted_data.pop("undo", None)
-    if undo:
-        my_logger.info("Undo clicked")
-        next_name.clear()
-        next_name['_id'] = ObjectId(id)
+        undo = posted_data.pop("undo", None)
+        if undo:
+            my_logger.info("Undo clicked")
+            next_name.clear()
+            next_name['_id'] = ObjectId(id)
 
-    elif posted_data.pop("is_skipped"):
-        my_logger.info("Skip button clicked")
-        inc_skip_count(id)
+        elif posted_data.pop("is_skipped"):
+            my_logger.info("Skip button clicked")
+            inc_skip_count(id)
 
-    else:
-        my_logger.info("Tagged data to be saved after successful submit click = {}".format(posted_data))        
-        db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
-        inc_tag_count(user_id)
+        else:
+            my_logger.info("Tagged data to be saved after successful submit click = {}".format(posted_data))        
+            db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
+            inc_tag_count(user_id)
 
-    #fetching next product tagging info
-    tagging_info = get_product_tagging_details(next_name)
+        #fetching next product tagging info
+        tagging_info = get_product_tagging_details(next_name)
 
-    if undo:
-        db.products.update({'_id': ObjectId(id)},{"$unset":{'is_dirty':'', 'tags':'',
-                                                    'tagged_by':'','epoch':''}})
-        dcr_tag_count(user_id)
+        if undo:
+            db.products.update({'_id': ObjectId(id)},{"$unset":{'is_dirty':'', 'tags':'',
+                                                        'tagged_by':'','epoch':''}})
+            dcr_tag_count(user_id)
 
-    tag_count, verify_count = get_tag_count(user_id)
-    tagging_info['tag_count'] = tag_count
-    tagging_info['verify_count'] = verify_count
-    my_logger.info("Next product tagging info = {}".format(tagging_info))
-    return json.dumps(tagging_info)
+        tag_count, verify_count = get_tag_count(user_id)
+        tagging_info['tag_count'] = tag_count
+        tagging_info['verify_count'] = verify_count
+        my_logger.info("Next product tagging info = {}".format(tagging_info))
+        return json.dumps(tagging_info)
+    except Exception as e:
+        my_logger.error("Exception in set_tags function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in set_tags function",
+            extra = {"Exception":e}
+            )
 
 @bp.route('/set-verified-tags', methods=['GET', 'POST'])
 def set_verified_tags():
-    posted_data = request.get_json()
-    my_logger.info("Posted data for setting verified tags = {}".format(posted_data))
-    q = posted_data.pop('q', None)
-    id = posted_data.pop("id", None)
-    user_id = session['user']['id']
-    posted_data['verified_by'] = user_id
-    posted_data['verified'] = True
+    try:
+        posted_data = request.get_json()
+        my_logger.info("Posted data for setting verified tags = {}".format(posted_data))
+        q = posted_data.pop('q', None)
+        id = posted_data.pop("id", None)
+        user_id = session['user']['id']
+        posted_data['verified_by'] = user_id
+        posted_data['verified'] = True
 
-    next_name = {}
-    if 'category' in posted_data:
-        next_name['category'] = posted_data.pop("category")
-    if 'vendor' in posted_data:
-        vendor = posted_data.pop("vendor")
-        if vendor != 'All':
-            next_name['vendor'] = vendor
-    if 'price' in posted_data:
-        next_name['price'] = ast.literal_eval(posted_data.pop('price'))
+        next_name = {}
+        if 'category' in posted_data:
+            next_name['category'] = posted_data.pop("category")
+        if 'vendor' in posted_data:
+            vendor = posted_data.pop("vendor")
+            if vendor != 'All':
+                next_name['vendor'] = vendor
+        if 'price' in posted_data:
+            next_name['price'] = ast.literal_eval(posted_data.pop('price'))
 
-    undo = posted_data.pop("undo", None)
-    if undo:
-        my_logger.info("Undo clicked")
-        next_name.clear()
-        next_name['_id'] = ObjectId(id)
+        undo = posted_data.pop("undo", None)
+        if undo:
+            my_logger.info("Undo clicked")
+            next_name.clear()
+            next_name['_id'] = ObjectId(id)
+            
+        elif posted_data.pop("is_skipped"):
+            my_logger.info("Skip button clicked")
+            admin_skip_keys = ['verified_by', 'verified', 'admin_tags']
+            admin_skip_data = dict(map(lambda key: (key, posted_data.get(key, None)), admin_skip_keys))
+            admin_skip_data['dirty_by_admin'] = True
+            db.products.update({'_id': ObjectId(id)}, {"$set": admin_skip_data})
         
-    elif posted_data.pop("is_skipped"):
-        my_logger.info("Skip button clicked")
-        admin_skip_keys = ['verified_by', 'verified', 'admin_tags']
-        admin_skip_data = dict(map(lambda key: (key, posted_data.get(key, None)), admin_skip_keys))
-        admin_skip_data['dirty_by_admin'] = True
-        db.products.update({'_id': ObjectId(id)}, {"$set": admin_skip_data})
-    
-    else:
-        my_logger.info("Verified data to be saved after successful submit click = {}".format(posted_data))
-        db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
-        inc_tag_count(user_id, True)
+        else:
+            my_logger.info("Verified data to be saved after successful submit click = {}".format(posted_data))
+            db.products.update({'_id': ObjectId(id)}, {"$set": posted_data})
+            inc_tag_count(user_id, True)
 
-    #fetching next product tagging info
-    if q == 'verify':
-        tagging_info = get_product_tagging_details(next_name, True)
-    elif q == '3-skips':
-        tagging_info = get_product_tagging_details(next_name, False, True)
+        #fetching next product tagging info
+        if q == 'verify':
+            tagging_info = get_product_tagging_details(next_name, True)
+        elif q == '3-skips':
+            tagging_info = get_product_tagging_details(next_name, False, True)
 
-    if undo:
-        db.products.update({'_id': ObjectId(id)},{"$unset":{'admin_tags':'','verified_by':'','verified':'','dirty_by_admin':''}})
-        dcr_tag_count(user_id, True)
+        if undo:
+            db.products.update({'_id': ObjectId(id)},{"$unset":{'admin_tags':'','verified_by':'','verified':'','dirty_by_admin':''}})
+            dcr_tag_count(user_id, True)
 
-    tag_count, verify_count = get_tag_count(user_id)
-    tagging_info['tag_count'] = tag_count
-    tagging_info['verify_count'] = verify_count
-    my_logger.info("Next product tagging info = {}".format(tagging_info))
-    return json.dumps(tagging_info)
+        tag_count, verify_count = get_tag_count(user_id)
+        tagging_info['tag_count'] = tag_count
+        tagging_info['verify_count'] = verify_count
+        my_logger.info("Next product tagging info = {}".format(tagging_info))
+        return json.dumps(tagging_info)
+    except Exception as e:
+        my_logger.error("Exception in set_verified_tags function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in set_verified_tags function",
+            extra = {"Exception":e}
+            )
 
 @bp.route('/add-subcat', methods=['GET', 'POST'])
 def add_subcat():
-    if 'user' in session and session['is_admin']:
-        subcat_status = 'Not Added'
-        if request.form:
-            if len(request.form['subcat']) and request.form['category'] != '-1':
-                subcat_status = add_new_subcat( request.form['category'], request.form['subcat'] )
-                my_logger.info("Sub-category = {} added successfully for category = {}".format(request.form['subcat'], request.form['category']))
-            else:
-                subcat_status = 'Error'
-        user_id = session['user']['id']
-        my_logger.info("New sub-category adding status = {}".format(subcat_status))
-        tag_count, verify_count = get_tag_count(user_id)
-        return render_template("add_sub_cat.html",
-                               username=session['user']['name'],
-                               tag_count=tag_count,
-                               verify_count=verify_count,
-                               available_cats=get_categories(),
-                               subcat_status=subcat_status)
-    else:
-        my_logger.error("User is not admin error")
-        flash('Invalid credentials', 'error')
-        return redirect(url_for('bp.login'))
+    try:
+        if 'user' in session and session['is_admin']:
+            subcat_status = 'Not Added'
+            if request.form:
+                if len(request.form['subcat']) and request.form['category'] != '-1':
+                    subcat_status = add_new_subcat( request.form['category'], request.form['subcat'] )
+                    my_logger.info("Sub-category = {} added successfully for category = {}".format(request.form['subcat'], request.form['category']))
+                else:
+                    subcat_status = 'Error'
+            user_id = session['user']['id']
+            my_logger.info("New sub-category adding status = {}".format(subcat_status))
+            tag_count, verify_count = get_tag_count(user_id)
+            return render_template("add_sub_cat.html",
+                                   username=session['user']['name'],
+                                   tag_count=tag_count,
+                                   verify_count=verify_count,
+                                   available_cats=get_categories(),
+                                   subcat_status=subcat_status)
+        else:
+            my_logger.error("Invalid credentials error with session = {}".format(session))
+            flash('Invalid credentials', 'error')
+            return redirect(url_for('bp.login'))
+    except Exception as e:
+        my_logger.error("Exception in add_subcat function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in add_subcat function",
+            extra = {"Exception":e}
+            )
 
 @bp.route('/leaderboard')
 def view_leaderboard():
