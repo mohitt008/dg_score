@@ -64,7 +64,7 @@ class OAuth2Login(object):
       my_logger.error("Exception while fetching token = {}".format(e))
       sentry_client.captureException(
           message = "Exception while fetching token",
-          extra = {"Exception":e}
+          extra = {"Exception": e}
           )
       return self.login_failure_func(e)
 
@@ -75,7 +75,7 @@ class OAuth2Login(object):
       my_logger.error("Exception while getting profile = {}".format(e))
       sentry_client.captureException(
           message = "Exception while getting profile",
-          extra = {"Exception":e}
+          extra = {"Exception": e}
           )
       return self.login_failure_func(e)
 
