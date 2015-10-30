@@ -1,24 +1,12 @@
 import re
 import json
-import config
 
-from config import my_logger, sentry_client
+from config import my_logger, sentry_client, db
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import randint
 from bson import json_util
 from users import find_user
-
-try:
-    client = MongoClient(config.MONGO_IP, 27017)
-    db = client.products_db
-    db.products.find().limit(1)
-except Exception as e:
-    my_logger.error("MongoClient Exception in utils.py = {}".format(e))
-    sentry_client.captureException(
-        message = "MongoClient Exception in utils.py",
-        extra = {"Exception":e}
-        )
 
 def segment_product(prod_name):
     prod_name = str(prod_name).replace(" ,", ",")
@@ -48,14 +36,7 @@ def segment_product(prod_name):
 
 def to_json(data):
     """Convert Mongo object(s) to JSON"""
-    try:
-        return json.dumps(data, default=json_util.default)
-    except Exception as e:
-        my_logger.error("Exception in to_json function, e = {}".format(e))
-        sentry_client.captureException(
-            message = "Exception in to_json function",
-            extra = {"Exception":e}
-            )
+    return json.dumps(data, default=json_util.default)
 
 
 def get_categories():
@@ -76,8 +57,9 @@ def get_subcategories(cat_id):
         my_logger.error("Exception in get_subcategories function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in get_subcategories function",
-            extra = {"Exception":e}
+            extra = {"Exception": e}
             )
+
 
 def get_vendors():
     return db.products.distinct('vendor')
@@ -85,7 +67,7 @@ def get_vendors():
 
 def get_taglist(cat_name):
     cat_obj = db.categories.find_one({"category_name": cat_name})
-    my_logger.info("In get_taglist function, cat_obj = {}".format(cat_obj))
+    my_logger.info("Tag-list object for the category {} : {}".format(cat_name, cat_obj))
     if cat_obj is not None and 'tags' in cat_obj:
         return cat_obj['tags']
     else:
@@ -141,7 +123,6 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
 
         return tag_info
     else:
-        my_logger.error("No untagged products for this vendor")
         return {'error': 'No untagged products for this vendor.'}
 
 
@@ -180,8 +161,8 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)
     prod_obj = next(cur, None)
-    print("------------------Random product name object------------------")
-    print("{}".format(prod_obj))
+    #print("------------------Random product name object------------------")
+    #print(prod_obj)
     my_logger.info("Random product name object = {}".format(prod_obj))
     return prod_obj
 
