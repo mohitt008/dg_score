@@ -13,15 +13,10 @@ db = client.products_db
 
 
 def segment_product(prod_name):
-    prod_name = str(prod_name).replace(" ,", ",")
-    prod_name = str(prod_name).replace(",", ", ")
-    prod_name = str(prod_name).replace(",", ", ")
-    prod_name = str(prod_name).replace(".", ". ")
-    prod_name = str(prod_name).replace("-", " - ")
-    prod_name = str(prod_name).replace("^", "^ ")
-    prod_name = str(prod_name).replace("(", " ( ")
-    prod_name = str(prod_name).replace(")", " ) ")
-    prod_name = str(prod_name).replace("\n", " ")
+    prod_name = str(prod_name).replace(" ,", ",").replace(", ", ",").replace(",", " , ")\
+                                .replace(".", " . ").replace("-", " - ").replace("^", " ^ ")\
+                                .replace("+", " + ").replace("(", " ( ").replace(")", " ) ")\
+                                .replace("|", " | ").replace(":", " : ").replace(";", " ; ").replace("\n", " ")
     prod_name = re.sub("[\s]+", " ", prod_name)
     prod_name = str(prod_name).strip()
     segmented_array = str(prod_name).split(" ")
