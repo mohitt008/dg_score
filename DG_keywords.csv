@@ -13,6 +13,7 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Gel,,,"Silicon, Cover, Bag, Angel, Bar, Softgels","""Sports and Outdoors"", ""Shoes and footwear"""
 0,Health,,"""Beauty Products and Personal Care"", ""Health and Wellness""",,
 1,Lotion,,,,
+1,Juice,,,"Juicer, Canvas",
 1,Mah,,,"Maha, Mahi, Maht","""Automotive"", ""Kitchenware"""
 1,Ml,,,"Container, Bag, Jug, Casserole, Thermosteel, Milton, Tupperware, Storage, Dispenser, Amla, Watch, Shaker, Jar Set, Rimless, Asus, Flask","""Home and Kitchen"", ""KitchenWare"", ""Sports and Outdoors"""
 1,Oil,,,"Boiler, Dispenser, Pastel, Tupperware, Container","""Home and Kitchen"", ""KitchenWare"", ""Office Products"""
@@ -64,7 +65,6 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Hair Color,,,,
 1,Babyoye Package,,,,
 1,Baby Product,,,,
-1,Juice,,,,
 1,Nail Art,,,,
 1,Hair Loss,,,,
 1,Pidilite,,,,
@@ -85,3 +85,8 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Makeup,,,,
 1,Lacquer,,,,
 1,Musk,,,,
+1,Creme,,,,
+1,Sandhi sudha,,,,
+1,Inkjet,,,,
+1,Hair Wax,,,,
+1,Lotus Herbal,,,,
