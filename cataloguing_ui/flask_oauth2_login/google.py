@@ -28,7 +28,7 @@ class GoogleLogin(OAuth2Login):
             my_logger.error("Error with exception = {} and sess = {}".format(err, sess))
             sentry_client.captureException(
                 message = "Exception in get_profile function in google.py",
-                extra = {"Exception":err, "Sess":sess}
+                extra = {"Exception": err, "Sess": sess}
                 )
 
 

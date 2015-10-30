@@ -2,7 +2,7 @@ import json
 import config
 import ast
 
-from config import my_logger, sentry_client
+from config import my_logger, sentry_client, db
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
@@ -18,17 +18,6 @@ app = Flask(__name__)
 app.secret_key = config.APP_SECRET_KEY
 
 my_logger.info("Logging starts here")
-
-try:
-    client = MongoClient(config.MONGO_IP, 27017)
-    db = client.products_db
-    db.products.find().limit(1)
-except Exception as e:
-    my_logger.error("MongoClient Exception in app.py = {}".format(e))
-    sentry_client.captureException(
-        message = "MongoClient Exception in app.py",
-        extra = {"Exception":e}
-        )
 
 oauth = OAuth()
 
@@ -198,7 +187,7 @@ def get_products():
         my_logger.error("Exception in get_products function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in get_products function",
-            extra = {"Exception":e}
+            extra = {"Exception": e}
             )
 
 @bp.route('/get-subcats', methods=['GET', 'POST'])
@@ -211,7 +200,7 @@ def get_subcats():
         my_logger.error("Exception in get_subcats function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in get_subcats function",
-            extra = {"Exception":e}
+            extra = {"Exception": e}
             )
 
 @bp.route('/change-category', methods=['GET', 'POST'])
@@ -228,14 +217,14 @@ def change_category():
         my_logger.error("Exception in change_category function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in change_category function",
-            extra = {"Exception":e}
+            extra = {"Exception": e}
             )
 
 @bp.route('/set-tags', methods=['GET', 'POST'])
 def set_tags():
     try:
         posted_data = request.get_json()
-        my_logger.info("Posted data for setting tags = {}".format(posted_data))
+        my_logger.info("Posted data for set_tags function = {}".format(posted_data))
         q = posted_data.pop('q', None)
         id = posted_data.pop("id", None)
         user_id = session['user']['id']
@@ -253,12 +242,10 @@ def set_tags():
 
         undo = posted_data.pop("undo", None)
         if undo:
-            my_logger.info("Undo clicked")
             next_name.clear()
             next_name['_id'] = ObjectId(id)
 
         elif posted_data.pop("is_skipped"):
-            my_logger.info("Skip button clicked")
             inc_skip_count(id)
 
         else:
@@ -283,14 +270,14 @@ def set_tags():
         my_logger.error("Exception in set_tags function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in set_tags function",
-            extra = {"Exception":e}
+            extra = {"Exception": e}
             )
 
 @bp.route('/set-verified-tags', methods=['GET', 'POST'])
 def set_verified_tags():
     try:
         posted_data = request.get_json()
-        my_logger.info("Posted data for setting verified tags = {}".format(posted_data))
+        my_logger.info("Posted data for set_verified_tags function = {}".format(posted_data))
         q = posted_data.pop('q', None)
         id = posted_data.pop("id", None)
         user_id = session['user']['id']
@@ -309,12 +296,10 @@ def set_verified_tags():
 
         undo = posted_data.pop("undo", None)
         if undo:
-            my_logger.info("Undo clicked")
             next_name.clear()
             next_name['_id'] = ObjectId(id)
             
         elif posted_data.pop("is_skipped"):
-            my_logger.info("Skip button clicked")
             admin_skip_keys = ['verified_by', 'verified', 'admin_tags']
             admin_skip_data = dict(map(lambda key: (key, posted_data.get(key, None)), admin_skip_keys))
             admin_skip_data['dirty_by_admin'] = True
@@ -344,7 +329,7 @@ def set_verified_tags():
         my_logger.error("Exception in set_verified_tags function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in set_verified_tags function",
-            extra = {"Exception":e}
+            extra = {"Exception": e}
             )
 
 @bp.route('/add-subcat', methods=['GET', 'POST'])
@@ -355,11 +340,10 @@ def add_subcat():
             if request.form:
                 if len(request.form['subcat']) and request.form['category'] != '-1':
                     subcat_status = add_new_subcat( request.form['category'], request.form['subcat'] )
-                    my_logger.info("Sub-category = {} added successfully for category = {}".format(request.form['subcat'], request.form['category']))
                 else:
                     subcat_status = 'Error'
+                my_logger.info("Cat = {}, Subcat = {}, New subcat adding status = {}".format(request.form['category'], request.form['subcat'], subcat_status))
             user_id = session['user']['id']
-            my_logger.info("New sub-category adding status = {}".format(subcat_status))
             tag_count, verify_count = get_tag_count(user_id)
             return render_template("add_sub_cat.html",
                                    username=session['user']['name'],
@@ -375,7 +359,7 @@ def add_subcat():
         my_logger.error("Exception in add_subcat function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in add_subcat function",
-            extra = {"Exception":e}
+            extra = {"Exception": e}
             )
 
 @bp.route('/leaderboard')

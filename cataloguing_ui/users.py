@@ -1,19 +1,6 @@
-import config
-
-from config import my_logger, sentry_client
+from config import my_logger, sentry_client, db
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-
-try:
-    client = MongoClient(config.MONGO_IP, 27017)
-    db = client.products_db
-    db.products.find().limit(1)
-except Exception as e:
-    my_logger.error("MongoClient Exception in users.py = {}".format(e))
-    sentry_client.captureException(
-        message = "MongoClient Exception in users.py",
-        extra = {"Exception":e}
-        )
 
 def add_user(user_dict):
     my_logger.info("Inside add_user function")
@@ -38,7 +25,7 @@ def add_user(user_dict):
         my_logger.error("Error in adding user = {}".format(str(e)))
         sentry_client.captureException(
             message = "Exception while adding user",
-            extra = {"Exception":e}
+            extra = {"Exception": e}
             )
 
 

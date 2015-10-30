@@ -1,6 +1,7 @@
 (function ($) {
   $.fn.taggify = function () {
 
+
     jq_name_obj = this;
     var color_dict = {}
     
@@ -147,6 +148,7 @@
 
       sendTagsAJAX(tags, is_dirty, is_skipped).done(function(data) {
         console.log('next product-name data:  ', data);
+        $("input[type=submit]").removeAttr("disabled");
         if(data.error) {
             $.notify(data.error, { position:"bottom-right" });
             if (data.tag_count)
@@ -162,8 +164,6 @@
             else
               tagged_data = "";
             update_html(data);
-            $("#submit-button").removeAttr("disabled")
-            $("#skip-button").removeAttr("disabled")
             $('.address').taggify();
         }
       })
@@ -193,7 +193,7 @@
       $('#submit-button').off().on('click', function() {
         var is_dirty = $('#dirty-name').is(':checked');
         if ($("span[tag][tag!=null]").length == $("span .address_element").length || is_dirty) {
-              $("#submit-button").attr("disabled", "disabled")
+              $("input[type=submit]").attr("disabled", "disabled")
               var is_skipped = false;
               var tags = [];
               $.each($( "span .address_element"),function() {
@@ -222,7 +222,7 @@
       });
 
       $('#skip-button').off().on('click', function() {
-          $("#skip-button").attr("disabled", "disabled")
+          $("input[type=submit]").attr("disabled", "disabled")
           var is_skipped = true
           pid = id;
           $('#skip-button').notify("Skipping product name", {
@@ -236,6 +236,7 @@
       $('#undo-button').off().on('click', function() {
           if (pid) {
             is_undo = true;
+            $("input[type=submit]").attr("disabled", "disabled")
             $('#undo-button').notify("Getting previous product...", {
               className:"info",
               autoHide: true,
@@ -253,6 +254,7 @@
       });
       
     }
+
     setUp()
   };
   return this
