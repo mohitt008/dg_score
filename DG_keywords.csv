@@ -16,8 +16,8 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Juice,,,"Juicer, Canvas",
 1,Mah,,,"Maha, Mahi, Maht","""Automotive"", ""Kitchenware"""
 1,Ml,,,"Container, Bag, Jug, Casserole, Thermosteel, Milton, Tupperware, Storage, Dispenser, Amla, Watch, Shaker, Jar Set, Rimless, Asus, Flask","""Home and Kitchen"", ""KitchenWare"", ""Sports and Outdoors"""
-1,Oil,,,"Boiler, Dispenser, Pastel, Tupperware, Container","""Home and Kitchen"", ""KitchenWare"", ""Office Products"""
-1,Paint,,,,
+1,Oil,,,"Boiler, Dispenser, Pastel, Tupperware, Container, Voil, Foil","""Home and Kitchen"", ""KitchenWare"", ""Office Products"""
+1,Paint,,,Painting,
 1,Parfum,,,,
 1,Perfum,,,,
 1,Polish,,,Polished,"""Apparel & Accessories"""
@@ -80,13 +80,15 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,LED Lamp,,,,
 1,LED Light,,,,
 1,Make up,,,,
-1,Enamel,,,,
+1,Enamel,,,"Metal, Alloy, Jewel, Jewl",
 1,Make-up,,,,
 1,Makeup,,,,
 1,Lacquer,,,,
-1,Musk,,,"Muska, muske",
+1,Musk,,,"Muska, Muske",
 1,Creme,,,,
 1,Sandhi sudha,,,,
 1,Inkjet,,,,
 1,Hair Wax,,,,
 1,Lotus Herbal,,,,
+1,Zippo,,,,
+1,Fluid,,,,
