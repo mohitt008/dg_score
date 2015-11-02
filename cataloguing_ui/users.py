@@ -1,36 +1,32 @@
-import config
-
+from config import my_logger, sentry_client, db
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-client = MongoClient(config.MONGO_IP, 27017)
-db = client.products_db
-
-
 def add_user(user_dict):
-    '''
-    Adds a user to the users dict
-    '''
+    my_logger.info("Inside add_user function")
     to_retain = ['id', 'name', 'gender', 'email', 'link']
-    print(user_dict)
+    my_logger.info("User dict = {}".format(user_dict))
     data_dict = {}
     for key in to_retain:
         if key in user_dict:
             data_dict[key] = user_dict[key]
-    print(data_dict)
+    my_logger.info("Data dict = {}".format(data_dict))
     try:
         user_c = db.users.find({'id': data_dict['id']}).count()
-        print('******************success*********************')
+        my_logger.info("User successfully added")
         if user_c < 1:
             data_dict.update({'tags':0, 'tags_verified':0})
             a = db.users.update({'id': data_dict['id']}, data_dict, upsert=True)
-            print('update result...', a)
+            my_logger.info("Update result = {}".format(a))
             return a
         else:
             return 0
     except Exception as e:
-        print('##################error#######################')
-        print(str(e))
+        my_logger.error("Error in adding user = {}".format(str(e)))
+        sentry_client.captureException(
+            message = "Exception while adding user",
+            extra = {"Exception": e}
+            )
 
 
 def get_tag_count(user_id):

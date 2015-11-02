@@ -1,16 +1,12 @@
 import re
 import json
-import config
 
+from config import my_logger, sentry_client, db
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import randint
 from bson import json_util
 from users import find_user
-
-client = MongoClient(config.MONGO_IP, 27017)
-db = client.products_db
-
 
 def segment_product(prod_name):
     prod_name = str(prod_name).replace(" ,", ",").replace(", ", ",").replace(",", " , ")\
@@ -42,13 +38,21 @@ def get_categories():
 
 
 def get_subcategories(cat_id):
-    cursor = db.categories.find({'par_category': ObjectId(cat_id)},
-                                {'par_category': 0}).sort([('category_name', 1)])
+    try:
+        cursor = db.categories.find({'par_category': ObjectId(cat_id)},
+                                    {'par_category': 0}).sort([('category_name', 1)])
 
-    json_results = []
-    for result in cursor:
-        json_results.append(result)
-    return to_json(json_results)
+        json_results = []
+        for result in cursor:
+            json_results.append(result)
+        my_logger.info("Result for get sub-categories = {}".format(json_results))
+        return to_json(json_results)
+    except Exception as e:
+        my_logger.error("Exception in get_subcategories function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in get_subcategories function",
+            extra = {"Exception": e}
+            )
 
 
 def get_vendors():
@@ -57,7 +61,7 @@ def get_vendors():
 
 def get_taglist(cat_name):
     cat_obj = db.categories.find_one({"category_name": cat_name})
-    print(cat_obj)
+    my_logger.info("Tag-list object for the category {} : {}".format(cat_name, cat_obj))
     if cat_obj is not None and 'tags' in cat_obj:
         return cat_obj['tags']
     else:
@@ -69,15 +73,15 @@ def get_all_tags():
     tags = {}
     for tag_dict in tags_cursor:
         tags.update(tag_dict['tags'])
-    print('######tag list######', tags, type(tags))
+    my_logger.info("In get_all_tags function, tags = {}, type of tags = {}".format(tags, type(tags)))
     return tags
 
 
 def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
+    my_logger.info("Inside get_product_tagging_details function with query = {}".format(query))
     tag_info = {}
     if '_id' in query:
         product = db.products.find_one(query)
-        print('----------------product_name------------', product)
         if 'admin_tags' in product:
             tag_info['tags'] = product['admin_tags']
         else:
@@ -88,8 +92,7 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
 
     if product is not None:
         prod_seg = segment_product(product['product_name'])
-        print('###product segmentation###')
-        print(prod_seg)
+        my_logger.info("Fetched product segmentation = {}".format(prod_seg))
         tag_list = get_taglist(product['category'])
         tag_list.update(get_taglist(product['sub_category']))
         
@@ -118,6 +121,7 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
 
 
 def add_new_subcat( cat_id, subcat ):
+    my_logger.info("Inside add_new_subcat function with cat_id = {} and subcat = {}".format(cat_id, subcat))
     category_id = ObjectId(cat_id)
     subcat = subcat.title()
     subcat_id = db.categories.insert({'category_name':subcat, 'par_category':category_id})
@@ -126,6 +130,7 @@ def add_new_subcat( cat_id, subcat ):
 
 
 def update_category(id, cat, subcat):
+    my_logger.info("Inside update_category function with id = {}, cat = {} and subcat = {}".format(id, cat, subcat))
     res = db.products.update({'_id': ObjectId(id)}, {"$set": {"category": cat,
                                                               "sub_category": subcat}
     })
@@ -150,7 +155,9 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
     rand_no = randint(0, untagged_count)
     cur = db.products.find(query).limit(-1).skip(rand_no)
     prod_obj = next(cur, None)
-    print('random product name object:', prod_obj)
+    #print("------------------Random product name object------------------")
+    #print(prod_obj)
+    my_logger.info("Random product name object = {}".format(prod_obj))
     return prod_obj
 
 
