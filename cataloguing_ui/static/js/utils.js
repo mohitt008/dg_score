@@ -16,6 +16,7 @@ $(document).ready(function () {
       // });
     $(function() {
         $( "#get-products-button" ).click(function() {
+
             var vendor = $("#select-vendor").find(":selected").val();
             var cat_val = $("#select-category").find(":selected").val();
             var cat = $("#select-category").find(":selected").text();
@@ -26,6 +27,7 @@ $(document).ready(function () {
             if( vendor=='-1' && cat_val=='-1' && price_range_value=='-1' )
                 $("#get-products-button").notify('Please select a vendor or category or price range first.');
             else {
+                $("input[type=submit]").attr("disabled", "disabled")
                 data_obj = {}
                 if( vendor != '-1' )
                     data_obj['vendor'] = vendor;
@@ -43,8 +45,10 @@ $(document).ready(function () {
                     data: JSON.stringify(data_obj),
                     success: function (data) {
                         console.log('get-products data:  ', data);
-                        if (data['error'])
+                        $("input[type=submit]").removeAttr("disabled")
+                        if (data['error']) {
                             $("#get-products-button").notify(data['error']);
+                        }
                         else {
                             update_html(data);
                             if ( q == 'verify' )
@@ -80,6 +84,11 @@ $(document).ready(function () {
                     data: JSON.stringify({ "category": cat, "subcat": subcat, "id": id }),
                     success: function (data) {
                         $('#update-button').notify('Category Updated Successfully!', "success");
+                        $('#update-button').notify("Category Updated Successfully!", {
+                            className:"success",
+                            autoHide: true,
+                            autoHideDelay: 1500
+                        });
                         attrs="";
                         $.each(data, function (attr, code) {
                           attrs += '<a href="#" tagtype ="' + code + '"><span class="tag_text">' + attr + '</span></a>';
@@ -135,7 +144,6 @@ function update_html(data) {
     $("#price").html(data['price']);
     if (data['tagged_by'])
         $("#tagged-by").html(data['tagged_by']);
-
     if (data['is_dirty'])
         $('#dirty-name').prop("checked", true);
     if (data['tag_count'])
