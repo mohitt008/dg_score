@@ -38,34 +38,31 @@ def redirect_google():
 @google_login.login_success
 def login_success(token, profile):
     if profile:
-
         domain = profile['email'].split('@')[1]
-        if domain in DELHIVERY or profile['email'] in REVERSEGAZE or profile['email'] in OTHERS:
 
-            if domain in DELHIVERY:
-                profile["user_type"] = "delhivery"
-            elif profile["email"] in REVERSEGAZE:
-                profile["user_type"] = "reversegaze"
-            elif profile["email"] in OTHERS:
-                profile["user_type"] = "others"
-
-            add_user(profile)
-            session['is_admin'] = False
-            session['user'] = profile
-            
-            if profile['email'] in config.ADMINS:
-                session['is_admin'] = True
-            return redirect(url_for('bp.tag', q='tag'))
-
+        if domain in DELHIVERY:
+            profile["user_type"] = "delhivery"
+        elif profile["email"] in REVERSEGAZE:
+            profile["user_type"] = "reversegaze"
+        elif profile["email"] in OTHERS:
+            profile["user_type"] = "others"
         else:
             my_logger.error("Invalid credentials error with profile = {}".format(profile))
             flash('Invalid credentials', 'error')
+            return redirect(url_for('bp.login'))
+
+        add_user(profile)
+        session['is_admin'] = False
+        session['user'] = profile
+        if profile['email'] in config.ADMINS:
+            session['is_admin'] = True
+
+        return redirect(url_for('bp.tag', q='tag'))
     else:
         my_logger.error("User login failed, No data returned by Google")
         flash('Login failed', 'error')
-
-    return redirect(url_for('bp.login'))
-        
+        return redirect(url_for('bp.login'))
+       
 @google_login.login_failure
 def login_failure(e):
   return jsonify(error=str(e))
