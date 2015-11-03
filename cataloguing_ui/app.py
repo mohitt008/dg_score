@@ -181,12 +181,13 @@ def get_products():
 
         if 'vendor' in posted_data and posted_data['vendor'] == 'All':
             posted_data.pop('vendor', None)
-        if q == 'tag':
-            tagging_info = get_product_tagging_details(posted_data)
+            
         if q == 'verify':
             tagging_info = get_product_tagging_details(posted_data, True)
-        if q == '3-skips':
+        elif q == '3-skips':
             tagging_info = get_product_tagging_details(posted_data, False, True)
+        else:
+            tagging_info = get_product_tagging_details(posted_data)
 
         my_logger.info("Fetched product tagging info = {}".format(tagging_info))
         return json.dumps(tagging_info)
