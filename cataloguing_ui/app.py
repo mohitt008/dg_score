@@ -2,12 +2,11 @@ import json
 import config
 import ast
 
-from config import my_logger, sentry_client, db
+from config import my_logger, sentry_client, db, DELHIVERY, REVERSEGAZE, OTHERS
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
 from flask_oauth2_login import GoogleLogin
-from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat
@@ -41,7 +40,15 @@ def login_success(token, profile):
     if profile:
 
         domain = profile['email'].split('@')[1]
-        if domain in config.ALLOWED_DOMAINS or profile['email'] in config.WHITELIST:
+        if domain in DELHIVERY or profile['email'] in REVERSEGAZE or profile['email'] in OTHERS:
+
+            if domain in DELHIVERY:
+                profile["user_type"] = "delhivery"
+            elif profile["email"] in REVERSEGAZE:
+                profile["user_type"] = "reversegaze"
+            elif profile["email"] in OTHERS:
+                profile["user_type"] = "others"
+
             add_user(profile)
             session['is_admin'] = False
             session['user'] = profile
