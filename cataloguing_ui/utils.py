@@ -2,7 +2,6 @@ import re
 import json
 
 from config import my_logger, sentry_client, db
-from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import randint
 from bson import json_util
