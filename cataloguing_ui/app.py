@@ -2,12 +2,11 @@ import json
 import config
 import ast
 
-from config import my_logger, sentry_client, db
+from config import my_logger, sentry_client, db, DELHIVERY, REVERSEGAZE, OTHERS
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
 from flask_oauth2_login import GoogleLogin
-from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat
@@ -39,26 +38,31 @@ def redirect_google():
 @google_login.login_success
 def login_success(token, profile):
     if profile:
-
         domain = profile['email'].split('@')[1]
-        if domain in config.ALLOWED_DOMAINS or profile['email'] in config.WHITELIST:
-            add_user(profile)
-            session['is_admin'] = False
-            session['user'] = profile
-            
-            if profile['email'] in config.ADMINS:
-                session['is_admin'] = True
-            return redirect(url_for('bp.tag', q='tag'))
 
+        if domain in DELHIVERY:
+            profile["user_type"] = "delhivery"
+        elif profile["email"] in REVERSEGAZE:
+            profile["user_type"] = "reversegaze"
+        elif profile["email"] in OTHERS:
+            profile["user_type"] = "others"
         else:
             my_logger.error("Invalid credentials error with profile = {}".format(profile))
             flash('Invalid credentials', 'error')
+            return redirect(url_for('bp.login'))
+
+        add_user(profile)
+        session['is_admin'] = False
+        session['user'] = profile
+        if profile['email'] in config.ADMINS:
+            session['is_admin'] = True
+
+        return redirect(url_for('bp.tag', q='tag'))
     else:
         my_logger.error("User login failed, No data returned by Google")
         flash('Login failed', 'error')
-
-    return redirect(url_for('bp.login'))
-        
+        return redirect(url_for('bp.login'))
+       
 @google_login.login_failure
 def login_failure(e):
   return jsonify(error=str(e))
@@ -174,12 +178,13 @@ def get_products():
 
         if 'vendor' in posted_data and posted_data['vendor'] == 'All':
             posted_data.pop('vendor', None)
-        if q == 'tag':
-            tagging_info = get_product_tagging_details(posted_data)
+            
         if q == 'verify':
             tagging_info = get_product_tagging_details(posted_data, True)
-        if q == '3-skips':
+        elif q == '3-skips':
             tagging_info = get_product_tagging_details(posted_data, False, True)
+        else:
+            tagging_info = get_product_tagging_details(posted_data)
 
         my_logger.info("Fetched product tagging info = {}".format(tagging_info))
         return json.dumps(tagging_info)
