@@ -130,6 +130,36 @@ $(document).ready(function () {
             });
         });
     });
+
+    $(function () {
+        $('#specify-cat-filter').on("change", function () {
+            var cat_filter = $(this).find(':selected').val();
+            $.ajax({
+                url: '/cat-ui/get-subcats',
+                dataType: 'json',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({"category_id": cat_id}),
+                success: function (data) {
+                    console.log('update-subcategory data :  ', data);
+                    $("#update-subcategory").prop('disabled', false);
+                    if (jQuery.isEmptyObject(data)) {
+                        $("#update-subcategory").html('<option value="-1">--- No Sub-Categories found ---</option>');
+                        $("#update-subcategory").prop('disabled', true);
+                    } else {
+                        var subcat_options = '<option value="-1">-------- Select Sub-Category --------</option>';
+                        $.each(data, function (i, obj) {
+                            $.each(obj._id, function (key, value) {
+                                subcat_options += '<option value="' + value + '">' + obj.category_name + '</option>';
+                            });
+                        });
+                        $("#update-subcategory").html(subcat_options);
+                    }
+                }
+            });
+        });
+    });
+
 });
 
 function update_html(data) {
