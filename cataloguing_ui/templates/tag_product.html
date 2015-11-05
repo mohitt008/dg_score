@@ -6,22 +6,28 @@
 <p></p>
 
 <select id="select-vendor">
-  <option value="-1">------- Select Vendor -------</option>
+  <option value="-1">--- Select Vendor ---</option>
   {% for vendor in vendors %}
     <option value={{vendor}}>{{vendor}}</option>
   {% endfor %}
   <option value="All">--- All Vendors ---</option>
 </select>
 
+<select id="specify-cat-filter">
+  <option value="-1">--- Specify Category Filter ---</option>
+    <option value={{"vc"}}>{{"Use Vendor Category"}}</option>
+    <option value={{"dc"}}>{{"Use Detected Category"}}</option>
+</select>
+
 <select id="select-category">
-  <option value='-1'>----------- Select Category -----------</option>
+  <option value='-1'>-------------- Select Category --------------</option>
   {% for cat in available_cats1 %}
     <option value='{{cat._id}}'>{{cat.category_name}}</option>
   {% endfor %}
 </select>
 
 <select id="select-price-range">
-  <option value='-1'>----------- Select Price Range -----------</option>
+  <option value='-1'>--- Select Price Range ---</option>
   {% for i in range(6) %}
     <option value='{{price_range_value_list[i]}}'>{{price_range_text_list[i]}}</option>
   {% endfor %}
