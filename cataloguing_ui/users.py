@@ -1,26 +1,17 @@
 from config import my_logger, sentry_client, db
-from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 def add_user(user_dict):
-    my_logger.info("Inside add_user function")
-    to_retain = ['id', 'name', 'gender', 'email', 'link']
-    my_logger.info("User dict = {}".format(user_dict))
-    data_dict = {}
-    for key in to_retain:
-        if key in user_dict:
-            data_dict[key] = user_dict[key]
-    my_logger.info("Data dict = {}".format(data_dict))
+    my_logger.info("Inside add_user function with user_dict = {}".format(user_dict))
+
+    to_retain = ['id', 'name', 'gender', 'email', 'link', 'user_type']
+    data_dict = dict(map(lambda key: (key, user_dict.get(key, None)), to_retain))
     try:
         user_c = db.users.find({'id': data_dict['id']}).count()
-        my_logger.info("User successfully added")
         if user_c < 1:
             data_dict.update({'tags':0, 'tags_verified':0})
-            a = db.users.update({'id': data_dict['id']}, data_dict, upsert=True)
-            my_logger.info("Update result = {}".format(a))
-            return a
-        else:
-            return 0
+            my_logger.info("Adding new user with data = {}".format(data_dict))
+            db.users.update({'id': data_dict['id']}, data_dict, upsert=True)
     except Exception as e:
         my_logger.error("Error in adding user = {}".format(str(e)))
         sentry_client.captureException(
