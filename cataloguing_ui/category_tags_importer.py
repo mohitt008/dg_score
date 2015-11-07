@@ -84,4 +84,5 @@ for row in reader:
                                  {'$addToSet': {'children': ObjectId(subcat_obj['_id'])}})
         set_code(row[2], row[3], subcat_obj['_id'])
 
-print(existing_tag_dict)
+for keys in sorted(existing_tag_dict):
+    print(keys, "-----", existing_tag_dict[keys])
