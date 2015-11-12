@@ -9,7 +9,7 @@ from flask_oauthlib.client import OAuth
 from flask_oauth2_login import GoogleLogin
 from bson.objectid import ObjectId
 
-from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat
+from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat, get_cat_list
 from users import add_user, get_tag_count, inc_tag_count, dcr_tag_count, get_users
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
@@ -195,6 +195,19 @@ def get_products():
             extra = {"Exception": e}
             )
 
+@bp.route('/get-cats', methods=['GET', 'POST'])
+def get_cats():
+    try:
+        posted_data = request.get_json()
+        my_logger.info("Posted data for getting categories = {}".format(posted_data))
+        return get_cat_list( posted_data["cat_filter"], posted_data["vendor"] )
+    except Exception as e:
+        my_logger.error("Exception in get_cats function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in get_cats function",
+            extra = {"Exception": e}
+            )
+
 @bp.route('/get-subcats', methods=['GET', 'POST'])
 def get_subcats():
     try:
@@ -238,6 +251,12 @@ def set_tags():
         next_name = {}
         if 'category' in posted_data:
             next_name['category'] = posted_data.pop("category")
+        if 'vendor_cat' in posted_data:
+            next_name['vendor_cat'] = posted_data.pop('vendor_cat')
+        if 'sub_category' in posted_data:
+            next_name['sub_category'] = posted_data.pop('sub_category')
+        if 'vendor_subcat' in posted_data:
+            next_name['vendor_subcat'] = posted_data.pop('vendor_subcat')
         if 'vendor' in posted_data:
             vendor = posted_data.pop("vendor")
             if vendor != 'All':
@@ -292,6 +311,12 @@ def set_verified_tags():
         next_name = {}
         if 'category' in posted_data:
             next_name['category'] = posted_data.pop("category")
+        if 'vendor_cat' in posted_data:
+            next_name['vendor_cat'] = posted_data.pop('vendor_cat')
+        if 'sub_category' in posted_data:
+            next_name['sub_category'] = posted_data.pop('sub_category')
+        if 'vendor_subcat' in posted_data:
+            next_name['vendor_subcat'] = posted_data.pop('vendor_subcat')
         if 'vendor' in posted_data:
             vendor = posted_data.pop("vendor")
             if vendor != 'All':

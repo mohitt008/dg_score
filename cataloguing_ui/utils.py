@@ -32,6 +32,25 @@ def to_json(data):
     return json.dumps(data, default=json_util.default)
 
 
+def get_cat_list( cat_filter, vendor ):
+    try:
+        if cat_filter == "vc":
+            cat_cur = db.categories.find({"par_category": None, "vendor": vendor}).sort([("category_name", 1)])
+        elif cat_filter == "dc":
+            cat_cur = db.categories.find({"par_category": None, "vendor": "HQ-Data"}).sort([("category_name", 1)])
+        else:
+            return to_json([])
+        cat_list = []
+        for cat in cat_cur:
+            cat_list.append(cat)
+        return to_json(cat_list)
+    except Exception as e:
+        my_logger.error("Exception in get_cats function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in get_cats function",
+            extra = {"Exception": e}
+            )        
+
 def get_categories():
     return db.categories.find({'par_category': None}).sort([('category_name', 1)])
 
@@ -100,6 +119,8 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
         tag_info['vendor'] = product['vendor']
         tag_info['prod_cat'] = product['category']
         tag_info['prod_subcat'] = product['sub_category']
+        tag_info['vendor_cat'] = product['vendor_cat']
+        tag_info['vendor_subcat'] = product['vendor_subcat']
         tag_info['prod_url'] = product['product_url']
         tag_info['price'] = product['price']
         tag_info['taglist'] = tag_list
