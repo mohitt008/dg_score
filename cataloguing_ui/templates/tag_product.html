@@ -5,7 +5,7 @@
 <li>Please select a vendor or category or price range first. If you select more than one, the result will be an intersection of the selected drop-downs.</li>
 <p></p>
 
-<select id="select-vendor">
+<select id="select-vendor" class="get-cats-class">
   <option value="-1">--- Select Vendor ---</option>
   {% for vendor in vendors %}
     <option value={{vendor}}>{{vendor}}</option>
@@ -13,7 +13,7 @@
   <option value="All">--- All Vendors ---</option>
 </select>
 
-<select id="specify-cat-filter">
+<select id="specify-cat-filter" class="get-cats-class">
   <option value="-1">--- Specify Category Filter ---</option>
     <option value="vc">Use Vendor Category</option>
     <option value="dc">Use Delhivery Category</option>
