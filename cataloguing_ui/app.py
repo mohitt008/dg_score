@@ -9,7 +9,7 @@ from flask_oauthlib.client import OAuth
 from flask_oauth2_login import GoogleLogin
 from bson.objectid import ObjectId
 
-from utils import update_category, get_categories, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat, get_cat_list
+from utils import update_category, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat, get_cat_list, to_json
 from users import add_user, get_tag_count, inc_tag_count, dcr_tag_count, get_users
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
@@ -155,8 +155,7 @@ def tag():
 
         return render_template('tag_product.html',
                                vendors=get_vendors(),
-                               available_cats=get_categories(),
-                               available_cats1=get_categories(),
+                               available_cats=get_cat_list( "dc", "HQ-Data" ),
                                price_range_text_list=price_range_text_list,
                                price_range_value_list=price_range_value_list,
                                username=session['user']['name'],
@@ -200,7 +199,11 @@ def get_cats():
     try:
         posted_data = request.get_json()
         my_logger.info("Posted data for getting categories = {}".format(posted_data))
-        return get_cat_list( posted_data["cat_filter"], posted_data["vendor"] )
+        cat_cur = get_cat_list( posted_data["cat_filter"], posted_data["vendor"] )
+        cat_list = []
+        for cat in cat_cur:
+            cat_list.append(cat)
+        return to_json(cat_list)
     except Exception as e:
         my_logger.error("Exception in get_cats function, e = {}".format(e))
         sentry_client.captureException(
@@ -379,7 +382,7 @@ def add_subcat():
                                    username=session['user']['name'],
                                    tag_count=tag_count,
                                    verify_count=verify_count,
-                                   available_cats=get_categories(),
+                                   available_cats=get_cat_list( "dc", "HQ-Data" ),
                                    subcat_status=subcat_status)
         else:
             my_logger.error("Invalid credentials error with session = {}".format(session))

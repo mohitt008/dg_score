@@ -37,8 +37,22 @@
       <tbody>
           <tr><td>Product Name</td><td><span id='org_prod_name'></span></td></tr>
           <tr><td>Vendor</td><td><a href="#" target="_blank" id='vendor_name'></a></td></tr>
-          <tr><td>Category Identified</td><td><span id='category'></span></td></tr>
-          <tr><td>Sub-Category Identified</td><td><span id='sub-category'></span></td></tr>
+          <tr>
+            <td>Category Identified</td>
+            <td>
+              <span id='category'></span>
+              <img id='cat-new'
+                    src="{{url_for('bp.static',filename='img/updated.gif')}}" style="display: none;">
+            </td>
+          </tr>
+          <tr>
+            <td>Sub-Category Identified</td>
+            <td>
+              <span id='sub-category'></span>
+              <img id='subcat-new'
+                    src="{{url_for('bp.static',filename='img/updated.gif')}}" style="display: none;">
+            </td>
+          </tr>
           <tr><td>Price</td><td>Rs. <span id='price'></span></td></tr>
           {% if q == 'verify' %}
             <tr><td>Tagged By</td><td><span id='tagged-by'></span></td></tr>

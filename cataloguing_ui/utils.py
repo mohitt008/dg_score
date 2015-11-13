@@ -39,20 +39,14 @@ def get_cat_list( cat_filter, vendor ):
         elif cat_filter == "dc":
             cat_cur = db.categories.find({"par_category": None, "vendor": "HQ-Data"}).sort([("category_name", 1)])
         else:
-            return to_json([])
-        cat_list = []
-        for cat in cat_cur:
-            cat_list.append(cat)
-        return to_json(cat_list)
+            cat_cur = {}
+        return cat_cur
     except Exception as e:
         my_logger.error("Exception in get_cats function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in get_cats function",
             extra = {"Exception": e}
             )        
-
-def get_categories():
-    return db.categories.find({'par_category': None}).sort([('category_name', 1)])
 
 
 def get_subcategories(cat_id):
