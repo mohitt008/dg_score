@@ -113,6 +113,10 @@ $(document).ready(function () {
                         });
 
                         $(".extra-attrs").html(attrs);
+                        $("#category").html(cat);
+                        $("#cat-new").show();
+                        $("#sub-category").html(subcat);
+                        $("#subcat-new").show();
                         $('.address').taggify();
                     }
                 });
@@ -160,6 +164,8 @@ function update_html(data) {
     $("#category").html(data['prod_cat']);
     $("#sub-category").html(data['prod_subcat']);
     $("#price").html(data['price']);
+    $("#cat-new").hide();
+    $("#subcat-new").hide();
     if (data['tagged_by'])
         $("#tagged-by").html(data['tagged_by']);
     if (data['is_dirty'])
@@ -236,7 +242,7 @@ function get_cats() {
     }
 }
 
-function get_subcats( cat_id, task ) {
+function get_subcats( cat_id, dropdown_id ) {
     console.log( cat_id )
     $.ajax({
         url: '/cat-ui/get-subcats',
@@ -246,19 +252,19 @@ function get_subcats( cat_id, task ) {
         data: JSON.stringify({"category_id": cat_id}),
         success: function (data) {
             console.log('subcategory data : ', data);
-            $(task).prop('disabled', false);
-            $(task).css("width", "200px");
             if (jQuery.isEmptyObject(data)) {
-                $(task).html('<option value="-1">--- No Sub-Categories found ---</option>');
-                $(task).prop('disabled', true);
-            } else {
+                $(dropdown_id).html('<option value="-1">--- No Sub-Categories found ---</option>');
+            }
+            else {
                 var subcat_options = '<option value="-1">--- Select Sub-Category ---</option>';
                 $.each(data, function (i, obj) {
                     $.each(obj._id, function (key, value) {
                         subcat_options += '<option value="' + value + '">' + obj.category_name + '</option>';
                     });
                 });
-                $(task).html(subcat_options);
+                $(dropdown_id).prop('disabled', false);
+                $(dropdown_id).css("width", "200px");
+                $(dropdown_id).html(subcat_options);
             }
         }
     });
