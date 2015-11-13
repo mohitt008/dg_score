@@ -62,7 +62,6 @@ $(document).ready(function () {
                     contentType: 'application/json',
                     data: JSON.stringify(data_obj),
                     success: function (data) {
-                        console.log('get-products data:  ', data);
                         $("input[type=submit]").removeAttr("disabled")
                         if (data['error']) {
                             $("#get-products-button").notify(data['error']);
@@ -133,13 +132,7 @@ $(document).ready(function () {
     });
 
     $(function () {
-        $("#select-vendor").on("change", function () {
-            get_cats()
-        });
-    });
-
-    $(function () {
-        $("#specify-cat-filter").on("change", function () {
+        $(".get-cats-class").on("change", function () {
             get_cats()
         });
     });
@@ -195,19 +188,15 @@ function get_cats() {
     $("#select-subcategory").prop('disabled', true);
     var vendor = $("#select-vendor").find(":selected").val();
     var cat_filter = $("#specify-cat-filter").find(":selected").val();
-    console.log(vendor);
-    console.log(cat_filter);
 
     if( cat_filter != "-1" ){
 
-        var flag = true
-        if ( cat_filter == "vc" ) {
-            if ( (vendor == "All") || (vendor == "-1") ) {
-                flag = false;
-            }
+        if ( cat_filter=="vc" && (vendor=="All" || vendor=="-1") ) {
+            $("#select-category").empty()
+            $("#select-category").prop('disabled', true);
+            $.notify("Invalid combination! Please select any specific vendor to get corresponding categories", {clickToHide: true});
         }
-
-        if ( flag ) {
+        else {
             $.ajax({
                 url: '/cat-ui/get-cats',
                 dataType: 'json',
@@ -233,17 +222,10 @@ function get_cats() {
                 }
             });
         }
-        else {
-            console.log("Invalid combination!");
-            $("#select-category").empty()
-            $("#select-category").prop('disabled', true);
-            $.notify("Invalid combination! Please select any specific vendor to get corresponding categories", {clickToHide: true});
-        }
     }
 }
 
 function get_subcats( cat_id, dropdown_id ) {
-    console.log( cat_id )
     $.ajax({
         url: '/cat-ui/get-subcats',
         dataType: 'json',
@@ -251,7 +233,6 @@ function get_subcats( cat_id, dropdown_id ) {
         contentType: 'application/json',
         data: JSON.stringify({"category_id": cat_id}),
         success: function (data) {
-            console.log('subcategory data : ', data);
             if (jQuery.isEmptyObject(data)) {
                 $(dropdown_id).html('<option value="-1">--- No Sub-Categories found ---</option>');
             }
