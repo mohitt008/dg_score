@@ -18,8 +18,18 @@ $(document).ready(function () {
         $( "#get-products-button" ).click(function() {
 
             var vendor = $("#select-vendor").find(":selected").val();
-            var cat_val = $("#select-category").find(":selected").val();
-            var cat = $("#select-category").find(":selected").text();
+            var cat_filter = $("#specify-cat-filter").find(":selected").val();
+            if( cat_filter == "-1" )
+                var cat_val = "-1";
+            else {
+                var cat_val = $("#select-category").find(":selected").val();
+                var cat = $("#select-category").find(":selected").text();
+            }
+            var subcat_val = $("#select-subcategory").find(":selected").val();
+            if( subcat_val == "-1" )
+                var subcat = null;
+            else
+                var subcat = $("#select-subcategory").find(":selected").text();
             var price_range_value = $("#select-price-range").find(":selected").val();
             var sPageURL = window.location.search.substring(1);
             sPageURL_split_list = sPageURL.split('=');
@@ -31,8 +41,16 @@ $(document).ready(function () {
                 data_obj = {}
                 if( vendor != '-1' )
                     data_obj['vendor'] = vendor;
-                if( cat_val != '-1' )
-                    data_obj['category'] = cat;
+                if( cat_val != '-1' && cat_val != null )
+                    if( cat_filter == "dc" )
+                        data_obj["category"] = cat;
+                    else if( cat_filter == "vc" )
+                        data_obj["vendor_cat"] = cat;
+                if( subcat )
+                    if( cat_filter == "dc ")
+                        data_obj['sub_category'] = subcat
+                    else if( cat_filter == "vc" )
+                        data_obj["vendor_subcat"] = subcat
                 if( price_range_value != '-1' )
                     data_obj['price'] = price_range_value;
                 q = sPageURL_split_list[1];
@@ -44,7 +62,6 @@ $(document).ready(function () {
                     contentType: 'application/json',
                     data: JSON.stringify(data_obj),
                     success: function (data) {
-                        console.log('get-products data:  ', data);
                         $("input[type=submit]").removeAttr("disabled")
                         if (data['error']) {
                             $("#get-products-button").notify(data['error']);
@@ -95,6 +112,10 @@ $(document).ready(function () {
                         });
 
                         $(".extra-attrs").html(attrs);
+                        $("#category").html(cat);
+                        $("#cat-new").show();
+                        $("#sub-category").html(subcat);
+                        $("#subcat-new").show();
                         $('.address').taggify();
                     }
                 });
@@ -105,31 +126,25 @@ $(document).ready(function () {
     $(function () {
         $('#update-category').on("change", function () {
             var cat_id = $(this).find(':selected').val();
-            $.ajax({
-                url: '/cat-ui/get-subcats',
-                dataType: 'json',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({"category_id": cat_id}),
-                success: function (data) {
-                    console.log('update-subcategory data :  ', data);
-                    $("#update-subcategory").prop('disabled', false);
-                    if (jQuery.isEmptyObject(data)) {
-                        $("#update-subcategory").html('<option value="-1">--- No Sub-Categories found ---</option>');
-                        $("#update-subcategory").prop('disabled', true);
-                    } else {
-                        var subcat_options = '<option value="-1">-------- Select Sub-Category --------</option>';
-                        $.each(data, function (i, obj) {
-                            $.each(obj._id, function (key, value) {
-                                subcat_options += '<option value="' + value + '">' + obj.category_name + '</option>';
-                            });
-                        });
-                        $("#update-subcategory").html(subcat_options);
-                    }
-                }
-            });
+            if( cat_id != "-1" )
+                get_subcats( cat_id, "#update-subcategory" )
         });
     });
+
+    $(function () {
+        $(".get-cats-class").on("change", function () {
+            get_cats()
+        });
+    });
+
+    $(function () {
+        $("#select-category").on("change", function () {
+            var cat_id = $(this).find(':selected').val();
+            if( cat_id != "-1" )
+                get_subcats( cat_id, "#select-subcategory" )
+        });
+    });
+
 });
 
 function update_html(data) {
@@ -142,6 +157,8 @@ function update_html(data) {
     $("#category").html(data['prod_cat']);
     $("#sub-category").html(data['prod_subcat']);
     $("#price").html(data['price']);
+    $("#cat-new").hide();
+    $("#subcat-new").hide();
     if (data['tagged_by'])
         $("#tagged-by").html(data['tagged_by']);
     if (data['is_dirty'])
@@ -160,4 +177,76 @@ function update_html(data) {
     $(".extra-attrs").html(attrs);
     id = data['id'];
     prod_seg = JSON.parse(data['prod_seg']);
+}
+
+function get_cats() {
+    $("#select-category").empty()
+    $("#select-category").css("width", "")
+    $("#select-category").prop('disabled', true);
+    $("#select-subcategory").empty()
+    $("#select-subcategory").css("width", "")
+    $("#select-subcategory").prop('disabled', true);
+    var vendor = $("#select-vendor").find(":selected").val();
+    var cat_filter = $("#specify-cat-filter").find(":selected").val();
+
+    if( cat_filter != "-1" ){
+
+        if ( cat_filter=="vc" && (vendor=="All" || vendor=="-1") ) {
+            $("#select-category").empty()
+            $("#select-category").prop('disabled', true);
+            $.notify("Invalid combination! Please select any specific vendor to get corresponding categories", {clickToHide: true});
+        }
+        else {
+            $.ajax({
+                url: '/cat-ui/get-cats',
+                dataType: 'json',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({"cat_filter": cat_filter, "vendor": vendor}),
+                success: function (data) {
+                    $("#select-category").css("width", "150px");
+                    $("#select-category").prop("disabled", false);
+                    if (jQuery.isEmptyObject(data)) {
+                        $("#select-category").empty()
+                        $("#select-category").prop("disabled", true);
+                    }
+                    else {
+                        var cat_options = '<option value="-1">--- Select Category ---</option>';
+                        $.each(data, function (i, obj) {
+                            $.each(obj._id, function (key, value) {
+                                cat_options += '<option value="' + value + '">' + obj.category_name + '</option>';
+                            });
+                        });
+                        $("#select-category").html(cat_options);
+                    }
+                }
+            });
+        }
+    }
+}
+
+function get_subcats( cat_id, dropdown_id ) {
+    $.ajax({
+        url: '/cat-ui/get-subcats',
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({"category_id": cat_id}),
+        success: function (data) {
+            if (jQuery.isEmptyObject(data)) {
+                $(dropdown_id).html('<option value="-1">--- No Sub-Categories found ---</option>');
+            }
+            else {
+                var subcat_options = '<option value="-1">--- Select Sub-Category ---</option>';
+                $.each(data, function (i, obj) {
+                    $.each(obj._id, function (key, value) {
+                        subcat_options += '<option value="' + value + '">' + obj.category_name + '</option>';
+                    });
+                });
+                $(dropdown_id).prop('disabled', false);
+                $(dropdown_id).css("width", "200px");
+                $(dropdown_id).html(subcat_options);
+            }
+        }
+    });
 }
