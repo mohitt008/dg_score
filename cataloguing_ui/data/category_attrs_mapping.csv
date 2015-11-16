@@ -5,8 +5,8 @@ Books,title;isbn; author; artist; binding (hardcover/paperback); edition; publis
 Industrial and Scientific Goods,,,
 Computers and Laptops,screen_size,Routers and Modems,
 Computers and Laptops,,Laptop,Processor; Memory(RAM); Hard_Disk_Capacity_HDD; Processor_Brand; Screen_Size; OS; ssd_capacity
-Computers and Laptops,,Computer Components,
-Computers and Laptops,,Computer Accessories,
+Computers and Laptops,,Computer Components,Processor; Memory(RAM); Hard_Disk_Capacity_HDD; Processor_Brand; Screen_Size; OS; ssd_capacity
+Computers and Laptops,,Computer Accessories,Processor; Memory(RAM); Hard_Disk_Capacity_HDD; Processor_Brand; Screen_Size; OS; ssd_capacity
 Computers and Laptops,,Desktops,Processor; Memory(RAM); Hard_Disk_Capacity_HDD; Processor_Brand; Screen_Size; OS; ssd_capacity
 Computers and Laptops,,Pen Drives and Data Card,capacity
 Computers and Laptops,,External Hard Drives,capacity
@@ -50,7 +50,7 @@ Electronics and Appliances,,Speakers,Wattage
 Electronics and Appliances,,Audio and Video Accessories,
 Electronics and Appliances,,Washing Machine,
 "Handbags, Bags and Luggage",,,
-Sports and Outdoors,,Sports Clothing,
+Sports and Outdoors,Size,Sports Clothing,
 Sports and Outdoors,,Outdoor Gear,
 Sports and Outdoors,,Sports Equipment,
 Sports and Outdoors,,Exercise and Fitness,
@@ -91,4 +91,3 @@ Baby Care,,,
 Gifts,,,
 KitchenWare,,,
 Uncategorized,,,
-Delhivery_Others,,,
