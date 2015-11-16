@@ -145,9 +145,9 @@ def add_new_subcat( cat_id, subcat ):
 
 def update_category(id, cat, subcat):
     my_logger.info("Inside update_category function with id = {}, cat = {} and subcat = {}".format(id, cat, subcat))
-    res = db.products.update({'_id': ObjectId(id)}, {"$set": {"category": cat,
-                                                              "sub_category": subcat}
-    })
+    prod = db.products.find_one({'_id': ObjectId(id)})
+    res = db.products.update( {'_id': ObjectId(id)}, {"$set": {"category": cat, "sub_category": subcat,
+                                                "old_cat": prod["category"], "old_subcat": prod["sub_category"]}} )
     if res['updatedExisting']:
         return json.dumps({'message': 'Category Added Successfully.'})
     else:
