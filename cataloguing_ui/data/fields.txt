@@ -3,9 +3,15 @@ vendor
 product_url
 category
 sub_category
+vendor_cat
+vendor_subcat
+price
 tags
+admin_tags
 is_dirty
+dirty_by_admin
 skip_count
 tagged_by
+verified_by
 epoch
 

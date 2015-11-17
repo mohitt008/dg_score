@@ -18,6 +18,9 @@ tag_dict_obj = db.categories.distinct('tags')
 for dicts in tag_dict_obj:
     existing_tag_dict.update(dicts)
 
+for keys in sorted(existing_tag_dict):
+    print(keys, "-----", existing_tag_dict[keys])
+
 '''
 Returns a code for a given attribute from tag_dict
 if not found in tag_dict, calculates a new code and returns that
