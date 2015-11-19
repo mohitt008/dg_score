@@ -47,7 +47,7 @@ $(document).ready(function () {
                     else if( cat_filter == "vc" )
                         data_obj["vendor_cat"] = cat;
                 if( subcat )
-                    if( cat_filter == "dc ")
+                    if( cat_filter == "dc")
                         data_obj['sub_category'] = subcat
                     else if( cat_filter == "vc" )
                         data_obj["vendor_subcat"] = subcat
