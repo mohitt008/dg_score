@@ -1,0 +1,47 @@
+Descrption of all handled test cases .
+1. 
+  Different available command options to run the test script.
+   py.test --tb=short -s --maxfail=1 --capture=no test_catfight.py
+   
+   
+py.test [options] script[optional / otherwise all test_*py will run]
+
+py.test --capture=no is used to show all the print text on the terminal
+py.test --tb=long    # the default informative traceback formatting
+py.test --tb=native  # the Python standard library formatting
+py.test --tb=short   # a shorter traceback format
+py.test --tb=line    # only one line per failure 
+py.test -s            # disable all capturing (it prints all standard output on the terminal)
+py.test --showlocals # show local variables in tracebacks
+--maxfail=#of failure you want to display
+
+To test a particular test_function run following command
+py.test [options] --capture=no test_catfight.py::test_function_name
+
+2.
+ Test Cases Handled for CatFight
+    a. test_server /* this function is used to test if server is running properly or not.
+    b. test_auth   /* is used to check if authentication is ok or not.
+    c. test_input_results /* it will hit both the urls (input/results) for various available test cases.
+       where input_data and status_codes  will be taken from @pytest.mark.parametrize (overriden, its a predefined method in pytest)
+        its signture will be like ("comma seperated arguments (method signature)",[list of arguments matching with signature]).
+    d. test_csv is used to check csv file data against status_code.
+    e. test_mp is used to check performance of multiprocessing against non multiprocessing.
+
+  test cases data_format for validation [( data,input_status,output_status)]
+    [
+    ({'wbn':'7678','prd':'apple iphone 6s 8gb'}, 202,200),
+    ({'wbn':'7678','product': 'how are you'}, 202,200),
+    ([], 400,400),
+    ({'wbn':''},202,200),
+    ]
+  
+ NOTE:--- In case to test multiprocessing you need to keep track of the catfight_input queue in disque. (run it using )  py.test --capture=no test_catfight.py::test_mp
+ if you do'nt want to run any test function then just change the initials of the corresponding function via some other character.
+ 
+History.
+modified_by	modification_date	test_date	success_rate	comments
+anand		11-dec-2015		11-dec-2015	100%	test_auth,test_server, test_csv (all can be directly called like test_catfight::function_name)
+anand 		15-dec-2015		15-dec-2015	100%	added test_csv function to test CSV data and corresponding status_code 
+anand		17-dec-2015		17-dec-2015	100%	added test_mp function to test performance  in case of multiprocessing and non multiprocessing.    
+    
