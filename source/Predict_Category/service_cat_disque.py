@@ -2,9 +2,6 @@ import logging
 from logging.handlers import RotatingFileHandler
 import json
 
-from multiprocessing import Pool
-#from multiprocessing import cpu_count
-from functools import partial
 from constants import CATFIGHT_LOGGING_PATH
 from find_categories import process_product
 from settings import client, sentry_client, catfight_input, catfight_output
@@ -107,23 +104,19 @@ def get_products():
     into vendor and results, and calling get_category to generate products details
     for the job passed 
     """
-    # SK: Prod instance doesnt have enough memory
-    p = Pool(processes=1)
-    #p = Pool(processes=cpu_count())
     while True:
         try:
             jobs = client.get_job([catfight_input])
             for queue_name, job_id, job in jobs:
                 logger.info("Successfully fetched from Disque queue catfight_input GET Job ID {} with job {}".
-                                format(job_id, job))
+                            format(job_id, job))
                 job_data = json.loads(job)
                 vendor = job_data['vendor']
                 username = job_data['username']
                 products = json.loads(job_data['payload'])
-                
-                custom_callback = partial(add_results_to_disque, vendor=job_data['vendor'], username=username, job_id=job_id)
-                p.apply_async(get_category, args=(products, job_id, username,), callback=custom_callback)
-                client.ack_job(job_id)                    
+                results = get_category(products, job_id, username)
+                add_results_to_disque(results, vendor, username, job_id)
+                client.ack_job(job_id)
 
         except Exception as e:
             logger.error("Function get_products failed for Job ID {} with job {} with error {}".
