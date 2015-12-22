@@ -1,8 +1,6 @@
 *.pyc
 *.ipynb
 *.json
-Load_Data/snapdeal.json
-Load_Data/local_data_extraction.py
 .idea/*
 cataloguing_ui/__pycache__/*
 cataloguing_ui/.idea/*
@@ -10,7 +8,8 @@ cataloguing_ui/config.py
 *.css~
 *.py~
 cataloguing_ui/flask_oauth2_login/__pycache__/*
-Models/*
-Models/SubModels/*
+data/Models/*
 *.bz2
 settings.py
+testing/output.csv
+
