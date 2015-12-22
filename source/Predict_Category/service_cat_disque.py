@@ -2,7 +2,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 import json
 
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool
+#from multiprocessing import cpu_count
 from functools import partial
 from constants import CATFIGHT_LOGGING_PATH
 from find_categories import process_product
@@ -106,7 +107,9 @@ def get_products():
     into vendor and results, and calling get_category to generate products details
     for the job passed 
     """
-    p = Pool(processes=cpu_count())
+    # SK: Prod instance doesnt have enough memory
+    p = Pool(processes=1)
+    #p = Pool(processes=cpu_count())
     while True:
         try:
             jobs = client.get_job([catfight_input])
