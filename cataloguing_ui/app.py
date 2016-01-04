@@ -2,14 +2,14 @@ import json
 import config
 import ast
 
-from config import my_logger, sentry_client, db, DELHIVERY, REVERSEGAZE, OTHERS
+from config import my_logger, sentry_client, db, hq_db, DELHIVERY, REVERSEGAZE, OTHERS
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
 from flask_oauth2_login import GoogleLogin
 from bson.objectid import ObjectId
 
-from utils import update_category, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat, get_cat_list, to_json
+from utils import update_category, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat, get_cat_list, to_json, get_hq_cat_list, get_hq_subcat_list
 from users import add_user, get_tag_count, inc_tag_count, dcr_tag_count, get_users
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
@@ -166,6 +166,40 @@ def tag():
     else:
         return redirect(url_for('bp.login'))
 
+
+@bp.route('/cat-subcat-tagging', methods=['GET', 'POST'])
+def cat_subcat_tagging():
+    try:
+        if 'user' in session:
+            submit_status = "None"
+            if request.form:
+                if request.form['cat'] != "-1" and request.form['subcat'] != '-1':
+                    hq_db.products.update({"product_name":request.form["hq-product"]}, {"$set":{"new_cat":request.form["cat"], "new_subcat":request.form["subcat"]}})
+                    submit_status = "Success"
+                else:
+                    submit_status = "Error"
+            user_id = session['user']['id']
+            tag_count, verify_count = get_tag_count(user_id)
+            product_dict = hq_db.products.find_one({"new_cat":{"$exists":False}})
+            product_name = product_dict["product_name"]
+            return render_template("cat_subcat_tagging.html",
+                                   username=session['user']['name'],
+                                   tag_count=tag_count,
+                                   verify_count=verify_count,
+                                   hq_cats=get_hq_cat_list(),
+                                   product=product_name,
+                                   submit_status=submit_status
+                                   )
+        else:
+            return redirect(url_for('bp.login'))
+    except Exception as e:
+        my_logger.error("Exception in cat_subcat_tagging function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in cat_subcat_tagging function",
+            extra = {"Exception": e}
+            )
+
+
 @bp.route('/get-products', methods=['GET', 'POST'])
 def get_products():
     try:
@@ -193,6 +227,7 @@ def get_products():
             message = "Exception in get_products function",
             extra = {"Exception": e}
             )
+
 
 @bp.route('/get-cats', methods=['GET', 'POST'])
 def get_cats():
@@ -223,6 +258,21 @@ def get_subcats():
             message = "Exception in get_subcats function",
             extra = {"Exception": e}
             )
+
+
+@bp.route('/get-hq-subcats', methods=['GET', 'POST'])
+def get_hq_subcats():
+    try:
+        posted_data = request.get_json()
+        my_logger.info("Posted data for get sub-categories = {}".format(posted_data))
+        return get_hq_subcat_list(posted_data["cat"])
+    except Exception as e:
+        my_logger.error("Exception in get_hq_subcats function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in get_hq_subcats function",
+            extra = {"Exception": e}
+            )
+
 
 @bp.route('/change-category', methods=['GET', 'POST'])
 def change_category():
@@ -394,6 +444,7 @@ def add_subcat():
             message = "Exception in add_subcat function",
             extra = {"Exception": e}
             )
+
 
 @bp.route('/leaderboard')
 def view_leaderboard():
