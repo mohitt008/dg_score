@@ -9,17 +9,19 @@
 </p>
 <p></p>
 
-<form method="post" action="">
-    <input id="hq-product" name="hq-product" value="{{product}}" hidden>
-    <select id="select-hq-category" name="cat">
-        <option value='-1'>----------- Select Category -----------</option>
-        {% for cat_dict in hq_cats %}
-            <option value='{{cat_dict.cat}}'>{{cat_dict.cat}}</option>
-        {% endfor %}
-    </select>
-    <select id="select-hq-subcategory" name="subcat" disabled></select>
-    <input id="cat-subcat-submit-button" type="submit" class="btn btn-primary" value="Submit">
-</form>
+{% if all_products_finished == "False" %}
+    <form method="post" action="">
+        <input id="hq-product" name="hq-product" value="{{product}}" hidden>
+        <select id="select-hq-category" name="cat">
+            <option value='-1'>----------- Select Category -----------</option>
+            {% for cat_dict in hq_cats %}
+                <option value='{{cat_dict.cat}}'>{{cat_dict.cat}}</option>
+            {% endfor %}
+        </select>
+        <select id="select-hq-subcategory" name="subcat" disabled></select>
+        <input id="cat-subcat-submit-button" type="submit" class="btn btn-primary" value="Submit">
+    </form>
+{% endif %}
 
 {% if submit_status == 'Success' %}
     <div class="btn alert alert-success">
