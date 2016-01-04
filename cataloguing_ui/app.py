@@ -3,6 +3,7 @@ import config
 import ast
 
 from config import my_logger, sentry_client, db, hq_db, DELHIVERY, REVERSEGAZE, OTHERS
+from random import randint
 
 from flask import Flask, jsonify, render_template, request, url_for, session, redirect, Blueprint, flash
 from flask_oauthlib.client import OAuth
@@ -180,15 +181,28 @@ def cat_subcat_tagging():
                     submit_status = "Error"
             user_id = session['user']['id']
             tag_count, verify_count = get_tag_count(user_id)
-            product_dict = hq_db.products.find_one({"new_cat":{"$exists":False}})
-            product_name = product_dict["product_name"]
+            untagged_count = hq_db.products.find({"new_cat":{"$exists":False}}).count()
+            product_name = None
+            while untagged_count:
+                rand_no = randint(0, untagged_count)
+                cur = hq_db.products.find({"new_cat":{"$exists":False}}).limit(-1).skip(rand_no)
+                product_dict = next(cur, None)
+                if "product_name" in product_dict:
+                    product_name = product_dict["product_name"]
+                    break
+            if product_name:
+                all_products_finished = "False"
+            else:
+                all_products_finished = "True"
+                product_name = "All products finished"
             return render_template("cat_subcat_tagging.html",
                                    username=session['user']['name'],
                                    tag_count=tag_count,
                                    verify_count=verify_count,
                                    hq_cats=get_hq_cat_list(),
                                    product=product_name,
-                                   submit_status=submit_status
+                                   submit_status=submit_status,
+                                   all_products_finished=all_products_finished
                                    )
         else:
             return redirect(url_for('bp.login'))
