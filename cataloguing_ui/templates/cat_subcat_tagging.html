@@ -1,0 +1,38 @@
+{% extends "base_tagging.html" %}
+
+{% block content %}
+
+<li style="text-decoration: underline">Product Name:</li>
+
+<p style="font-weight: bold">
+{{product}}
+</p>
+<p></p>
+
+<form method="post" action="">
+    <input id="hq-product" name="hq-product" value="{{product}}" hidden>
+    <select id="select-hq-category" name="cat">
+        <option value='-1'>----------- Select Category -----------</option>
+        {% for cat_dict in hq_cats %}
+            <option value='{{cat_dict.cat}}'>{{cat_dict.cat}}</option>
+        {% endfor %}
+    </select>
+    <select id="select-hq-subcategory" name="subcat" disabled></select>
+    <input id="cat-subcat-submit-button" type="submit" class="btn btn-primary" value="Submit">
+</form>
+
+{% if submit_status == 'Success' %}
+    <div class="btn alert alert-success">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      <strong>Cat Subcat Added Successfully!&nbsp&nbsp</strong>
+    </div>
+{% endif %}
+
+{% if submit_status == 'Error' %}
+    <div class="btn alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Invalid input!&nbsp&nbsp</strong>
+    </div>
+{% endif %}
+
+{% endblock %}
