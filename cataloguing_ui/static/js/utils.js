@@ -145,6 +145,14 @@ $(document).ready(function () {
         });
     });
 
+    $(function () {
+        $("#select-hq-category").on("change", function () {
+            var cat_name = $(this).find(':selected').val();
+            if( cat_name != "-1" )
+                get_hq_subcats( cat_name, "#select-hq-subcategory" )
+        });
+    });
+
 });
 
 function update_html(data) {
@@ -245,6 +253,31 @@ function get_subcats( cat_id, dropdown_id ) {
                 });
                 $(dropdown_id).prop('disabled', false);
                 $(dropdown_id).css("width", "200px");
+                $(dropdown_id).html(subcat_options);
+            }
+        }
+    });
+}
+
+function get_hq_subcats( cat_name, dropdown_id ) {
+    $.ajax({
+        url: '/cat-ui/get-hq-subcats',
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({"cat": cat_name}),
+        success: function (data) {
+            if (jQuery.isEmptyObject(data)) {
+                $(dropdown_id).prop('disabled', false);
+                $(dropdown_id).html('<option value=null>------ No Sub-Categories found ------</option>');
+            }
+            else {
+                var subcat_options = '<option value="-1">------ Select Sub-Category ------</option>';
+                $.each(data, function (i, subcat) {
+                    subcat_options += '<option value="' + subcat + '">' + subcat + '</option>';
+                });
+                subcat_options += '<option value=null>None of these</option>';
+                $(dropdown_id).prop('disabled', false);
                 $(dropdown_id).html(subcat_options);
             }
         }

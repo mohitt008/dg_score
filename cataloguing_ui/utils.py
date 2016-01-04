@@ -1,7 +1,7 @@
 import re
 import json
 
-from config import my_logger, sentry_client, db
+from config import my_logger, sentry_client, db, hq_db
 from bson.objectid import ObjectId
 from random import randint
 from bson import json_util
@@ -141,6 +141,22 @@ def add_new_subcat( cat_id, subcat ):
     subcat_id = db.categories.insert({'category_name':subcat, 'par_category':category_id})
     db.categories.update({'_id':category_id}, {'$addToSet':{'children':ObjectId(subcat_id)}})
     return 'Added'
+
+
+def get_hq_cat_list():
+    my_logger.info("Inside get_hq_cat_list function")
+    cat_cur = hq_db.categories.find().sort([("cat", 1)])
+    cat_list = []
+    for item in cat_cur:
+        cat_list.append({"cat":item["cat"], "subcats":item["subcats"]})
+    return cat_list
+
+
+def get_hq_subcat_list( cat ):
+    my_logger.info("Inside get_hq_cat_list function")
+    cat_dict = hq_db.categories.find_one({"cat":cat})
+    subcat_list = cat_dict["subcats"]
+    return to_json(subcat_list)
 
 
 def update_category(id, cat, subcat):
