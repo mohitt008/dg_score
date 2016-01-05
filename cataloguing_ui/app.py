@@ -173,9 +173,11 @@ def cat_subcat_tagging():
     try:
         if 'user' in session:
             submit_status = "None"
-            if request.form:
-                if request.form['cat'] != "-1" and request.form['subcat'] != '-1':
-                    hq_db.products.update({"product_name":request.form["hq-product"]}, {"$set":{"new_cat":request.form["cat"], "new_subcat":request.form["subcat"]}})
+            if request.form and request.method == "POST":
+                form_cat = request.form.get("cat", "-1")
+                form_subcat = request.form.get("subcat", "-1")
+                if form_cat != "-1" and form_subcat != '-1':
+                    hq_db.products.update({"product_name":request.form["hq-product"]}, {"$set":{"new_cat":form_cat, "new_subcat":form_subcat}})
                     submit_status = "Success"
                 else:
                     submit_status = "Error"
