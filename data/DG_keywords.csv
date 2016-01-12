@@ -16,7 +16,6 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 0,Health,,"""Beauty Products and Personal Care"", ""Health and Wellness""","Slipper, Paper, Foil, Seat","""Shoes and footwear"""
 1,Lotion,,,,
 1,Juice,,,"Juicer, Canvas, Micromax",
-1,Mah,,,"Maha, Mahi, Maht, Mahotsav, Mahr, Mahe, 3G, Android, 2G, 4G, Kurti","""Automotive"", ""Kitchenware"""
 1,Ml,,,"Container, Bag, Jug, Casserole, Thermosteel, Milton, Tupperware, Storage, Dispenser, Amla, Watch, Shaker, Jar Set, Rimless, Asus, Flask, Seamless, Bottle, Ramleela, Camlin, Kurta, Mug, Steel, Hamlet, Headset, Xiaom, Bluetooth, Headphone, Earphone, Mlange, Kurti, Shirt, Saree, Earrings, (English), Basket, Plastic, Shoe, Pill Splitter, Boxer, Screen, Glass, Bowl","""Home and Kitchen"", ""KitchenWare"", ""Sports and Outdoors"", ""Shoes and footwear"", ""Apparel & Accessories"""
 1,Oil,,,"Boiler, Dispenser, Pastel, Tupperware, Container, Voil, Foil, Coil, Trouser, Louis Philippe, English, Prepaid, Data Card, Watch, Shoe, Bag","""Home and Kitchen"", ""KitchenWare"", ""Office Products"", ""Shoes and footwear"", ""Apparel & Accessories"""
 1,Paint,,,"Painting, Painted, Marker",
@@ -28,7 +27,7 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Shampoo,,,"Cap, Hat",
 0,Shav,"Gel, Cream","""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""",Cap,
 0,Shower,"Cream, Body, Gel","""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""",Cap,
-0,Skin,,"""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""","Bra, Socks, Tweeser, Spring, Shapewear, Top, Camisole, Bikini, Tweezer, I6, I5, Hipster","""Shoes and footwear"",  ""Apparel & Accessories"""
+0,Skin,,"""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""","Bra, Socks, Tweeser, Spring, Shapewear, Top, Camisole, Bikini, Tweezer, I6, I5, Hipster, Short","""Shoes and footwear"",  ""Apparel & Accessories"""
 0,Spray,,"""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""",Gun,
 1,Sunscreen,,,,
 1,Temptation,,,,
