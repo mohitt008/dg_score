@@ -188,7 +188,7 @@ def cat_subcat_tagging():
             while untagged_count:
                 rand_no = randint(0, untagged_count)
                 cur = hq_db.products.find({"new_cat":{"$exists":False}}).limit(-1).skip(rand_no)
-                product_dict = next(cur, None)
+                product_dict = next(cur, {})
                 if "product_name" in product_dict:
                     product_name = product_dict["product_name"]
                     break
