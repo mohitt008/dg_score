@@ -12,7 +12,7 @@ RESULTS_URL = 'http://{}/done-services/catfight/results'.format(URI)
 
 COMBINED_URL = 'http://{}/done-services/input'.format(URI)
 
-AUTH = HTTPBasicAuth('done','delhivery@123') 
+AUTH = HTTPBasicAuth('done','done@123') 
 QA_AUTH = HTTPBasicAuth('qa','qa@delhivery@123') 
 
 INPUT_ADDRESS_FILE = "input.csv"
@@ -137,7 +137,7 @@ def test_csv():
                         error_results.append([payload, r.status_code, r2.status_code, r2.text])
                     max_retry += 1
                     time.sleep(0.1)
-            if cnt > 100:
+            if cnt > 10:
                 break
 
         except Exception as err:
@@ -146,7 +146,7 @@ def test_csv():
     print len(error_input),len(error_results)
     f.close()
     f2.close()
-def test_mp():
+def fest_mp():
 
     client = Client(["127.0.0.1:7711"])
     client.connect()
