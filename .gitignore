@@ -10,6 +10,5 @@ cataloguing_ui/config.py
 cataloguing_ui/flask_oauth2_login/__pycache__/*
 data/Models/*
 *.bz2
-settings.py
 testing/output.csv
 
