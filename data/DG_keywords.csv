@@ -6,17 +6,17 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Cologne,,,,
 0,Condition,,"""Beauty Products and Personal Care"", ""Baby Care"", ""Health and Wellness""",,
 1,Deo,,,"Video, Rhodeo, Rodeo","""Movies, Music and Video Games"", ""Electronics and Appliances"", ""Camera and photos"""
-0,Face,,"""Beauty Products and Personal Care"", ""Health and Wellness""","Bar, Helmet, Towel, Bag, Sock, Dress, Jacket, Legwarmer, Emotisorbs, Winking, Hoodie, Cap, Tissue, Elastic","""Apparel & Accessories"""
+0,Face,,"""Beauty Products and Personal Care"", ""Health and Wellness""","Bar, Helmet, Towel, Bag, Sock, Dress, Jacket, Legwarmer, Emotisorbs, Winking, Hoodie, Cap, Tissue, Elastic, Tape, Mini, Funny, Cute, cartoon, Print, Animal, Cloth, Blanket, Tissue, Pollution","""Apparel & Accessories"""
 0,Facial,,"""Beauty Products and Personal Care"", ""Health and Wellness""","Steamer, Bat, Towel, Hair Remo",
 1,EDT,,,"RedTape, Top, Bowl, Shirt, Cotton, Bedtime, Staedtler, Pen","""Shoes and footwear"", ""Apparel & Accessories"", ""Home and Kitchen"", ""KitchenWare"""
 1,EDP,,,"PrettySecret, Speedpost, Speed",
 1,Extinguisher,,,,
-1,Fresh,,,"Container, Foil, Air Loc, Styler, Striaghtner, Skirt, Cashew, Almond , Pista, Tupperware, Saree, Blouse, English, Signoraware, Pack, Plastic, PrettySecret, Freshia, Sari, Box, Bottle, Towel, Mattress, Jar","""Shoes and footwear"", ""Apparel & Accessories"""
+1,Fresh,,,"Container, Foil, Air Loc, Styler, Striaghtner, Skirt, Cashew, Almond , Pista, Tupperware, Saree, Blouse, English, Signoraware, Pack, Plastic, PrettySecret, Freshia, Sari, Box, Bottle, Towel, Mattress, Jar, Panty","""Shoes and footwear"", ""Apparel & Accessories"""
 1,Gel,,,"Silicon, Cover, Bag, Angel, Bar, Softgels, Soft, Geliyo, Pen, Asics, Freecultr","""Sports and Outdoors"", ""Shoes and footwear"""
 0,Health,,"""Beauty Products and Personal Care"", ""Health and Wellness""","Slipper, Paper, Foil, Seat","""Shoes and footwear"""
 1,Lotion,,,,
-1,Juice,,,"Juicer, Canvas, Micromax",
-1,Ml,,,"Container, Bag, Jug, Casserole, Thermosteel, Milton, Tupperware, Storage, Dispenser, Amla, Watch, Shaker, Jar Set, Rimless, Asus, Flask, Seamless, Bottle, Ramleela, Camlin, Kurta, Mug, Steel, Hamlet, Headset, Xiaom, Bluetooth, Headphone, Earphone, Mlange, Kurti, Shirt, Saree, Earrings, (English), Basket, Plastic, Shoe, Pill Splitter, Boxer, Screen, Glass, Bowl, Card, Reader","""Home and Kitchen"", ""KitchenWare"", ""Sports and Outdoors"", ""Shoes and footwear"", ""Apparel & Accessories"""
+1,Juice,,,"Juicer, Canvas, Micromax, Nutrition",
+1,Ml,,,"Container,Jar, Bag, Jug, Casserole, Thermosteel, Milton, Tupperware, Storage, Dispenser, Amla, Watch, Shaker, Jar Set, Rimless, Asus, Flask, Seamless, Bottle, Ramleela, Camlin, Kurta, Mug, Steel, Hamlet, Headset, Xiaom, Bluetooth, Headphone, Earphone, Mlange, Kurti, Shirt, Saree, Earrings, (English), Basket, Plastic, Shoe, Pill Splitter, Boxer, Screen, Glass, Bowl, Card, Reader, Hindi, Kadhai","""Home and Kitchen"", ""KitchenWare"", ""Sports and Outdoors"", ""Shoes and footwear"", ""Apparel & Accessories"""
 1,Oil,,,"Boiler, Dispenser, Pastel, Tupperware, Container, Voil, Foil, Coil, Trouser, Louis Philippe, English, Prepaid, Data Card, Watch, Shoe, Bag, Toiletry Kit","""Home and Kitchen"", ""KitchenWare"", ""Office Products"", ""Shoes and footwear"", ""Apparel & Accessories"""
 1,Paint,,,"Painting, Painted, Marker",
 1,Parfum,,,,
@@ -27,14 +27,14 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Shampoo,,,"Cap, Hat",
 0,Shav,"Gel, Cream","""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""",Cap,
 0,Shower,"Cream, Body, Gel","""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""",Cap,
-0,Skin,,"""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""","Bra, Socks, Tweeser, Spring, Shapewear, Top, Camisole, Bikini, Tweezer, I6, I5, Hipster, Short","""Shoes and footwear"",  ""Apparel & Accessories"""
+0,Skin,,"""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""","Bra, Socks, Tweeser, Spring, Shapewear, Top, Camisole, Bikini, Tweezer, I6, I5, Hipster, Short, Dermawear, Romper","""Shoes and footwear"",  ""Apparel & Accessories"""
 0,Spray,,"""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""",Gun,
 1,Sunscreen,,,,
 1,Temptation,,,,
 1,Trimmer,,,"Tummy, Shapewear",
 1,Vlcc,,,Holder,
 0,Wash,"Face, Body","""Beauty Products and Personal Care"", ""Baby Care""","Jean, Brush, Boot, Cloth, Handkerchief, Mat","""Shoes and footwear"", ""Apparel & Accessories"""
-0,Cream,,"""Beauty Products and Personal Care"", ""Baby Care"", ""Health and Wellness""","Dhoti, Saree, Salwar, Kameez, Wedge, Heels, Do Bhai, Top, kurti, Clip, Belt, Tee, Short, Sweatshirt, Shawl, Bellies, Frock, Suit, Gown, Handbag, Headband, Legging, Spaghetti, Shirt, Curtain, Top, Sandal, Loafer, Flat, Cardigan, Ring, Hoodie, Romper, Cookie, Bowknot, Jacket, Maxi, Duppata, Clutch, Trouser, Sweater, Jegging, Belt, Seat, Jacket, Cap","""Shoes and footwear"", ""Apparel & Accessories"""
+0,Cream,,"""Beauty Products and Personal Care"", ""Baby Care"", ""Health and Wellness""","Dhoti, Saree, Salwar, Kameez, Wedge, Heels, Do Bhai, Top, kurti, Clip, Belt, Tee, Short, Sweatshirt, Shawl, Bellies, Frock, Suit, Gown, Handbag, Headband, Legging, Spaghetti, Shirt, Curtain, Top, Sandal, Loafer, Flat, Cardigan, Ring, Hoodie, Romper, Cookie, Bowknot, Jacket, Maxi, Duppata, Clutch, Trouser, Sweater, Jegging, Belt, Seat, Jacket, Cap, Cute, Band, Hat, Dress, Shoe, Ballerina, Seat, Toy, Pasta, Towel","""Shoes and footwear"", ""Apparel & Accessories"""
 1,General Good,,,,
 1,Lighter,,,Pen,
 1,Thinner,,,,
@@ -57,8 +57,8 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Luminous UPS,,,,
 1,Agarbatti,,,,
 1,Enamel,,,"Metal, Alloy, Jewel, Jewl, Pendant, Voylla, Cookware",
-1,Make-up,,,"Mirror, Brush, Case, Vanity",
-1,Makeup,,,"Mirror, Brush, Case, Vanity",
+1,Make-up,,,"Mirror, Brush, Case, Vanity, Cover",
+1,Makeup,,,"Mirror, Brush, Case, Vanity, Cover",
 1,Lacquer,,,,
 1,Musk,,,"Muska, Muske, Shoes, Dress, Boot, Basket, English","""Shoes and footwear"", ""Apparel & Accessories"""
 1,Creme,,,,
@@ -76,13 +76,15 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Grocery,,,,
 0,Pest,"Spray, Lotion",,,
 1,Panchgavya Medicines,,,,
-0,ink,"Epson, canon, brother, hp, printer",,,
-1,Toner,,,,
+0,ink,"Epson, canon, brother, hp, printer",,Pink,
+1,Toner,,,Protoner,
 1,Parfum,,,,
-1,Toilette,,,,
+1,Toilette,,,"Seat, Book",
 1,Cologne,,,,
 1,Eau de,,,,
 0,Spa,Kit,,,
 0,(English),,,,
 0,(Hindi),,,,
 1,Aerosol,,,,
+0,Books,,,,
+1,Fire,,,,
