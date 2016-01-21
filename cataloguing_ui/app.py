@@ -178,11 +178,10 @@ def cat_subcat_tagging():
                 form_cat = request.form.get("cat", "-1")
                 form_subcat = request.form.get("subcat", "-1")
                 if form_cat != "-1" and form_subcat != '-1':
-                    existing_prod = hq_db.products.find_one({"product_name":request.form["hq-product"], "tagged_by":{"$exists":True}})
-                    if not existing_prod:
-                        hq_db.products.update({"product_name":request.form["hq-product"]},
-                                          {"$set":{"new_cat":form_cat, "new_subcat":form_subcat,
-                                                   "tagged_by":user_id}})
+                    update_response =  hq_db.products.update({"product_name":request.form["hq-product"]},
+                                            {"$set":{"new_cat":form_cat, "new_subcat":form_subcat,
+                                                "tagged_by":user_id}})
+                    if update_response["nModified"] == 1:
                         inc_tag_count(user_id)
                         submit_status = "Success"
                     else:
