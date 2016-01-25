@@ -120,7 +120,11 @@ def process_product(product_name_dict, cat_model, dang_model, logger, username):
     
     final_result = original_dict
     if not results:
-        results = "Not Found"
+        #SK: Don't send empty result or bad format.
+        #SK: Default dg = true(ops verified)
+        results['cat'] = "Not Found"
+        results['scat'] = "Not Found"
+        results['dg'] = True
     final_result['result'] = results
     return final_result
 
