@@ -72,9 +72,6 @@ def removeColor(sentence):
 
             if current.end_node:
                 del stringIndexed[index:j + 1]
-                # print stringIndexed
-                # print index
-                index = index + j
             else:
                 index = j + 1
             # print "index is",index
@@ -86,5 +83,5 @@ def removeColor(sentence):
 
 if __name__ == '__main__':
     print removeColor("pink")
-    print removeColor("line color white".lower())
+    print removeColor("black color white".lower())
 
