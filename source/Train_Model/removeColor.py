@@ -64,7 +64,6 @@ def removeColor(sentence):
     while index <= len(stringIndexed) - 1:
         # print stringIndexed[index],index,stringIndexed[index+1]
         j = index
-        # print index
         current = db.search(stringIndexed[index])
         if current:
             while (current and current.children and stringIndexed[j + 1] in current.children):
@@ -75,7 +74,7 @@ def removeColor(sentence):
                 del stringIndexed[index:j + 1]
                 # print stringIndexed
                 # print index
-                index = index - 1
+                index = index + j
             else:
                 index = j + 1
             # print "index is",index
@@ -85,6 +84,7 @@ def removeColor(sentence):
     return ' '.join(stringIndexed)
 
 
-# if __name__ == '__main__':
-#     print removeColor("jabra solemate nfc wireless bluetooth speakers (black)".lower())
+if __name__ == '__main__':
+    print removeColor("pink")
+    print removeColor("line color white".lower())
 

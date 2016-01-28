@@ -12,4 +12,3 @@ def get_color_set():
     return x
 
 COLOR_SET=get_color_set()
-print
