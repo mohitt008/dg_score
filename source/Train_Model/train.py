@@ -31,7 +31,7 @@ from sklearn.externals import joblib
 
 
 plural_dict = {}
-with open(ROOT_PATH + '/data/Train_Model/word_list_verified.csv','rb') as f:
+with open(ROOT_PATH + '/data/word_list_verified.csv','rb') as f:
     reader = csv.reader(f)
     for row in reader:
         type(row[2])
@@ -101,7 +101,7 @@ def ngrams(desc, MIN_N=2, MAX_N=5):
                 for i in xrange(n_tokens):
                     for j in xrange(i + MIN_N, min(n_tokens, i + MAX_N) + 1):
                         ngram_list.append(" ".join(tokens[i:j]))
-    except:
+    except exception as e:
         print desc
     return ngram_list
 
@@ -173,18 +173,22 @@ def root_training_prcoess():
     hq = product_table.find({"vendor_id":"HQ"})
     print "----------------"
     print "root training"
-    print hq.count()
-    for products in hq:
-        train_x.append(products['product_name'].encode('ascii','ignore').lower())
-        if products['vendor_category_id'] == 'NA':
-            current_category_name = 'Delhivery_Others'
-        else:
-            current_category_name =  products['vendor_category_id'].split('->')[0]
-        train_y.append(current_category_name)
-        product_list.append((products,current_category_name))
+    # print hq.count()
+    # for products in hq:
+    #     train_x.append(products['product_name'].encode('ascii','ignore').lower())
+    #     if products['vendor_category_id'] == 'NA':
+    #         current_category_name = 'Delhivery_Others'
+    #     else:
+    #         current_category_name =  products['vendor_category_id'].split('->')[0]
+    #     train_y.append(current_category_name)
+    #     product_list.append((products,current_category_name))
 
-
-
+    #Reading from csv
+    reader=csv.DictReader(open(ROOT_PATH+"/data/prdcat_21jan.csv"))
+    for row in reader:
+        if row['new_cat']!='Unclear':
+            train_x.append(row['product_name'].encode('ascii','ignore').lower())
+            train_y.append(row['new_cat'])
 
     print "Training Set Constructed"
     print "Training Set Stats"
@@ -204,14 +208,14 @@ def root_training_prcoess():
     vocabulary=set()
     print "Constructing Vocab"
     for i,records in enumerate(train_x):
-        print i
+        print i,records
         try:
             for word in ngrams(records.lower(),1,3):
                 if not re.match('^[0-9]+$',word):
                     vocabulary.add(word.lower())
-        except:
+        except Exception as e:
             print records
-            continue
+            pass
     print "Vocab Done"
 
     vectorizer=feature_extraction.text.CountVectorizer(vocabulary=set(vocabulary),ngram_range=(1,3),stop_words='english')
@@ -232,7 +236,7 @@ def root_training_prcoess():
     clf_rf = Pipeline([
         ('feature_selection', LinearSVC(C=2, penalty="l1", dual=False)),
   ('classification', RandomForestClassifier(n_estimators=100, max_depth=1000))])
-    clf_rf.fit(train_x_vectorized, train_y)
+    clf_rf.fit(train_x_vectorized.toarray(), train_y)
    
     print "model 3 done"
     
@@ -340,7 +344,7 @@ def second_training_process():
 
 if __name__=='__main__':
     root_training_prcoess()
-    second_training_process()
+    # second_training_process()
     # categories=json.loads(get_categories())
     # for cat in categories:
     #     print cat
