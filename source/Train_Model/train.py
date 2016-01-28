@@ -34,7 +34,6 @@ plural_dict = {}
 with open(ROOT_PATH + '/data/word_list_verified.csv','rb') as f:
     reader = csv.reader(f)
     for row in reader:
-        type(row[2])
         if row[2]!='0':
             plural_dict[row[0]] = row[1]
 
@@ -101,7 +100,7 @@ def ngrams(desc, MIN_N=2, MAX_N=5):
                 for i in xrange(n_tokens):
                     for j in xrange(i + MIN_N, min(n_tokens, i + MAX_N) + 1):
                         ngram_list.append(" ".join(tokens[i:j]))
-    except exception as e:
+    except Exception as e:
         print desc
     return ngram_list
 
