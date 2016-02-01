@@ -1,4 +1,6 @@
+
 from pandas import isnull
+
 
 def predict_dangerous(clean_product_name, wbn, category, dg_keywords, logger, username):
     keyword = "No keyword matched"
@@ -22,6 +24,13 @@ def predict_dangerous(clean_product_name, wbn, category, dg_keywords, logger, us
             temp = int(row[0])
             if temp == 1:
                 flag = True
+            elif temp == 2: # prohibited
+                dg_report['dangerous'] = True
+                dg_report['prohibited'] = True
+                logger.info('Check DG: Product Name: {} Report: {} for username {}'
+                    .format(clean_product_name, dg_report, username)
+                )
+                return dg_report
             else:
                 flag = False
             keyword = row[1]
