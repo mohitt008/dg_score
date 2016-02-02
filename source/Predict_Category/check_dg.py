@@ -25,12 +25,10 @@ def predict_dangerous(clean_product_name, wbn, category, dg_keywords, logger, us
             if temp == 1:
                 flag = True
             elif temp == 2: # prohibited
-                dg_report['dangerous'] = True
+                flag = True
                 dg_report['prohibited'] = True
-                logger.info('Check DG: Product Name: {} Report: {} for username {}'
-                    .format(clean_product_name, dg_report, username)
-                )
-                return dg_report
+                keyword = row[1]
+                break
             else:
                 flag = False
             keyword = row[1]
