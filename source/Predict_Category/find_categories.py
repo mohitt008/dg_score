@@ -75,6 +75,7 @@ def predict_category(product_name, wbn, cat_model, dang_model, logger, username)
         result['cat'] = first_level
         result['scat'] = second_level
         result['dg'] = dg_report['dangerous']
+        result['prohibited'] = dg_report.get('prohibited', False)
         return result
 
     except Exception as err:
@@ -114,6 +115,7 @@ def process_product(product_name_dict, cat_model, dang_model, logger, username):
                                       dang_model.dg_keywords, logger, username)
 
             results['dg'] = dg_report['dangerous']
+            results['prohibited'] = dg_report.get('prohibited', False)
             results['cached'] = True
     else:
         results['invalid_product_name'] = True
@@ -125,6 +127,7 @@ def process_product(product_name_dict, cat_model, dang_model, logger, username):
         results['cat'] = "Not Found"
         results['scat'] = "Not Found"
         results['dg'] = True
+        results['prohibited'] = False
     final_result['result'] = results
     return final_result
 
