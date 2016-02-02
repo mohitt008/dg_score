@@ -127,7 +127,7 @@ def process_product(product_name_dict, cat_model, dang_model, logger, username):
         results['cat'] = "Not Found"
         results['scat'] = "Not Found"
         results['dg'] = True
-        results['prohibited'] = True
+        results['prohibited'] = False
     final_result['result'] = results
     return final_result
 
