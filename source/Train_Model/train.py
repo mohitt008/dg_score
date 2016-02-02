@@ -10,6 +10,7 @@ sys.path.append(PARENT_DIR)
 import re
 from Load_Data.get_products import get_categories, get_delhivery_products, get_vendor_category_products, get_delhivery_vendor_products
 from config.config_details import second_level_cat_names, second_level_cat_names_nb, second_level_cat_names_rf, ROOT_PATH
+from utilities import get_category_tree
 
 import csv
 import json
@@ -207,13 +208,13 @@ def root_training_prcoess():
     vocabulary=set()
     print "Constructing Vocab"
     for i,records in enumerate(train_x):
-        print i,records
+        print i
         try:
             for word in ngrams(records.lower(),1,3):
                 if not re.match('^[0-9]+$',word):
                     vocabulary.add(word.lower())
         except Exception as e:
-            print records
+            print i,records
             pass
     print "Vocab Done"
 
@@ -235,7 +236,7 @@ def root_training_prcoess():
     clf_rf = Pipeline([
         ('feature_selection', LinearSVC(C=2, penalty="l1", dual=False)),
   ('classification', RandomForestClassifier(n_estimators=100, max_depth=1000))])
-    clf_rf.fit(train_x_vectorized.toarray(), train_y)
+    clf_rf.fit(train_x_vectorized, train_y)
    
     print "model 3 done"
     
@@ -254,6 +255,7 @@ def root_training_prcoess():
 
 def second_training_process():
     count=10000
+    """
     category_tree=json.loads(get_categories())
     for parent_category in second_level_cat_names:
         train_x=[]
@@ -262,7 +264,7 @@ def second_training_process():
         category_count_dict={}
         for category_id in category_tree[parent_category].keys():
             ## For vendor based model
-            """
+
             print get_products(category_id,count)
             current_prod_list=json.loads(get_products(category_id,count=count))
             print category_id
@@ -279,7 +281,6 @@ def second_training_process():
                 # print products
                 train_x.append(products.get('product_name',"").encode('ascii','ignore').lower())
                 train_y.append(current_category_name)
-            """
             try:
                 hq = product_table.find({"vendor_id":"HQ","vendor_category_id":category_id})
                 print "---------------------"
@@ -292,6 +293,18 @@ def second_training_process():
                     # product_list.append((products,current_category_name))
             except:
                 pass
+            """
+    category_tree=get_category_tree()
+    for parent_category in second_level_cat_names:
+        train_x=[]
+        train_y=[]
+        reader=csv.DictReader(open(ROOT_PATH+"/data/prdcat_21jan.csv"))
+        for row in reader:
+            if row['new_cat']!='Unclear' and row['new_cat']==parent_category and row['new_subcat']!='null':
+                train_x.append(row['product_name'].encode('ascii','ignore').lower())
+                train_y.append(row['new_subcat'])
+
+
         print "Training Set Constructed for %s "%(parent_category)
         print "Training Set Stats"
         print len(train_x), len(train_y)
@@ -304,9 +317,9 @@ def second_training_process():
                 for word in ngrams(records.lower(),1,3):
                     if not re.match('^[0-9]+$',word):
                         vocabulary.add(word.lower())
-            except:
+            except Exception as e:
                 print records
-                continue
+                pass
         print "Vocab Done"
 
         vectorizer=feature_extraction.text.CountVectorizer(vocabulary=set(vocabulary),ngram_range=(1,3),stop_words='english')
@@ -343,7 +356,7 @@ def second_training_process():
 
 if __name__=='__main__':
     root_training_prcoess()
-    # second_training_process()
+    second_training_process()
     # categories=json.loads(get_categories())
     # for cat in categories:
     #     print cat
