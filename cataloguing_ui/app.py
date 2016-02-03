@@ -228,8 +228,9 @@ def cat_subcat_tagging():
 @bp.route('/attribute-mapping', methods=['GET', 'POST'])
 def attribute_mapping():
     try:
-        if 'user' in session:
-            user_id = session['user']['id']
+        user_dict = session.get("user", None)
+        if user_dict:
+            user_id = user_dict.get('id', None)
             tag_count, verify_count = get_tag_count(user_id)
             available_cats = get_attr_mapping_cat_list()
             return render_template("attribute_mapping.html",
@@ -281,8 +282,8 @@ def get_products():
 def get_attribute_details():
     try:
         posted_data = request.get_json()
-        cat = posted_data["cat"]
-        subcat = posted_data["subcat"]
+        cat = posted_data.get("cat", None)
+        subcat = posted_data.get("subcat", None)
         query = {}
         if cat:
             query["cat"] = cat
@@ -300,12 +301,12 @@ def get_attribute_details():
 @bp.route('/set-attribute-mapping', methods=['GET', 'POST'])
 def set_attribute_mapping():
     try:
-        user_id = session['user']['id']
+        user_id = session['user'].get('id', None)
         posted_data = request.get_json()
-        attr_id = posted_data.pop("attr_id")
-        core_attr = posted_data.pop("core_attr")
-        cat_filter = posted_data.pop("cat_filter")
-        subcat_filter = posted_data.pop("subcat_filter")
+        attr_id = posted_data.pop("attr_id", "")
+        core_attr = posted_data.pop("core_attr", None)
+        cat_filter = posted_data.pop("cat_filter", None)
+        subcat_filter = posted_data.pop("subcat_filter", None)
         db.attributes.update({"_id":ObjectId(attr_id)}, {"$set":{"core_attr":core_attr, "tagged_by":user_id}})
         inc_tag_count(user_id)
         tag_count, verify_count = get_tag_count(user_id)

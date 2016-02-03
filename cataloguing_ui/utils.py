@@ -208,12 +208,12 @@ def get_random_attribute_details(query):
         attr_dict_list.append(attr_dict)
     attr_dict = random.choice(attr_dict_list)
     if attr_dict["subcat"] == "null":
-        cat_dict = db.attr_mapping_cats.find_one({"cat_name":attr_dict["cat"]})
+        cat_dict = db.attr_mapping_cats.find_one({"cat_name":attr_dict.get("cat", None)})
     else:
-        cat_dict = db.attr_mapping_cats.find_one({"cat_name":attr_dict["subcat"]})
-    attr_dict["allowed_attrs"] = cat_dict["attrs"]
+        cat_dict = db.attr_mapping_cats.find_one({"cat_name":attr_dict.get("subcat", None)})
+    attr_dict["allowed_attrs"] = cat_dict.get("attrs", [])
     attr_dict["attr_id"] = str(attr_dict.pop("_id"))
-    if bool(attr_dict):
+    if attr_dict:
         return attr_dict
     else:
         return {'error':'No untagged attributes for this filter.'}
