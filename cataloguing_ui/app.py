@@ -1,6 +1,7 @@
 import json
 import config
 import ast
+import random
 
 from config import my_logger, sentry_client, db, hq_db, DELHIVERY, REVERSEGAZE, OTHERS
 from random import randint
@@ -10,7 +11,8 @@ from flask_oauthlib.client import OAuth
 from flask_oauth2_login import GoogleLogin
 from bson.objectid import ObjectId
 
-from utils import update_category, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count, add_new_subcat, get_cat_list, to_json, get_hq_cat_list, get_hq_subcat_list
+from utils import update_category, get_product_tagging_details, get_vendors, get_subcategories, get_taglist, get_all_tags, inc_skip_count
+from utils import add_new_subcat, get_cat_list, to_json, get_hq_cat_list, get_hq_subcat_list, get_attr_mapping_cat_list, get_random_attribute_details
 from users import add_user, get_tag_count, inc_tag_count, dcr_tag_count, get_users
 
 bp = Blueprint('bp', __name__, static_folder='static', template_folder='templates')
@@ -223,6 +225,30 @@ def cat_subcat_tagging():
             )
 
 
+@bp.route('/attribute-mapping', methods=['GET', 'POST'])
+def attribute_mapping():
+    try:
+        user_dict = session.get("user", None)
+        if user_dict:
+            user_id = user_dict.get('id', None)
+            tag_count, verify_count = get_tag_count(user_id)
+            available_cats = get_attr_mapping_cat_list()
+            return render_template("attribute_mapping.html",
+                                   username=session['user']['name'],
+                                   tag_count=tag_count,
+                                   verify_count=verify_count,
+                                   available_cats=available_cats
+                                   )
+        else:
+            return redirect(url_for('bp.login'))
+    except Exception as e:
+        my_logger.error("Exception in attribute_mapping function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in attribute_mapping function",
+            extra = {"Exception": e}
+            )
+
+
 @bp.route('/get-products', methods=['GET', 'POST'])
 def get_products():
     try:
@@ -248,6 +274,55 @@ def get_products():
         my_logger.error("Exception in get_products function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in get_products function",
+            extra = {"Exception": e}
+            )
+
+
+@bp.route('/get-attribute-details', methods=['GET', 'POST'])
+def get_attribute_details():
+    try:
+        posted_data = request.get_json()
+        cat = posted_data.get("cat", None)
+        subcat = posted_data.get("subcat", None)
+        query = {}
+        if cat:
+            query["cat"] = cat
+        if subcat:
+            query["subcat"] = subcat
+        return json.dumps(get_random_attribute_details(query))
+    except Exception as e:
+        my_logger.error("Exception in get_attribute_details function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in get_attribute_details function",
+            extra = {"Exception": e}
+            )
+
+
+@bp.route('/set-attribute-mapping', methods=['GET', 'POST'])
+def set_attribute_mapping():
+    try:
+        user_id = session['user'].get('id', None)
+        posted_data = request.get_json()
+        attr_id = posted_data.pop("attr_id", "")
+        core_attr = posted_data.pop("core_attr", None)
+        cat_filter = posted_data.pop("cat_filter", None)
+        subcat_filter = posted_data.pop("subcat_filter", None)
+        db.attributes.update({"_id":ObjectId(attr_id)}, {"$set":{"core_attr":core_attr, "tagged_by":user_id}})
+        inc_tag_count(user_id)
+        tag_count, verify_count = get_tag_count(user_id)
+        query = {}
+        if cat_filter:
+            query["cat"] = cat_filter
+        if subcat_filter:
+            query["subcat"] = subcat_filter
+        random_attr_dict = get_random_attribute_details(query)
+        random_attr_dict["tag_count"] = tag_count
+        random_attr_dict["verify_count"] = verify_count
+        return json.dumps(random_attr_dict)
+    except Exception as e:
+        my_logger.error("Exception in set_attribute_mapping function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in set_attribute_mapping function",
             extra = {"Exception": e}
             )
 
@@ -293,6 +368,25 @@ def get_hq_subcats():
         my_logger.error("Exception in get_hq_subcats function, e = {}".format(e))
         sentry_client.captureException(
             message = "Exception in get_hq_subcats function",
+            extra = {"Exception": e}
+            )
+
+
+@bp.route('/get-attr-mapping-subcats', methods=['GET', 'POST'])
+def get_attr_mapping_subcats():
+    try:
+        posted_data = request.get_json()
+        my_logger.info("Posted data for get sub-categories = {}".format(posted_data))
+        cat_id = posted_data["cat_id"]
+        subcat_cur = db.attr_mapping_cats.find({"parent":ObjectId(cat_id)})
+        subcat_list = []
+        for subcat in subcat_cur:
+            subcat_list.append(subcat["cat_name"])
+        return to_json(subcat_list)
+    except Exception as e:
+        my_logger.error("Exception in get_attr_mapping_subcats function, e = {}".format(e))
+        sentry_client.captureException(
+            message = "Exception in get_attr_mapping_subcats function",
             extra = {"Exception": e}
             )
 

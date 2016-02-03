@@ -1,0 +1,40 @@
+{% extends "base_tagging.html" %}
+
+{% block content %}
+
+<li>The resultant attribute will be an intersection of Select Category and Select Sub-category choices</li>
+<li>Selecting nothing will fetch the attribute directly without any filter</li>
+<p></p>
+
+<select id="select-attr-mapping-cat" >
+    <option value='-1'>----------- Select Category -----------</option>
+    {% for cat in available_cats %}
+        <option value='{{cat._id}}'>{{cat.cat_name}}</option>
+    {% endfor %}
+</select>
+<select id="select-attr-mapping-subcat" disabled></select>
+<input id="get-attribute-button" type="submit" class="btn btn-primary" value="Get Attribute">
+
+<div id="map-attributes" style="display:none">
+  <h4>Attribute details:</h4>
+  <table class="table table-bordered table-hover">
+      <tbody>
+          <tr><th>Attribute Name</th><th><span id='page_attr_name'></span></th></tr>
+          <tr><td>Category</td><td><span id='page_attr_cat'></span></td></tr>
+          <tr><td>Sub-Category</td><td><span id='page_attr_subcat'></span></td></tr>
+          <tr><td>Sample Values</td><td><span id='page_attr_sample_values'><ul style="margin-left:-20px;"></ul></span></td></tr>
+      </tbody>
+  </table>
+  <select id="select-core-attribute"></select>
+  <input type="submit" class="btn btn-primary" value="Submit Core Attribute" id="submit-core-attr-button">
+</div>
+
+{% with messages = get_flashed_messages(category_filter=["error"]) %}
+  {% if messages %}
+    {% for message in messages %}
+        <script>$.notify("Access denied. Please login as Admin.", {clickToHide: true});</script>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% endblock %}
