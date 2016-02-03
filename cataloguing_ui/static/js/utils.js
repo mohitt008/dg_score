@@ -1,6 +1,9 @@
 $(document).ready(function () {
       window.q;
       window.id;
+      window.attr_mapping_cat_filter
+      window.attr_mapping_subcat_filter
+      window.attr_id;
       window.vendor;
       window.prod_seg;
       window.data_obj;
@@ -73,6 +76,103 @@ $(document).ready(function () {
                             else
                                 tagged_data = "";
                             $('.address').taggify();
+                        }
+                    }
+                });                         
+            }
+        });
+    });
+
+    $(function() {
+        $( "#get-attribute-button" ).click(function() {
+
+            var cat_val = $("#select-attr-mapping-cat").find(":selected").val();
+            var cat_text = $("#select-attr-mapping-cat").find(":selected").text();
+            var subcat_val = $("#select-attr-mapping-subcat").find(":selected").val();
+            var subcat_text = $("#select-attr-mapping-subcat").find(":selected").text();
+            if( subcat_val == undefined )
+                subcat_val = '-1'
+            if( cat_val=='-1' &&  subcat_val!='-1' )
+                $("#get-attribute-button").notify('Please select a category for the selected sub-category.');
+            else {
+                $("input[type=submit]").attr("disabled", "disabled")
+                data_obj = {}
+                if ( cat_val == "-1" )
+                    data_obj["cat"] = null
+                else {
+                    data_obj["cat"] = cat_text
+                }
+                if ( subcat_val == "-1" )
+                    data_obj["subcat"] = null
+                else {
+                    data_obj["subcat"] = subcat_text
+                }
+                attr_mapping_cat_filter = data_obj["cat"]
+                attr_mapping_subcat_filter = data_obj["subcat"]
+                $.ajax({
+                    url: '/cat-ui/get-attribute-details',
+                    dataType: 'json',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data_obj),
+                    success: function (data) {
+                        $("input[type=submit]").removeAttr("disabled")
+                        if (data['error']) {
+                            $("#get-attribute-button").notify(data['error']);
+                        }
+                        else {
+                            update_html(data);
+                            var allowed_attr_options = '<option value="-1">------ Select Core Attribute ------</option>';
+                            $.each(data["allowed_attrs"], function (i, attr) {
+                                allowed_attr_options += '<option value="' + attr + '">' + attr + '</option>';
+                            });
+                            allowed_attr_options += '<option value="null">None of these</option>';
+                            $('#select-core-attribute').html(allowed_attr_options);
+                        }
+                    }
+                });                         
+            }
+        });
+    });
+
+    $(function() {
+        $( "#submit-core-attr-button" ).click(function() {
+
+            var core_attr_val = $("#select-core-attribute").find(":selected").val();
+            if( core_attr_val=='-1' )
+                $("#submit-core-attr-button").notify('Please select a core attribute value before submitting.');
+            else {
+                $("input[type=submit]").attr("disabled", "disabled")
+                data_obj = {};
+                data_obj["attr_id"] = attr_id;
+                data_obj["core_attr"] = core_attr_val;
+                data_obj["cat_filter"] = attr_mapping_cat_filter;
+                data_obj["subcat_filter"] = attr_mapping_subcat_filter;
+                $.ajax({
+                    url: '/cat-ui/set-attribute-mapping',
+                    dataType: 'json',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data_obj),
+                    success: function (data) {
+                        $("input[type=submit]").removeAttr("disabled")
+                        if (data['error']) {
+                            $("#submit-core-attr-button").notify(data['error']);
+                        }
+                        else {
+                            $("#submit-core-attr-button").notify();
+                            $('#submit-button').notify("Core attribute saved, fetching new attribute...", {
+                                className:"success",
+                                autoHide: true,
+                                autoHideDelay: 1000
+                            });
+                            update_html(data);
+                            var allowed_attr_options = '<option value="-1">------ Select Core Attribute ------</option>';
+                            $.each(data["allowed_attrs"], function (i, attr) {
+                                allowed_attr_options += '<option value="' + attr + '">' + attr + '</option>';
+                            });
+                            allowed_attr_options += '<option value=null>None of these</option>';
+                            $('#select-core-attribute').html(allowed_attr_options);
                         }
                     }
                 });                         
@@ -153,11 +253,30 @@ $(document).ready(function () {
         });
     });
 
+    $(function () {
+        $("#select-attr-mapping-cat").on("change", function () {
+            var cat_id = $(this).find(':selected').val();
+            if( cat_id != "-1" )
+                get_attr_mapping_subcats( cat_id, "#select-attr-mapping-subcat" )
+        });
+    });
+
 });
 
 function update_html(data) {
+    attr_id = data["attr_id"];
+    console.log(attr_id)
     $('input:checkbox').removeAttr('checked');
     $("#tag-products").css("display", "block");
+    $("#map-attributes").css("display", "block");
+    $("#page_attr_name").html(data['attr_name']);
+    $("#page_attr_cat").html(data['cat']);
+    $("#page_attr_subcat").html(data['subcat']);
+    var sample_values = '';
+    $.each(data['sample_values'],function(index){
+        sample_values += '<li>'+this+'</li>';
+    });
+    $("#page_attr_sample_values ul").html(sample_values);
     $("#org_prod_name").html(data['prod_name']);
     $("#vendor_name").html(data['vendor']);
     $("#vendor_name").attr("href", data['prod_url']);
@@ -175,7 +294,6 @@ function update_html(data) {
         $('#tag-count').html(data.tag_count);
     if (data['verify_count'])
         $('#verify-count').html(data.verify_count);
-
     attrs="";
     if (!jQuery.isEmptyObject(data['taglist'])) {
       $.each(data['taglist'], function (attr, code) {
@@ -184,7 +302,8 @@ function update_html(data) {
     }
     $(".extra-attrs").html(attrs);
     id = data['id'];
-    prod_seg = JSON.parse(data['prod_seg']);
+    if ('prod_seg' in data)
+        prod_seg = JSON.parse(data['prod_seg']);
 }
 
 function get_cats() {
@@ -277,6 +396,30 @@ function get_hq_subcats( cat_name, dropdown_id ) {
                     subcat_options += '<option value="' + subcat + '">' + subcat + '</option>';
                 });
                 subcat_options += '<option value=null>None of these</option>';
+                $(dropdown_id).prop('disabled', false);
+                $(dropdown_id).html(subcat_options);
+            }
+        }
+    });
+}
+
+function get_attr_mapping_subcats( cat_id, dropdown_id ) {
+    $.ajax({
+        url: '/cat-ui/get-attr-mapping-subcats',
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({"cat_id": cat_id}),
+        success: function (data) {
+            if (jQuery.isEmptyObject(data)) {
+                $(dropdown_id).prop('disabled', false);
+                $(dropdown_id).html('<option value="-1">------ No Sub-Categories found ------</option>');
+            }
+            else {
+                var subcat_options = '<option value="-1">------ Select Sub-Category ------</option>';
+                $.each(data, function (i, subcat) {
+                    subcat_options += '<option value="' + subcat + '">' + subcat + '</option>';
+                });
                 $(dropdown_id).prop('disabled', false);
                 $(dropdown_id).html(subcat_options);
             }

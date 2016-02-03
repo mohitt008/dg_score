@@ -1,5 +1,6 @@
 import re
 import json
+import random
 
 from config import my_logger, sentry_client, db, hq_db
 from bson.objectid import ObjectId
@@ -48,6 +49,13 @@ def get_cat_list( cat_filter, vendor ):
             extra = {"Exception": e}
             )        
 
+
+def get_attr_mapping_cat_list():
+    cat_list = []
+    cat_cur = db.attr_mapping_cats.find({"parent":None})
+    for cat in cat_cur:
+        cat_list.append(cat)
+    return cat_list
 
 def get_subcategories(cat_id):
     try:
@@ -189,6 +197,26 @@ def get_random_product(query, to_verify=False, skipped_thrice=False):
     #print(prod_obj)
     my_logger.info("Random product name object = {}".format(prod_obj))
     return prod_obj
+
+
+def get_random_attribute_details(query):
+    query["tagged_by"] = {"$exists": False}
+    attr_cur = db.attributes.find(query)
+    attr_dict_list = []
+    for attr_dict in attr_cur:
+        attr_dict.pop("most_occuring_words")
+        attr_dict_list.append(attr_dict)
+    attr_dict = random.choice(attr_dict_list)
+    if attr_dict["subcat"] == "null":
+        cat_dict = db.attr_mapping_cats.find_one({"cat_name":attr_dict.get("cat", None)})
+    else:
+        cat_dict = db.attr_mapping_cats.find_one({"cat_name":attr_dict.get("subcat", None)})
+    attr_dict["allowed_attrs"] = cat_dict.get("attrs", [])
+    attr_dict["attr_id"] = str(attr_dict.pop("_id"))
+    if attr_dict:
+        return attr_dict
+    else:
+        return {'error':'No untagged attributes for this filter.'}
 
 
 def inc_skip_count(product_id):
