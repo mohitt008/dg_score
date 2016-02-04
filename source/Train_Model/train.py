@@ -8,7 +8,7 @@ print PARENT_DIR
 sys.path.append(PARENT_DIR)
 
 import re
-from Load_Data.get_products import get_categories, get_delhivery_products, get_vendor_category_products, get_delhivery_vendor_products
+#from Load_Data.get_products import get_categories, get_delhivery_products, get_vendor_category_products, get_delhivery_vendor_products
 from config.config_details import second_level_cat_names, second_level_cat_names_nb, second_level_cat_names_rf, ROOT_PATH
 from utilities import get_category_tree
 
@@ -38,9 +38,9 @@ with open(ROOT_PATH + '/data/word_list_verified.csv','rb') as f:
         if row[2]!='0':
             plural_dict[row[0]] = row[1]
 
-client = MongoClient()
-db = client['cat_identification']
-product_table = db['products_new']
+# client = MongoClient()
+# db = client['cat_identification']
+# product_table = db['products_new']
 
 def mypluralremover(word):
     """
@@ -131,15 +131,15 @@ def remove_text_inside_brackets(text, brackets="()[]"):
     return ''.join(saved_chars)
 
 
-
-def get_products(cat_id, count):
-
-    return get_delhivery_products(cat_id,count)
+#
+# def get_products(cat_id, count):
+#
+#     return get_delhivery_products(cat_id,count)
 
 
 def root_training_prcoess():
     count=1000
-    category_tree=json.loads(get_categories())
+    category_tree=get_category_tree()
     category_list=category_tree.keys()
     product_list=[]
     category_count_dict={}
@@ -170,7 +170,7 @@ def root_training_prcoess():
             train_y.append(current_category_name)
             product_list.append((products,current_category_name))
     """
-    hq = product_table.find({"vendor_id":"HQ"})
+    # hq = product_table.find({"vendor_id":"HQ"})
     print "----------------"
     print "root training"
     # print hq.count()
