@@ -206,6 +206,7 @@ def get_random_attribute_details(query):
     for attr_dict in attr_cur:
         attr_dict.pop("most_occuring_words")
         attr_dict_list.append(attr_dict)
+    attr_dict = {}
     if attr_dict_list:
         attr_dict = random.choice(attr_dict_list)
     if attr_dict:
