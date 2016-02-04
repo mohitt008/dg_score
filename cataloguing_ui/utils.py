@@ -206,14 +206,18 @@ def get_random_attribute_details(query):
     for attr_dict in attr_cur:
         attr_dict.pop("most_occuring_words")
         attr_dict_list.append(attr_dict)
-    attr_dict = random.choice(attr_dict_list)
-    if attr_dict["subcat"] == "null":
-        cat_dict = db.attr_mapping_cats.find_one({"cat_name":attr_dict.get("cat", None)})
-    else:
-        cat_dict = db.attr_mapping_cats.find_one({"cat_name":attr_dict.get("subcat", None)})
-    attr_dict["allowed_attrs"] = cat_dict.get("attrs", [])
-    attr_dict["attr_id"] = str(attr_dict.pop("_id"))
+    if attr_dict_list:
+        attr_dict = random.choice(attr_dict_list)
     if attr_dict:
+        cat = attr_dict.get("cat", None)
+        subcat = attr_dict.get("subcat", None)
+        cat_dict = {}
+        if subcat == "null":
+            cat_dict = db.attr_mapping_cats.find_one({"cat_name": cat})
+        else:
+            cat_dict = db.attr_mapping_cats.find_one({"cat_name": subcat})
+        attr_dict["allowed_attrs"] = cat_dict.get("attrs", [])
+        attr_dict["attr_id"] = str(attr_dict.pop("_id"))
         return attr_dict
     else:
         return {'error':'No untagged attributes for this filter.'}
