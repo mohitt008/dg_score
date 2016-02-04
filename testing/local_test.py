@@ -76,13 +76,13 @@ def predict_category_test(product_name, cat_model):
                 second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
 
         result = {}
-        result['cat'] = first_level
+        result['cat'] = class1,class2,class3
         result['scat'] = second_level
         return result
 
     except Exception as err:
         pass
-
+#
 # product_list=[]
 # reader = csv.DictReader(open("/home/delhivery/dg2feb.csv"))
 # output_file=open("/home/delhivery/dg2febresults.csv",'w')
