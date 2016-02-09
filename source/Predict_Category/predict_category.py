@@ -20,10 +20,10 @@ def predict_category_tree (l_product_name, cat_model):
         class2 = "Delhivery_Others"
     else:
         class2 = clf_bayes.classes_[np.argmax(class2_prob_vector)]
-        if len(np.unique(class3_prob_vector)) == 1:
-            class3 = "Delhivery_Others"
-        else:
-            class3 = clf_bayes.classes_[np.argmax(class3_prob_vector)]
+    if len(np.unique(class3_prob_vector)) == 1:
+        class3 = "Delhivery_Others"
+    else:
+        class3 = clf_bayes.classes_[np.argmax(class3_prob_vector)]
 
     if class3 == "Delhivery_Others":
         if class1 == class2:
