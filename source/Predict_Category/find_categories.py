@@ -60,8 +60,9 @@ def process_product(product_name_dict, cat_model, dang_model, logger, username):
             product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
             clean_product_name = " ".join(product_words)
             first_level = results['cat']
-            dg_report = predict_dangerous(clean_product_name, wbn, first_level,
-                                      dang_model.dg_keywords, logger, username)
+            dg_report = predict_dangerous(clean_product_name, first_level,
+                                          dang_model.dg_keywords,
+                                          logger, username, wbn)
 
             results['dg'] = dg_report['dangerous']
             results['prohibited'] = dg_report.get('prohibited', False)
