@@ -15,8 +15,9 @@ def get_category_dg(product_name, wbn, cat_model, dang_model, logger, username):
         product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
         clean_product_name = " ".join(product_words)
 
-        dg_report = predict_dangerous(clean_product_name, wbn, first_level,
-                                      dang_model.dg_keywords, logger, username)
+        dg_report = predict_dangerous(clean_product_name, first_level,
+                                      dang_model.dg_keywords,
+                                      logger, username, wbn)
 
         result = {}
         result['cat'] = first_level
