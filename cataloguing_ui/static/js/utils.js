@@ -265,7 +265,6 @@ $(document).ready(function () {
 
 function update_html(data) {
     attr_id = data["attr_id"];
-    console.log(attr_id)
     $('input:checkbox').removeAttr('checked');
     $("#tag-products").css("display", "block");
     $("#map-attributes").css("display", "block");
@@ -273,9 +272,11 @@ function update_html(data) {
     $("#page_attr_cat").html(data['cat']);
     $("#page_attr_subcat").html(data['subcat']);
     var sample_values = '';
-    $.each(data['sample_values'],function(index){
-        sample_values += '<li>'+this+'</li>';
-    });
+    if (!jQuery.isEmptyObject(data['sample_values'])) {
+        $.each(data['sample_values'],function(index){
+            sample_values += '<li>'+this+'</li>';
+        });
+    }
     $("#page_attr_sample_values ul").html(sample_values);
     $("#org_prod_name").html(data['prod_name']);
     $("#vendor_name").html(data['vendor']);
