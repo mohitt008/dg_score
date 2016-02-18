@@ -10,7 +10,7 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 0,Facial,,"""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""","Steamer, Bat, Towel, Hair Remo",
 1,EDT,,,"RedTape, Top, Bowl, Shirt, Cotton, Bedtime, Staedtler, Pen","""Shoes and footwear"", ""Apparel and Accessories"", ""Home and Kitchen"", ""KitchenWare"""
 1,EDP,,,"PrettySecret, Speedpost, Speed",
-1,Extinguisher,,,,
+2,Extinguisher,,,,
 1,Fresh,,,"Container, Foil, Air Loc, Styler, Striaghtner, Skirt, Cashew, Almond , Pista, Tupperware, Saree, Blouse, English, Signoraware, Pack, Plastic, PrettySecret, Freshia, Sari, Box, Bottle, Towel, Mattress, Jar, Panty, Walnut, Raisin, Roasted, Salted, Juice, Kiwi, Fruit, lehenga","""Shoes and footwear"", ""Apparel and Accessories"""
 1,Gel,,,"Silicon, Cover, Bag, Angel, Bar, Softgels, Soft, Geliyo, Pen, Asics, Freecultr, Earring, Helmet","""Sports and Outdoors"", ""Shoes and footwear"""
 1,Health,,"""Beauty Products and Personal Care"", ""Health and Wellness"", ""Baby Care""","Slipper, Paper, Foil, Seat, Sole, belt, Sauna","""Shoes and footwear"""
@@ -86,5 +86,5 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 0,(Hindi),,,,
 1,Aerosol,,,,
 0,Books,,,,
-1,Fire Stop,,,"Edition, English, Shoe, Saffire",
-1,Firestop,,,"Edition, English, Shoe, Saffire",
+2,Fire Stop,,,"Edition, English, Shoe, Saffire",
+2,Firestop,,,"Edition, English, Shoe, Saffire",
