@@ -10,24 +10,21 @@
     <tbody>
       <tr>
       <td>
-        B1 - Brand<br>
-        C1 - Color<br>
-        D1 - Dimensions<br>
-        F1 - Flavour/Fragrance<br>
-        M1 - Model Name<br>
-        M2 - Model No<br>
-        O1 - Others<br>
-        P1 - Price<br>
-        P2 - Product Name<br>
-        P3 - Product Type<br>
-        S1 - Style No<br>
-        V1 - Volume/Quantity<br>        
-        W1 - Weight<br>
-        W2 - Wattage/Power<br>
+        O1 -<br>
+        Others<br>
+        (When no attribute matches)<br>
+        <br>
+        P1 - <br>
+        Price<br>
+        (When product name contains price)<br>
+        <br>
+        P2 -<br>
+        Product Type<br>
+        (Eg. Mousepad, Screengaurd, Shirt, etc.)<br>
       </td>
       <td>
-        {% for attr, code in tags.items() %}
-            {{ code }} - {{attr}}<br>
+        {% for code_attr in tags %}
+            {{code_attr[0]}} - {{code_attr[1]}}<br>
         {% endfor %}
       </td>
       </tr>
