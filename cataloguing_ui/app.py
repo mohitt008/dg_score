@@ -397,8 +397,10 @@ def change_category():
         posted_data = request.get_json()
         my_logger.info("Posted data for change category = {}".format(posted_data))
         update_category(posted_data['id'], posted_data['category'], posted_data['subcat'])
-        tag_list = get_taglist(posted_data['category'])
-        tag_list.update(get_taglist(posted_data['subcat']))
+        if posted_data['subcat']:
+            tag_list = get_taglist(posted_data['subcat'])
+        else:
+            tag_list = get_taglist(posted_data['category'])
         my_logger.info("Tag list after change category = {}".format(tag_list))
         return json.dumps(tag_list)
     except Exception as e:
