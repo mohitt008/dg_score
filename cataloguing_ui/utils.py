@@ -57,11 +57,11 @@ def get_attr_mapping_cat_list():
         cat_list.append(cat)
     return cat_list
 
+
 def get_subcategories(cat_id):
     try:
         cursor = db.categories.find({'par_category': ObjectId(cat_id)},
                                     {'par_category': 0}).sort([('category_name', 1)])
-
         json_results = []
         for result in cursor:
             json_results.append(result)
@@ -80,7 +80,7 @@ def get_vendors():
 
 
 def get_taglist(cat_name):
-    cat_obj = db.categories.find_one({"category_name": cat_name})
+    cat_obj = db.categories.find_one({"category_name": cat_name, "vendor":"HQ-Data"})
     my_logger.info("Tag-list object for the category {} : {}".format(cat_name, cat_obj))
     if cat_obj is not None and 'tags' in cat_obj:
         return cat_obj['tags']
@@ -93,8 +93,12 @@ def get_all_tags():
     tags = {}
     for tag_dict in tags_cursor:
         tags.update(tag_dict['tags'])
-    my_logger.info("In get_all_tags function, tags = {}, type of tags = {}".format(tags, type(tags)))
-    return tags
+    all_tag_list = []
+    for attr in tags:
+        all_tag_list.append([tags[attr], attr])
+    all_tag_list.sort()
+    my_logger.info("In get_all_tags function, tags = {}, type of tags = {}".format(all_tag_list, type(all_tag_list)))
+    return all_tag_list
 
 
 def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
@@ -113,9 +117,10 @@ def get_product_tagging_details(query, to_verify=False, skipped_thrice=False):
     if product is not None:
         prod_seg = segment_product(product['product_name'])
         my_logger.info("Fetched product segmentation = {}".format(prod_seg))
-        tag_list = get_taglist(product['category'])
-        tag_list.update(get_taglist(product['sub_category']))
-        
+        if product['sub_category']:
+            tag_list = get_taglist(product['sub_category'])
+        else:
+            tag_list = get_taglist(product['category'])
         tag_info['id'] = str(product['_id'])
         tag_info['prod_name'] = product['product_name']
         tag_info['vendor'] = product['vendor']
