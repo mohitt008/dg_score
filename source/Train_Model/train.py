@@ -6,27 +6,27 @@ from removeColor import removeColor
 PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname('__file__')))
 print PARENT_DIR
 sys.path.append(PARENT_DIR)
-from xgboost import XGBClassifier
+#from xgboost import XGBClassifier
 
 import re
 #from Load_Data.get_products import get_categories, get_delhivery_products, get_vendor_category_products, get_delhivery_vendor_products
 from config.config_details import second_level_cat_names, words_to_remove,ROOT_PATH
-from utilities import get_category_tree
+#from utilities import get_category_tree
 
 import csv
-import json
-import numpy as np
-from pymongo import MongoClient
+#import json
+#import numpy as np
+#from pymongo import MongoClient
 
 from sklearn import feature_extraction
 from sklearn import naive_bayes
-from sklearn import metrics
-from sklearn.svm import SVC
-from sklearn.svm import LinearSVC
-from sklearn import tree
-from sklearn.ensemble import RandomForestClassifier
-from nltk.stem.porter import PorterStemmer
-from nltk.stem.snowball import SnowballStemmer
+#from sklearn import metrics
+#from sklearn.svm import SVC
+#from sklearn.svm import LinearSVC
+#from sklearn import tree
+#from sklearn.ensemble import RandomForestClassifier
+#from nltk.stem.porter import PorterStemmer
+#from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_selection import SelectPercentile, chi2, f_classif, SelectFpr
 from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
@@ -105,6 +105,7 @@ def ngrams(desc, MIN_N=2, MAX_N=5):
                         ngram_list.append(" ".join(tokens[i:j]))
     except Exception as e:
         print desc
+        print e
     return ngram_list
 
 
@@ -140,12 +141,12 @@ def remove_text_inside_brackets(text, brackets="()[]"):
 
 
 def root_training_prcoess():
-    count=1000
-    category_tree=get_category_tree()
-    category_list=category_tree.keys()
-    product_list=[]
+    #count=1000
+    #category_tree=get_category_tree()
+    #category_list=category_tree.keys()
+    #product_list=[]
     category_count_dict={}
-    second_level_categories=set()
+    #second_level_categories=set()
     train_x=[]
     train_y=[]
     # # print category_list
@@ -221,6 +222,7 @@ def root_training_prcoess():
                 if not re.match('^[0-9]+$',word):
                     vocabulary.add(word.lower())
         except Exception as e:
+            print e
             print i,records
             pass
     print "Vocab Done"
@@ -252,13 +254,13 @@ def root_training_prcoess():
 
     print "model 3 done"
 
-    
+
     print os.path.dirname(os.path.realpath('__file__'))+'/../Models/clf_bayes.pkl'
     joblib.dump(clf_bayes, ROOT_PATH + '/data/Models/clf_bayes.pkl')
     joblib.dump(clf_chi, ROOT_PATH + '/data/Models/clf_chi.pkl')
     joblib.dump(clf_fp, ROOT_PATH + '/data/Models/clf_fp.pkl')
     joblib.dump(vectorizer,ROOT_PATH + '/data/Models/vectorizer.pkl')
-  
+
 
 
     # joblib.dump(second_level_cats,'../Models')
@@ -267,7 +269,7 @@ def root_training_prcoess():
 
 
 def second_training_process():
-    count=20000
+    #count=20000
     """
     category_tree=json.loads(get_categories())
     for parent_category in second_level_cat_names:
@@ -307,7 +309,7 @@ def second_training_process():
             except:
                 pass
             """
-    category_tree=get_category_tree()
+    #category_tree=get_category_tree()
     for parent_category in second_level_cat_names:
         train_x=[]
         train_y=[]
@@ -335,6 +337,7 @@ def second_training_process():
                     if not re.match('^[0-9]+$',word):
                         vocabulary.add(word.lower())
             except Exception as e:
+                print e
                 print records
                 pass
         print "Vocab Done"
@@ -353,20 +356,13 @@ def second_training_process():
 
         joblib.dump(vectorizer,ROOT_PATH + "/data/Models/SubModels/Vectorizer_"+parent_category)
         joblib.dump(clf_bayes,ROOT_PATH + "/data/Models/SubModels/clf_bayes_"+parent_category)
-        
+
         if parent_category in second_level_cat_names:
             clf_fpr = Pipeline([
             ('feature_selection',SelectFpr(f_classif,0.05)),
             ('classification', naive_bayes.MultinomialNB(fit_prior=False))])
             clf_fpr.fit(train_x_vectorized, train_y)
             joblib.dump(clf_fpr,ROOT_PATH + "/data/Models/SubModels/clf_fpr_"+parent_category)
-
-        
-
-
-
-
-
 
 if __name__=='__main__':
     root_training_prcoess()
@@ -376,6 +372,4 @@ if __name__=='__main__':
     #     print cat
     #     for subcats in categories[cat]:
     #         print '\t'+subcats
-
-
 
