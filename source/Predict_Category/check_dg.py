@@ -14,7 +14,7 @@ def predict_dangerous(clean_product_name, wbn, category, dg_keywords, logger, us
     if isnull(category) or not category:
         category = 'Delhivery_Others'
 
-    contain_failed = 0  
+    contain_failed = 0
     except_failed = 0
 
     for row in dg_keywords:
@@ -111,7 +111,7 @@ def predict_dangerous(clean_product_name, wbn, category, dg_keywords, logger, us
     dg_report["contain_cat"]  = contain_cat
     dg_report["except_list"]  = except_list
     dg_report["except_cat"]   = except_cat
-    
+
     logger.info('Check DG: Product Name: {} Report: {} for username {}'.format(
         clean_product_name, dg_report, username
         ))
