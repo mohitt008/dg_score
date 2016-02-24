@@ -3,7 +3,10 @@ import os
 ROOT_PATH = os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),
   os.path.pardir)),os.path.pardir))
 
-
+words_to_remove = \
+    [
+        'new','item new',"item"
+    ]
 second_level_cat_names=\
     ["Apparel and Accessories",
      "Automotive",
@@ -20,26 +23,27 @@ second_level_cat_names=\
      "Sports and Outdoors",
      "Watches, Eyewear and Jewellery"
     ]
-
-second_level_cat_names_nb=\
-    ["Apparel and Accessories",
-     "Automotive",
-     "Beauty Products and Personal Care",
-     "Books, Software and E-learning",
-     "Camera and Photos",
-     "Computers, Laptops and Accessories",
-     "Electronics and Appliances",
-     "Handbags, Bags and Luggage",
-     "Health and Wellness",
-     "Home and Kitchen",
-     "Shoes and Footwear",
-     "Sports and Outdoors",
-     "Watches, Eyewear and Jewellery"
-    ]
-
-
-second_level_cat_names_rf=\
-    [ "Mobile Phone, Tablets and Accessories"]
+#
+# second_level_cat_names_nb=\
+#     ["Apparel and Accessories",
+#      "Automotive",
+#      "Beauty Products and Personal Care",
+#      "Books, Software and E-learning",
+#      "Camera and Photos",
+#      "Computers, Laptops and Accessories",
+#      "Electronics and Appliances",
+#      "Handbags, Bags and Luggage",
+#      "Health and Wellness",
+#      "Home and Kitchen",
+#      "Shoes and Footwear",
+#      "Sports and Outdoors",
+#      "Watches, Eyewear and Jewellery",
+#
+#     ]
+#
+#
+# second_level_cat_names_rf=\
+#     [ "Mobile Phone, Tablets and Accessories"]
 
 
 """
