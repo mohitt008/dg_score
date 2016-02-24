@@ -66,7 +66,7 @@ def removeColor(sentence):
         j = index
         current = db.search(stringIndexed[index])
         if current:
-            while (current and current.children and stringIndexed[j + 1] in current.children):
+            while ( j+1 < len(stringIndexed) and current and current.children and stringIndexed[j + 1] in current.children):
                 current = current.children[stringIndexed[j + 1]]
                 j = j + 1
 
