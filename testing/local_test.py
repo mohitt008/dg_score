@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname('__file__')))
 sys.path.append(PARENT_DIR+"/../source/")
 
-from config.config_details import ROOT_PATH
+#from config.config_details import ROOT_PATH
 from Predict_Category.objects import categoryModel
 from Predict_Category.constants import CLEAN_PRODUCT_NAME_REGEX
 from Train_Model.train import ngrams
@@ -24,8 +24,6 @@ clf_fp = cat_model.clf_fp
 second_level_vectorizer = cat_model.second_level_vectorizer
 second_level_clf_bayes = cat_model.second_level_clf_bayes
 second_level_clf_fpr = cat_model.second_level_clf_fpr
-
-
 
 def single_output(product_name):
 
@@ -53,7 +51,6 @@ def single_output(product_name):
             'class2':class2,
             'class3':class3}
 
-
 def test_first_level(products):
     f=open("/home/delhivery/newcatresults_4.csv",'w')
     writer=csv.writer(f)
@@ -64,7 +61,6 @@ def test_first_level(products):
     found_2,correct_2=0,0
     found_3,correct_3=0,0
 
-
     for i,product_desc in enumerate(products):
         print i
         product_name=product_desc.get('product_name')
@@ -74,7 +70,6 @@ def test_first_level(products):
         class2=output_dict.get('class2')
         class3=output_dict.get('class3')
         clean_product_name=output_dict.get('clean_product_name')
-
 
         if class1!="Uncategorized":
             found_1+=1
@@ -169,9 +164,8 @@ def predict_category_test(product_name, cat_model):
         return result
 
     except Exception as err:
+        print err
         pass
-
-
 
 if __name__=="__main__":
 
@@ -194,7 +188,4 @@ if __name__=="__main__":
     # print single_output("beauty item")
 
     # product_name,new_cat,new_subcat
-
-
-
 
