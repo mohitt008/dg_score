@@ -6,41 +6,42 @@ from removeColor import removeColor
 PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname('__file__')))
 print PARENT_DIR
 sys.path.append(PARENT_DIR)
+#from xgboost import XGBClassifier
 
 import re
-from Load_Data.get_products import get_categories, get_delhivery_products, get_vendor_category_products, get_delhivery_vendor_products
-from config.config_details import second_level_cat_names, second_level_cat_names_nb, second_level_cat_names_rf, ROOT_PATH
+#from Load_Data.get_products import get_categories, get_delhivery_products, get_vendor_category_products, get_delhivery_vendor_products
+from config.config_details import second_level_cat_names, words_to_remove,ROOT_PATH
+#from utilities import get_category_tree
 
 import csv
-import json
-import numpy as np
-from pymongo import MongoClient
+#import json
+#import numpy as np
+#from pymongo import MongoClient
 
 from sklearn import feature_extraction
 from sklearn import naive_bayes
-from sklearn import metrics
-from sklearn.svm import SVC
-from sklearn.svm import LinearSVC
-from sklearn import tree
-from sklearn.ensemble import RandomForestClassifier
-from nltk.stem.porter import PorterStemmer
-from nltk.stem.snowball import SnowballStemmer
+#from sklearn import metrics
+#from sklearn.svm import SVC
+#from sklearn.svm import LinearSVC
+#from sklearn import tree
+#from sklearn.ensemble import RandomForestClassifier
+#from nltk.stem.porter import PorterStemmer
+#from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_selection import SelectPercentile, chi2, f_classif, SelectFpr
 from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
 
 
 plural_dict = {}
-with open(ROOT_PATH + '/data/Train_Model/word_list_verified.csv','rb') as f:
+with open(ROOT_PATH + '/data/word_list_verified.csv','rb') as f:
     reader = csv.reader(f)
     for row in reader:
-        type(row[2])
         if row[2]!='0':
             plural_dict[row[0]] = row[1]
 
-client = MongoClient()
-db = client['cat_identification']
-product_table = db['products_new']
+# client = MongoClient()
+# db = client['cat_identification']
+# product_table = db['products_new']
 
 def mypluralremover(word):
     """
@@ -88,10 +89,11 @@ def ngrams(desc, MIN_N=2, MAX_N=5):
     """
 
     ngram_list = []
-    # desc = remove_text_inside_brackets(desc)
+    desc = remove_text_inside_brackets(desc)
     desc = removeColor(desc)
     tokens = re.findall(r"[\w'-]+", desc)
     tokens = [mypluralremover(x) for x in tokens]
+
     try:
         if tokens != []:
             if len(tokens) < 2:
@@ -101,8 +103,9 @@ def ngrams(desc, MIN_N=2, MAX_N=5):
                 for i in xrange(n_tokens):
                     for j in xrange(i + MIN_N, min(n_tokens, i + MAX_N) + 1):
                         ngram_list.append(" ".join(tokens[i:j]))
-    except:
+    except Exception as e:
         print desc
+        print e
     return ngram_list
 
 
@@ -131,19 +134,19 @@ def remove_text_inside_brackets(text, brackets="()[]"):
     return ''.join(saved_chars)
 
 
-
-def get_products(cat_id, count):
-
-    return get_delhivery_products(cat_id,count)
+#
+# def get_products(cat_id, count):
+#
+#     return get_delhivery_products(cat_id,count)
 
 
 def root_training_prcoess():
-    count=1000
-    category_tree=json.loads(get_categories())
-    category_list=category_tree.keys()
-    product_list=[]
+    #count=1000
+    #category_tree=get_category_tree()
+    #category_list=category_tree.keys()
+    #product_list=[]
     category_count_dict={}
-    second_level_categories=set()
+    #second_level_categories=set()
     train_x=[]
     train_y=[]
     # # print category_list
@@ -170,22 +173,30 @@ def root_training_prcoess():
             train_y.append(current_category_name)
             product_list.append((products,current_category_name))
     """
-    hq = product_table.find({"vendor_id":"HQ"})
+    # hq = product_table.find({"vendor_id":"HQ"})
     print "----------------"
     print "root training"
-    print hq.count()
-    for products in hq:
-        train_x.append(products['product_name'].encode('ascii','ignore').lower())
-        if products['vendor_category_id'] == 'NA':
-            current_category_name = 'Delhivery_Others'
-        else:
-            current_category_name =  products['vendor_category_id'].split('->')[0]
-        train_y.append(current_category_name)
-        product_list.append((products,current_category_name))
+    # print hq.count()
+    # for products in hq:
+    #     train_x.append(products['product_name'].encode('ascii','ignore').lower())
+    #     if products['vendor_category_id'] == 'NA':
+    #         current_category_name = 'Delhivery_Others'
+    #     else:
+    #         current_category_name =  products['vendor_category_id'].split('->')[0]
+    #     train_y.append(current_category_name)
+    #     product_list.append((products,current_category_name))
 
-
-
-
+    #Reading from csv
+    reader=csv.DictReader(open(ROOT_PATH+"/data/prdcat_16feb.csv"))
+    for row in reader:
+        if row['new_cat']!='Unclear':
+            try:
+                ngram_list=ngrams(row['product_name'].encode('ascii','ignore').lower(),1,1)
+                train_x.append(" ".join(ngram_list))
+                train_y.append(row['new_cat'])
+            except Exception:
+                pass
+    # train_x,train_y=train_x[:10000],train_y[:10000]
     print "Training Set Constructed"
     print "Training Set Stats"
     print category_count_dict
@@ -201,6 +212,7 @@ def root_training_prcoess():
     #         train_x_tokenized.append([""])
     # print "Tokenized Training Set"
 
+
     vocabulary=set()
     print "Constructing Vocab"
     for i,records in enumerate(train_x):
@@ -209,10 +221,16 @@ def root_training_prcoess():
             for word in ngrams(records.lower(),1,3):
                 if not re.match('^[0-9]+$',word):
                     vocabulary.add(word.lower())
-        except:
-            print records
-            continue
+        except Exception as e:
+            print e
+            print i,records
+            pass
     print "Vocab Done"
+    for word in words_to_remove:
+         try:
+            vocabulary.remove(word)
+         except Exception:
+            pass
 
     vectorizer=feature_extraction.text.CountVectorizer(vocabulary=set(vocabulary),ngram_range=(1,3),stop_words='english')
     train_x_vectorized=vectorizer.transform(train_x)
@@ -228,20 +246,21 @@ def root_training_prcoess():
     clf_chi.fit(train_x_vectorized, train_y)
 
     print "model 2 done"
-    
-    clf_rf = Pipeline([
-        ('feature_selection', LinearSVC(C=2, penalty="l1", dual=False)),
-  ('classification', RandomForestClassifier(n_estimators=100, max_depth=1000))])
-    clf_rf.fit(train_x_vectorized, train_y)
-   
+
+    clf_fp = Pipeline([
+        ('feature_selection',SelectFpr(f_classif,alpha=0.1)),
+  ('classification', naive_bayes.MultinomialNB(fit_prior=False))])
+    clf_fp.fit(train_x_vectorized, train_y)
+
     print "model 3 done"
-    
+
+
     print os.path.dirname(os.path.realpath('__file__'))+'/../Models/clf_bayes.pkl'
     joblib.dump(clf_bayes, ROOT_PATH + '/data/Models/clf_bayes.pkl')
     joblib.dump(clf_chi, ROOT_PATH + '/data/Models/clf_chi.pkl')
-    joblib.dump(clf_rf, ROOT_PATH + '/data/Models/clf_l1_rf.pkl')
+    joblib.dump(clf_fp, ROOT_PATH + '/data/Models/clf_fp.pkl')
     joblib.dump(vectorizer,ROOT_PATH + '/data/Models/vectorizer.pkl')
-  
+
 
 
     # joblib.dump(second_level_cats,'../Models')
@@ -250,7 +269,8 @@ def root_training_prcoess():
 
 
 def second_training_process():
-    count=10000
+    #count=20000
+    """
     category_tree=json.loads(get_categories())
     for parent_category in second_level_cat_names:
         train_x=[]
@@ -259,7 +279,7 @@ def second_training_process():
         category_count_dict={}
         for category_id in category_tree[parent_category].keys():
             ## For vendor based model
-            """
+
             print get_products(category_id,count)
             current_prod_list=json.loads(get_products(category_id,count=count))
             print category_id
@@ -276,7 +296,6 @@ def second_training_process():
                 # print products
                 train_x.append(products.get('product_name',"").encode('ascii','ignore').lower())
                 train_y.append(current_category_name)
-            """
             try:
                 hq = product_table.find({"vendor_id":"HQ","vendor_category_id":category_id})
                 print "---------------------"
@@ -289,6 +308,22 @@ def second_training_process():
                     # product_list.append((products,current_category_name))
             except:
                 pass
+            """
+    #category_tree=get_category_tree()
+    for parent_category in second_level_cat_names:
+        train_x=[]
+        train_y=[]
+        reader=csv.DictReader(open(ROOT_PATH+"/data/prdcat_16feb.csv"))
+        for row in reader:
+            if row['new_cat']!='Unclear' and row['new_cat']==parent_category and row['new_subcat']!='null' and row['new_subcat']!='':
+                try:
+                    ngram_list=ngrams(row['product_name'].encode('ascii','ignore').lower(),1,1)
+                    train_x.append(" ".join(ngram_list))
+                    train_y.append(row['new_subcat'])
+                except Exception:
+                    pass
+
+
         print "Training Set Constructed for %s "%(parent_category)
         print "Training Set Stats"
         print len(train_x), len(train_y)
@@ -301,10 +336,17 @@ def second_training_process():
                 for word in ngrams(records.lower(),1,3):
                     if not re.match('^[0-9]+$',word):
                         vocabulary.add(word.lower())
-            except:
+            except Exception as e:
+                print e
                 print records
-                continue
+                pass
         print "Vocab Done"
+
+        for word in words_to_remove:
+            try:
+                vocabulary.remove(word)
+            except Exception:
+                pass
 
         vectorizer=feature_extraction.text.CountVectorizer(vocabulary=set(vocabulary),ngram_range=(1,3),stop_words='english')
         train_x_vectorized=vectorizer.transform(train_x)
@@ -314,29 +356,13 @@ def second_training_process():
 
         joblib.dump(vectorizer,ROOT_PATH + "/data/Models/SubModels/Vectorizer_"+parent_category)
         joblib.dump(clf_bayes,ROOT_PATH + "/data/Models/SubModels/clf_bayes_"+parent_category)
-        
-        if parent_category in second_level_cat_names_nb:
+
+        if parent_category in second_level_cat_names:
             clf_fpr = Pipeline([
             ('feature_selection',SelectFpr(f_classif,0.05)),
             ('classification', naive_bayes.MultinomialNB(fit_prior=False))])
             clf_fpr.fit(train_x_vectorized, train_y)
-            
             joblib.dump(clf_fpr,ROOT_PATH + "/data/Models/SubModels/clf_fpr_"+parent_category)
-            
-        elif parent_category in second_level_cat_names_rf:
-            clf_rf = Pipeline([
-            ('feature_selection', LinearSVC(C=2, penalty="l1", dual=False)),
-            ('classification', RandomForestClassifier(n_estimators=500, max_depth=1000))])
-            clf_rf.fit(train_x_vectorized, train_y)
-            
-            joblib.dump(clf_rf,ROOT_PATH + "/data/Models/SubModels/clf_rf_"+parent_category)
-
-        
-
-
-
-
-
 
 if __name__=='__main__':
     root_training_prcoess()
@@ -346,6 +372,4 @@ if __name__=='__main__':
     #     print cat
     #     for subcats in categories[cat]:
     #         print '\t'+subcats
-
-
 
