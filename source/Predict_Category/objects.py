@@ -5,18 +5,16 @@ from constants import PARENT_DIR_PATH
 
 sys.path.append(PARENT_DIR_PATH)
 
-from config.config_details import second_level_cat_names, second_level_cat_names_nb, second_level_cat_names_rf, ROOT_PATH
+from config.config_details import second_level_cat_names, ROOT_PATH
 
 
 class categoryModel(object):
     def __init__(self):
         self.second_level_cat_names_set = set(second_level_cat_names)
-        self.second_level_cat_names_set_nb = set(second_level_cat_names_nb)
-        self.second_level_cat_names_set_rf = set(second_level_cat_names_rf)
         self.vectorizer = joblib.load(ROOT_PATH + '/'+ 'data/Models/vectorizer.pkl')
         self.clf_bayes = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_bayes.pkl')
         self.clf_chi = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_chi.pkl')
-        self.clf_rf = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_l1_rf.pkl')
+        self.clf_fp = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_fp.pkl')
 
         self.second_level_vectorizer = {}
         self.second_level_clf_bayes = {}
@@ -27,12 +25,9 @@ class categoryModel(object):
                                                             'data/Models/SubModels/Vectorizer_' + cat_name)
             self.second_level_clf_bayes[cat_name] = joblib.load(ROOT_PATH + '/' +
                                                         'data/Models/SubModels/clf_bayes_' + cat_name)
-            if cat_name in self.second_level_cat_names_set_nb:
+            if cat_name in self.second_level_cat_names_set:
                 self.second_level_clf_fpr[cat_name] = joblib.load(ROOT_PATH + '/' +
                                                         'data/Models/SubModels/clf_fpr_' + cat_name)
-            elif cat_name in self.second_level_cat_names_set_rf:
-                self.second_level_clf_rf[cat_name] = joblib.load(ROOT_PATH + '/' +
-                                                        'data/Models/SubModels/clf_rf_' + cat_name)
 class dangerousModel(object):
     def __init__(self):
         file_dg_csv = open(ROOT_PATH + '/' + "data/DG_keywords.csv")

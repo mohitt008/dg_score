@@ -102,7 +102,7 @@ def get_products():
     """
     Function to fetch job from disque queue, catfight_input, splitting the job
     into vendor and results, and calling get_category to generate products details
-    for the job passed 
+    for the job passed
     """
     while True:
         try:
@@ -122,7 +122,7 @@ def get_products():
             logger.error("Function get_products failed for Job ID {} with job {} with error {}".
                         format(job_id,job,e))
             sentry_client.captureException(
-                message = "get_products failed", 
+                message = "get_products failed",
                 extra = {"error" : e})
             pass
 

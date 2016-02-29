@@ -2,36 +2,48 @@ __author__ = 'delhivery'
 import os
 ROOT_PATH = os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),
   os.path.pardir)),os.path.pardir))
+
+words_to_remove = \
+    [
+        'new','item new',"item"
+    ]
 second_level_cat_names=\
-    ["Beauty Products and Personal Care",
+    ["Apparel and Accessories",
+     "Automotive",
+     "Beauty Products and Personal Care",
+     "Books, Software and E-learning",
      "Camera and Photos",
-     "Mobile Phone, Tablets and Accesories",
-     "Apparel & Accessories",
-     "Watches, Eyewear and Jewellery",
+     "Computers, Laptops and Accessories",
      "Electronics and Appliances",
-     "Home and Kitchen",
-     "Sports and Outdoors",
-     "Computers and Laptops",
+     "Handbags, Bags and Luggage",
      "Health and Wellness",
-     "Shoes and Footwear"
+     "Home and Kitchen",
+     "Mobile Phone, Tablets and Accessories",
+     "Shoes and Footwear",
+     "Sports and Outdoors",
+     "Watches, Eyewear and Jewellery"
     ]
-
-second_level_cat_names_nb=\
-    ["Beauty Products and Personal Care",
-                  "Camera and Photos",
-                  "Apparel & Accessories",
-                  "Watches, Eyewear and Jewellery",
-                  "Electronics and Appliances",
-                  "Home and Kitchen",
-                  "Computers and Laptops",
-                  "Sports and Outdoors",
-                  "Health and Wellness",
-                  "Shoes and Footwear"
-    ]
-
-
-second_level_cat_names_rf=\
-    [ "Mobile Phone, Tablets and Accesories"]
+#
+# second_level_cat_names_nb=\
+#     ["Apparel and Accessories",
+#      "Automotive",
+#      "Beauty Products and Personal Care",
+#      "Books, Software and E-learning",
+#      "Camera and Photos",
+#      "Computers, Laptops and Accessories",
+#      "Electronics and Appliances",
+#      "Handbags, Bags and Luggage",
+#      "Health and Wellness",
+#      "Home and Kitchen",
+#      "Shoes and Footwear",
+#      "Sports and Outdoors",
+#      "Watches, Eyewear and Jewellery",
+#
+#     ]
+#
+#
+# second_level_cat_names_rf=\
+#     [ "Mobile Phone, Tablets and Accessories"]
 
 
 """
