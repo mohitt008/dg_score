@@ -11,10 +11,10 @@ from config.config_details import second_level_cat_names, ROOT_PATH
 class categoryModel(object):
     def __init__(self):
         self.second_level_cat_names_set = set(second_level_cat_names)
-        self.vectorizer = joblib.load(ROOT_PATH + '/'+ 'data/Models/vectorizer.pkl')
-        self.clf_bayes = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_bayes.pkl')
-        self.clf_chi = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_chi.pkl')
-        self.clf_fp = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_fp.pkl')
+        self.vectorizer = joblib.load(ROOT_PATH + '/'+ 'data/Models/vectorizer.pkl', mmap_mode='r')
+        self.clf_bayes = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_bayes.pkl', mmap_mode='r')
+        self.clf_chi = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_chi.pkl', mmap_mode='r')
+        self.clf_fp = joblib.load(ROOT_PATH + '/' + 'data/Models/clf_fp.pkl', mmap_mode='r')
 
         self.second_level_vectorizer = {}
         self.second_level_clf_bayes = {}
@@ -22,12 +22,12 @@ class categoryModel(object):
         self.second_level_clf_rf = {}
         for cat_name in self.second_level_cat_names_set:
             self.second_level_vectorizer[cat_name] = joblib.load(ROOT_PATH + '/' +
-                                                            'data/Models/SubModels/Vectorizer_' + cat_name)
+                                                            'data/Models/SubModels/Vectorizer_' + cat_name, mmap_mode='r')
             self.second_level_clf_bayes[cat_name] = joblib.load(ROOT_PATH + '/' +
-                                                        'data/Models/SubModels/clf_bayes_' + cat_name)
+                                                        'data/Models/SubModels/clf_bayes_' + cat_name, mmap_mode='r')
             if cat_name in self.second_level_cat_names_set:
                 self.second_level_clf_fpr[cat_name] = joblib.load(ROOT_PATH + '/' +
-                                                        'data/Models/SubModels/clf_fpr_' + cat_name)
+                                                        'data/Models/SubModels/clf_fpr_' + cat_name, mmap_mode='r')
 class dangerousModel(object):
     def __init__(self):
         file_dg_csv = open(ROOT_PATH + '/' + "data/DG_keywords.csv")
