@@ -80,7 +80,7 @@ def get_vendors():
 
 
 def get_taglist(cat_name):
-    cat_obj = db.categories.find_one({"category_name": cat_name, "vendor":"HQ-Data"})
+    cat_obj = db.categories.find_one({"category_name": cat_name, "vendor": "HQ-Data"})
     my_logger.info("Tag-list object for the category {} : {}".format(cat_name, cat_obj))
     if cat_obj is not None and 'tags' in cat_obj:
         return cat_obj['tags']
@@ -89,7 +89,7 @@ def get_taglist(cat_name):
 
 
 def get_all_tags():
-    tags_cursor = db.categories.find({'tags': {'$exists': True}}, {'_id': 0, 'tags': 1})
+    tags_cursor = db.categories.find({"tags": {"$exists": True}, "vendor": "HQ-Data"}, {'_id': 0, 'tags': 1})
     tags = {}
     for tag_dict in tags_cursor:
         tags.update(tag_dict['tags'])
