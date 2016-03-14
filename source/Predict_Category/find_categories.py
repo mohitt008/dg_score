@@ -6,11 +6,12 @@ import copy
 from check_dg import predict_dangerous
 from predict_category import predict_category_tree
 
-def get_category_dg(product_name, wbn, cat_model, dang_model, logger, username):
+
+def get_category_dg(product_name, wbn, dang_model, logger, username):
     try:
         l_product_name = product_name.lower()
 
-        first_level, second_level = predict_category_tree(l_product_name, cat_model)
+        first_level, second_level = predict_category_tree(l_product_name)
 
         product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
         clean_product_name = " ".join(product_words)
@@ -34,7 +35,8 @@ def get_category_dg(product_name, wbn, cat_model, dang_model, logger, username):
             message = "predict.py: Exception occured",
             extra = {"error" : err, "product_name" : product_name})
 
-def process_product(product_name_dict, cat_model, dang_model, logger, username):
+
+def process_product(product_name_dict, dang_model, logger, username):
     results = {}
     results_cache = ''
 
@@ -43,21 +45,22 @@ def process_product(product_name_dict, cat_model, dang_model, logger, username):
         final_result = {}
         original_dict = copy.deepcopy(product_name_dict)
 
-        product_name_clean = (re.sub(ALPHA_NUM_REGEX, '', product_name)).lower()
+        product_name_clean = re.sub(ALPHA_NUM_REGEX, '', product_name)
+        product_name_clean = product_name_clean.lower()
         product_name_key = 'catfight:' +':' + product_name_clean
         results_cache = r.get(product_name_key)
         wbn = product_name_dict.get('wbn', "")
         if not results_cache:
             results = get_category_dg(product_name.encode('ascii','ignore'),
-                                      wbn, cat_model, dang_model,
-                                      logger, username)
+                                      wbn, dang_model, logger, username)
             if results:
                 r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
                 results['cached'] = False
         else:
             results = json.loads(results_cache)
             l_product_name = product_name.lower()
-            product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
+            product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX,
+                                       l_product_name)
             clean_product_name = " ".join(product_words)
             first_level = results['cat']
             dg_report = predict_dangerous(clean_product_name, first_level,
@@ -72,12 +75,11 @@ def process_product(product_name_dict, cat_model, dang_model, logger, username):
 
     final_result = original_dict
     if not results:
-        #SK: Don't send empty result or bad format.
-        #SK: Default dg = true(ops verified)
+        # SK: Don't send empty result or bad format.
+        # SK: Default dg = true(ops verified)
         results['cat'] = "Not Found"
         results['scat'] = "Not Found"
         results['dg'] = True
         results['prohibited'] = False
     final_result['result'] = results
     return final_result
-

@@ -1,11 +1,13 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import json
+from multiprocessing import Pool, cpu_count
+from functools import partial
 
 from constants import CATFIGHT_LOGGING_PATH
 from find_categories import process_product
 from settings import client, sentry_client, catfight_input, catfight_output
-from objects import categoryModel, dangerousModel
+from objects import dangerousModel
 
 logger = logging.getLogger('Catfight App')
 handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000,
@@ -18,7 +20,6 @@ logger.info("Loading Process Started")
 
 try:
     dang_model = dangerousModel()
-    cat_model = categoryModel()
 except Exception as err:
     logger.error("Error {} while loading models".format(err))
     sentry_client.captureException(
@@ -40,42 +41,46 @@ def validate_product_args(record):
             value = False
     return value, error_response
 
+
 def get_category(list_product_names, job_id, username):
     output_list = []
-    logger.info("Request received {0} for username {1}".format(list_product_names,username))
+    logger.info("Request received {0} for username {1}".format(
+        list_product_names, username))
     if list_product_names:
         for product_name_dict in list_product_names:
             try:
-                valid_record, error_response = validate_product_args(product_name_dict)
+                valid_record, error_response = validate_product_args(
+                    product_name_dict)
                 if valid_record:
                     result = process_product(product_name_dict,
-                                            cat_model,
-                                            dang_model,
-                                            logger,
-                                            username)
+                                             dang_model,
+                                             logger,
+                                             username)
                     output_list.append(result)
                 else:
                     if type(product_name_dict) is dict:
                         for key, value in product_name_dict.items():
                             error_response[key] = value
-                    error_response["error"] = "BAD REQUEST"
+                            error_response["error"] = "BAD REQUEST"
                     output_list.append(error_response)
             except Exception as err:
                 logger.error(
-                    'get_category:Exception {} occurred against input: {} for job_id {} for username {}'.
+                    'get_category:Exception {} occurred against input: {} \
+                    for job_id {} for username {}'.
                     format(err, list_product_names, job_id, username))
                 sentry_client.captureException(
-                    message = "Exception occurred against input in get_category",
-                    extra = {"error" : err,"job_id" : job_id,
+                    message = "Exception occurred in get_category",
+                    extra = {"error" : err, "job_id" : job_id,
                              "product_name_dict" : product_name_dict,
                              "username" : username
                              })
                 pass
     else:
-        error_response = {'error':'MissingProductList'}
+        error_response = {'error' : 'MissingProductList'}
         output_list.append(error_response)
 
-    logger.info("Result produced {} for username {}".format(output_list, username))
+    logger.info("Result produced {} for username {}".format(
+        output_list, username))
 
     return output_list
 
@@ -91,36 +96,46 @@ def add_results_to_disque(results, vendor, username, job_id):
         results_dict['username'] = str(username)
         results_dict['catfight_results'] = results
         second_job_id = client.add_job(catfight_output,
-                                            json.dumps(results_dict),
-                                            retry = 5)
-        logger.info("Successfully added to Disque catfight_output with Job ID {}".format(second_job_id))
+                                       json.dumps(results_dict),
+                                       retry = 5)
+        logger.info("Successfully added to queue catfight_output \
+                    with Job ID {}".format(second_job_id))
     else:
-        logger.info("No results found for Job ID {} with job {}".format(job_id))
+        logger.info(
+            "No results found for Job ID {} with job {}".format(job_id))
 
 
 def get_products():
     """
     Function to fetch job from disque queue, catfight_input, splitting the job
-    into vendor and results, and calling get_category to generate products details
-    for the job passed
+    into vendor and results, and calling get_category to generate products
+    details for the job passed
     """
+    p = Pool(processes=cpu_count())
     while True:
         try:
             jobs = client.get_job([catfight_input])
             for queue_name, job_id, job in jobs:
-                logger.info("Successfully fetched from Disque queue catfight_input GET Job ID {} with job {}".
+                logger.info("Successfully fetched from queue catfight_input \
+                            GET Job ID {} with job {}".
                             format(job_id, job))
                 job_data = json.loads(job)
-                vendor = job_data['vendor']
                 username = job_data['username']
                 products = json.loads(job_data['payload'])
-                results = get_category(products, job_id, username)
-                add_results_to_disque(results, vendor, username, job_id)
+
+                custom_callback = partial(add_results_to_disque,
+                                          vendor = job_data['vendor'],
+                                          username = username,
+                                          job_id = job_id)
+                p.apply_async(get_category,
+                              args = (products, job_id, username,),
+                              callback = custom_callback)
                 client.ack_job(job_id)
 
         except Exception as e:
-            logger.error("Function get_products failed for Job ID {} with job {} with error {}".
-                        format(job_id,job,e))
+            logger.error(
+                "get_products failed for Job ID {} with job {} with error {}".
+                format(job_id, job, e))
             sentry_client.captureException(
                 message = "get_products failed",
                 extra = {"error" : e})
@@ -128,4 +143,3 @@ def get_products():
 
 if __name__=='__main__':
     get_products()
-
