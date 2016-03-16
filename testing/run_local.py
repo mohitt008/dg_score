@@ -2,7 +2,7 @@ import sys
 import os.path
 import csv
 from multiprocessing import Pool, cpu_count
-import cProfile
+#import cProfile
 #import pstats
 #import StringIO
 
@@ -46,8 +46,8 @@ if __name__=="__main__":
     p = Pool(processes = cpu_count() - 2)
     cnt = 0
 
-    pr = cProfile.Profile()
-    pr.enable()
+    #pr = cProfile.Profile()
+    #pr.enable()
 
     # SK: TODO: cache (Redis) ...
     for row in reader:
