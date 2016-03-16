@@ -1,19 +1,17 @@
 import sys
 import csv
 from sklearn.externals import joblib
-from constants import PARENT_DIR_PATH
+from constants import PARENT_DIR_PATH, MODELS_PATH, \
+        SUB_MODELS_PATH, DG_KEYWORDS_FILE
 
 sys.path.append(PARENT_DIR_PATH)
 
-from config.config_details import second_level_cat_names, ROOT_PATH
+from config.config_details import second_level_cat_names
 
 
 class categoryModel(object):
     def __init__(self):
         self.second_level_cat_names_set = set(second_level_cat_names)
-
-        MODELS_PATH = ROOT_PATH + '/data/Models/'
-        SUB_MODELS_PATH = ROOT_PATH + '/data/Models/SubModels'
 
         self.vectorizer = joblib.load(MODELS_PATH + 'vectorizer.pkl',
                                       mmap_mode = 'r')
@@ -43,7 +41,7 @@ class categoryModel(object):
 
 class dangerousModel(object):
     def __init__(self):
-        file_dg_csv = open(ROOT_PATH + "/data/DG_keywords.csv")
+        file_dg_csv = open(DG_KEYWORDS_FILE)
         reader = csv.reader(file_dg_csv)
         # Skip keys
         reader.next()
