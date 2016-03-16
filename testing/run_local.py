@@ -2,6 +2,7 @@ import sys
 import os.path
 import csv
 from multiprocessing import Pool, cpu_count
+from functools import partial
 #import cProfile
 #import pstats
 #import StringIO
@@ -21,13 +22,14 @@ writer = csv.DictWriter(f2, fieldnames = l)
 writer.writeheader()
 
 
-def collect_results(res):
+def collect_results(res, prd):
     #print "callback:", os.getpid()
     #print "callback:", res, type(res)
+    #print res
     result = {}
-    result['prd'] = res[0]
-    result['cat'] = res[1]
-    result['subcat'] = res[2]
+    result['prd'] = prd
+    result['cat'] = res[0]
+    result['subcat'] = res[1]
     writer.writerow(result)
 
 
@@ -53,14 +55,19 @@ if __name__=="__main__":
     for row in reader:
         try:
             prd = row[1].lower()
+            custom_callback = partial(collect_results,
+                                      prd = prd)
             p.apply_async(predict_category_tree,
                           args=(prd, ),
-                          callback=collect_results)
+                          callback=custom_callback)
             cnt += 1
             #print cnt
+            if cnt > 50:
+                break
         except Exception as e:
             print e
-            continue
+            # continue
+            break
     p.close()
     p.join()
 
