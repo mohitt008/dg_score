@@ -46,8 +46,8 @@ client = Client([config.DISQUE_IP])
 try:
     client.connect()
 except Exception as disque_err:
-    sentry_client.captureException(message = "settings.py: Failed to connect to disque",
-                                   extra={"error" : disque_err})
+    sentry_client.captureException(
+        message = "settings.py: Failed to connect to disque",
+        extra={"error" : disque_err})
     print "settings.py: Failed to connect to disque. error = ", disque_err
     sys.exit()
-

@@ -1,7 +1,11 @@
 import numpy as np
+from objects import categoryModel
+
+cat_model = categoryModel()
+
 
 # Product name should be passed after converting to lowercase
-def predict_category_tree (l_product_name, cat_model):
+def predict_category_tree(l_product_name):
     vectorizer = cat_model.vectorizer
     clf_bayes = cat_model.clf_bayes
     clf_chi = cat_model.clf_chi
@@ -12,8 +16,10 @@ def predict_category_tree (l_product_name, cat_model):
     second_level_clf_fpr = cat_model.second_level_clf_fpr
 
     class1 = clf_bayes.predict(vectorizer.transform([l_product_name]))[0]
-    class2_prob_vector = clf_chi.predict_proba(vectorizer.transform([l_product_name]))[0]
-    class3_prob_vector = clf_fp.predict_proba(vectorizer.transform([l_product_name]))[0]
+    class2_prob_vector = clf_chi.predict_proba(
+        vectorizer.transform([l_product_name]))[0]
+    class3_prob_vector = clf_fp.predict_proba(
+        vectorizer.transform([l_product_name]))[0]
 
     if len(np.unique(class3_prob_vector)) == 1:
         class3 = "Uncategorized"
@@ -48,4 +54,3 @@ def predict_category_tree (l_product_name, cat_model):
             second_level = second_level_clf_bayes[first_level].classes_[np.argmax(prob_vector)]
 
     return first_level, second_level
-
