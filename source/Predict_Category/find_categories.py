@@ -1,10 +1,23 @@
+
 import re
 from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY, CLEAN_PRODUCT_NAME_REGEX
 from settings import r, sentry_client
 import json
 import copy
-from check_dg import predict_dangerous
 from predict_category import predict_category_tree
+
+from dg_predictor import DGPredictor
+
+
+def predict_dg(product_name, category, logger):
+    category = category.lower()
+    predictor = DGPredictor(
+        product_name,
+        category,
+        logger
+    )
+    report = predictor.predict()
+    return report
 
 
 def get_category_dg(product_name, wbn, dang_model, logger, username):
@@ -16,9 +29,11 @@ def get_category_dg(product_name, wbn, dang_model, logger, username):
         product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
         clean_product_name = " ".join(product_words)
 
-        dg_report = predict_dangerous(clean_product_name, first_level,
-                                      dang_model.dg_keywords,
-                                      logger, username, wbn)
+        dg_report = predict_dg(
+            clean_product_name,
+            first_level,
+            logger
+        )
 
         result = {}
         result['cat'] = first_level
@@ -63,9 +78,12 @@ def process_product(product_name_dict, dang_model, logger, username):
                                        l_product_name)
             clean_product_name = " ".join(product_words)
             first_level = results['cat']
-            dg_report = predict_dangerous(clean_product_name, first_level,
-                                          dang_model.dg_keywords,
-                                          logger, username, wbn)
+
+            dg_report = predict_dg(
+                clean_product_name,
+                first_level,
+                logger
+            )
 
             results['dg'] = dg_report['dangerous']
             results['prohibited'] = dg_report.get('prohibited', False)
@@ -83,3 +101,4 @@ def process_product(product_name_dict, dang_model, logger, username):
         results['prohibited'] = False
     final_result['result'] = results
     return final_result
+

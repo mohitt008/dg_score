@@ -8,6 +8,7 @@ from constants import CATFIGHT_LOGGING_PATH
 from find_categories import process_product
 from settings import client, sentry_client, catfight_input, catfight_output
 from objects import dangerousModel
+import sys
 
 logger = logging.getLogger('Catfight App')
 handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000,
@@ -25,6 +26,8 @@ except Exception as err:
     sentry_client.captureException(
         message = "service_category_disque : Failed to load models",
         extra = {"error" : err})
+    print "service_cat_disque: Failed to load dg model...exiting"
+    sys.exit()
 
 logger.info("Loading Process Complete")
 
