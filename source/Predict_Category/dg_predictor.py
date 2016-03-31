@@ -49,6 +49,7 @@ class DGPredictor(object):
         self.category = category
         self.logger = logger
         self.keyword = ""
+        self.found_keyword = ""
         self.contain_list = ""
         self.contain_category = ""
         self.except_list = ""
@@ -161,6 +162,7 @@ class DGPredictor(object):
                 default = int(rule[0])
                 keyword = str(rule[1])
                 if keyword in self.product_name:
+                    self.found_keyword = keyword
                     if default == 0:
                         dg = self.__check_dg_false(rule)
                         # If a non-DG product becomes DG for any keyword, then
@@ -193,6 +195,7 @@ class DGPredictor(object):
 
         dg_report = {}
         dg_report['product_name'] = self.product_name
+        dg_report['keyword'] = self.found_keyword
         dg_report['dangerous'] = dg
         dg_report['prohibited'] = prohibited
         dg_report['contain_list'] = self.contain_list
