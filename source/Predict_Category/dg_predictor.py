@@ -20,6 +20,7 @@ print dg_report['prohibited']
 
 from settings import sentry_client
 from objects import dangerousModel
+import sys
 
 
 try:
@@ -29,6 +30,8 @@ except Exception as e:
         message="dg_predictor: Failed to load dg model",
         extra={"error": e}
     )
+    print "dg_predictor: Failed to load dg model"
+    sys.exit()
 
 
 class DGPredictor(object):
@@ -37,7 +40,7 @@ class DGPredictor(object):
     pre-defined set of potentially dangerous/prohibited keywords and a set
     of rules.
     """
-    def __init__(self, product_name, category, logger):
+    def __init__(self, product_name, category, logger=None):
         """
         All inputs are expected in lower case for
         string/sub-string matching.
@@ -173,10 +176,11 @@ class DGPredictor(object):
                         # time of sanitization of DG keywords file.
                         pass
             except Exception as e:
-                self.logger.error(
-                    'dg_predictor:Exception {} occurred against rule: {} \
-                    for product {}'.format(e, rule, self.product_name)
-                )
+                if self.logger:
+                    self.logger.error(
+                        'dg_predictor:Exception {} occurred against rule: {} \
+                        for product {}'.format(e, rule, self.product_name)
+                    )
                 sentry_client.captureException(
                     message="dg_predictor:Exception occurred against rule",
                     extra={
@@ -196,11 +200,12 @@ class DGPredictor(object):
         dg_report['except_list'] = self.except_list
         dg_report['except_category'] = self.except_category
 
-        self.logger.info('Check DG: Product Name: {} Report: {}'.format(
-                self.product_name,
-                dg_report
+        if self.logger:
+            self.logger.info('Check DG: Product Name: {} Report: {}'.format(
+                    self.product_name,
+                    dg_report
+                )
             )
-        )
         return dg_report
 
 

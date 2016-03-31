@@ -1,7 +1,19 @@
+
 import numpy as np
 from objects import categoryModel
+from settings import sentry_client
+import sys
 
-cat_model = categoryModel()
+
+try:
+    cat_model = categoryModel()
+except Exception as e:
+    sentry_client.captureException(
+        message="predict_category: Failed to load category model",
+        extra={"error": e}
+    )
+    print "predict_category: Failed to load category model...exiting"
+    sys.exit()
 
 
 # Product name should be passed after converting to lowercase
