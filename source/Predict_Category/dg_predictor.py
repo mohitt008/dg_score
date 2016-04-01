@@ -63,7 +63,7 @@ class DGPredictor(object):
         Output: True/False
         """
         if len(haystack):
-            return self.category in haystack.split(",")
+            return self.category in haystack.split(", ")
         else:
             return False
 
@@ -76,7 +76,7 @@ class DGPredictor(object):
         """
         result = False
         if len(haystack):
-            for contain_word in haystack.split(","):
+            for contain_word in haystack.split(", "):
                 if contain_word in self.product_name:
                     self.keyword = contain_word
                     result = True
