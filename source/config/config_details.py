@@ -90,7 +90,7 @@ cnn_params = {
     'num_epochs': 10,  # Number of training epochs
 
     # Testing parameters
-    'confidence_threshold': 0.1,  # Use CNN result only if confidence is above this value
+    'confidence_threshold': 0.7,  # Use CNN result only if confidence is above this value
 
     # Misc Parameters
     'allow_soft_placement': True,  # Allow soft device placement

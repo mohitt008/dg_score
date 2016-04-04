@@ -13,13 +13,13 @@ from collections import Counter
 PADDING_WORD = "<PAD/>"
 
 
-def clean_str(string):
+def clean_str(input_string):
     """This function cleans out the characters other than alphabets, numerics and '.'. 
     Alphabet characters are further converted to lower case.
 
     """
-    string = re.sub(r"[^A-Za-z0-9.]", " ", string)
-    return string.lower()
+    input_string = re.sub(r"[^A-Za-z0-9.]", " ", input_string)
+    return input_string.lower()
 
 
 def read_data_and_labels(filename):
@@ -272,3 +272,29 @@ def get_data_vector(sentence, vocabulary, sequence_length):
             x_text.append(val)
     sentences_padded = pad_sentences([x_text], sequence_length, vocabulary[PADDING_WORD])
     return sentences_padded
+
+
+def cnn_score_to_prob(score_dict):
+    """This function converts scores given by CNN to probability values. Negative 
+    scores are directly mapped to zero probability and positive scores are 
+    normalized by sum of positive scores.
+
+    """
+    pos_score_dict = {key: max([value, 0]) for key, value in score_dict.items()}
+    score_sum = sum(pos_score_dict.values())
+    if score_sum == 0:
+        score_sum = 1
+    prob_dict = {key: value * 1.0 / score_sum for key, value in pos_score_dict.items()}
+    return prob_dict
+
+
+def probability_to_confidence_score(prob_array):
+    """Given the array of probabilities, this function gives the confidence 
+    score of max probability value. Value of alpha_parameter in implementation 
+    is chosen based on hit and trial
+
+    """
+    alpha_parameter = 10
+    exp_prob_array = [2**(alpha_parameter * item) for item in prob_array]
+    confidence_score = max(exp_prob_array) / sum(exp_prob_array)
+    return confidence_score
