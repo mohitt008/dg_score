@@ -9,14 +9,14 @@ from predict_category import predict_category_tree
 from dg_predictor import DGPredictor
 
 
-def predict_dg(product_name, category, logger):
+def predict_dg(product_name, category, logger, wbn = None):
     category = category.lower()
     predictor = DGPredictor(
         product_name,
         category,
         logger
     )
-    report = predictor.predict()
+    report = predictor.predict(wbn)
     return report
 
 
@@ -32,7 +32,8 @@ def get_category_dg(product_name, wbn, dang_model, logger, username):
         dg_report = predict_dg(
             clean_product_name,
             first_level,
-            logger
+            logger,
+            wbn
         )
 
         result = {}
@@ -82,7 +83,8 @@ def process_product(product_name_dict, dang_model, logger, username):
             dg_report = predict_dg(
                 clean_product_name,
                 first_level,
-                logger
+                logger,
+                wbn
             )
 
             results['dg'] = dg_report['dangerous']

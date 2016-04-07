@@ -148,7 +148,7 @@ class DGPredictor(object):
             dg = prohibited = True
         return (dg, prohibited)
 
-    def predict(self):
+    def predict(self, wbn = None):
         """
         Iterates over all DG/prohibited keywords defined in DG keywords file.
         Determines DG or prohibited value of a product name.
@@ -194,7 +194,8 @@ class DGPredictor(object):
                 pass
 
         dg_report = {}
-        dg_report['product_name'] = self.product_name
+        dg_report['name'] = self.product_name
+        dg_report["wbn"] = wbn
         dg_report['keyword'] = self.found_keyword
         dg_report['dangerous'] = dg
         dg_report['prohibited'] = prohibited
