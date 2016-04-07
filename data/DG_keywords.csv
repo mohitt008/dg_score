@@ -11,13 +11,13 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,EDP,,,"PrettySecret, Speedpost, Speed","Shoes and footwear, Apparel and Accessories"
 2,Extinguisher,,,,
 1,Fresh,,,"Container, Foil, Air Loc, Styler, Striaghtner, Skirt, Cashew, Almond , Pista, Tupperware, Saree, Blouse, English, Signoraware, Pack, Plastic, PrettySecret, Freshia, Sari, Box, Bottle, Towel, Mattress, Jar, Panty, Walnut, Raisin, Roasted, Salted, Juice, Kiwi, Fruit, lehenga","Shoes and footwear, Apparel and Accessories, Home and Kitchen Appliances,Watches, Eyewear and Jewellery"
-1,Gel,,,"Silicon, Cover, Bag, Angel, Bar, Softgels, Soft, Geliyo, Pen, Asics, Freecultr, Earring, Helmet, Mousepad, Screen Guard, Angel","Sports and Outdoors, Shoes and footwear,Home Decor and Furnishing,Computers, Laptops and Accessories"
-1,Health,,,"Slipper, Paper, Foil, Seat, Sole, belt, Sauna, Green tea, Stethoscope",Shoes and footwear
+1,Gel,,,"Silicon, Cover, Bag, Angel, Bar, Softgels, Soft, Geliyo, Pen, Asics, Freecultr, Earring, Helmet, Mousepad, Screen Guard, Angel","Sports and Outdoors, Shoes and footwear,Home Decor and Furnishing,Computers, Laptops and Accessories, Books, Software and E-learning"
+1,Health,,,"Slipper, Paper, Foil, Seat, Sole, belt, Sauna, Green tea, Stethoscope, glove",Shoes and footwear
 1,Lotion,,,,
 1,Juice,,,"xtractorJuicer, Canvas, Micromax, Extractor, Juicer","Mobile Phone, Tablets and Accessories, Protein and Health Supplements"
 1,Ml,,,"Container,Jar, Bag, Jug, Casserole, Thermosteel, Milton, Tupperware, Storage, Dispenser, Amla, Watch, Shaker, Jar Set, Rimless, Asus, Flask, Seamless, Bottle, Ramleela, Camlin, Kurta, Mug, Steel, Hamlet, Headset, Xiaom, Bluetooth, Headphone, Earphone, Mlange, Kurti, Shirt, Saree, Earrings, (English), Basket, Plastic, Shoe, Pill Splitter, Boxer, Screen, Glass, Bowl, Card, Reader, Hindi, Kadhai, Book, Cover, Paper, Sheet, Applying Uml And Patterns, Snack Attack, Boot","Home and Kitchen, KitchenWare, Sports and Outdoors, Shoes and footwear, Apparel and Accessories, Books, Software and E-learning,Watches, Eyewear and Jewellery, Mobile Phone, Tablets and Accessories"
-1,Oil,,,"Boiler, Dispenser, Pastel, Tupperware, Container, Voil, Foil, Coil, Trouser, Louis Philippe, English, Prepaid, Data Card, Watch, Shoe, Bag, Toiletry Kit, Bag","Home and Kitchen, KitchenWare, Office Products, Shoes and footwear, Apparel and Accessories,Books, Software and E-learning"
-1,Paint,,,"Painting, Painted, Marker, Stamp","Shoes and footwear, Apparel and Accessories"
+1,Oil,,,"Boiler, Dispenser, Pastel, Tupperware, Container, Voil, Foil, Coil, Trouser, Louis Philippe, English, Prepaid, Data Card, Watch, Shoe, Bag, Toiletry Kit, Bag, Spoil","Home and Kitchen, KitchenWare, Office Products, Shoes and footwear, Apparel and Accessories,Books, Software and E-learning"
+1,Paint,,,"Painting, Painted, Marker, Stamp, Roller","Shoes and footwear, Apparel and Accessories"
 1,Parfum,,,,
 1,Perfum,,,,
 1,Polish,,,"Polished, Jew, Glove",Apparel and Accessories
@@ -28,8 +28,8 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 0,Shav,,"Beauty Products and Personal Care, Health and Wellness, Baby Care,Uncategorized","Cap, Shaver"," Shoes and footwear, Apparel and Accessories, Books, Software and E-learning"
 0,Shower,"Cream, Body, Gel",,Cap," Shoes and footwear, Apparel and Accessories, Books, Software and E-learning"
 0,Shower,,"Beauty Products and Personal Care, Health and Wellness, Baby Care,Uncategorized",Cap," Shoes and footwear, Apparel and Accessories, Books, Software and E-learning"
-0,Skin,,"Beauty Products and Personal Care, Health and Wellness, Baby Care,Uncategorized","Bra, Socks, Tweeser, Spring, Shapewear, Top, Camisole, Bikini, Tweezer, I6, I5, Hipster, Short, Dermawear, Romper, Stocking,Bag","Shoes and footwear,  Apparel and Accessories"
-0,Skin,"Medicine, Homeopathic",,"Bra, Socks, Tweeser, Spring, Shapewear, Top, Camisole, Bikini, Tweezer, I6, I5, Hipster, Short, Dermawear, Romper, Stocking,Bag","Shoes and footwear,  Apparel and Accessories"
+0,Skin,,"Beauty Products and Personal Care, Health and Wellness, Baby Care,Uncategorized","Bra, Socks, Tweeser, Spring, Shapewear, Top, Camisole, Bikini, Tweezer, I6, I5, Hipster, Short, Dermawear, Romper, Stocking,Bag, glove","Shoes and footwear,  Apparel and Accessories"
+0,Skin,"Medicine, Homeopathic",,"Bra, Socks, Tweeser, Spring, Shapewear, Top, Camisole, Bikini, Tweezer, I6, I5, Hipster, Short, Dermawear, Romper, Stocking,Bag, glove","Shoes and footwear,  Apparel and Accessories"
 0,Spray,,"Beauty Products and Personal Care, Health and Wellness, Baby Care,Uncategorized","Gun, Paint"," Shoes and footwear, Apparel and Accessories, Books, Software and E-learning"
 1,Sunscreen,,,,
 1,Temptation,,,,
@@ -74,14 +74,15 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Akfix,,,,
 1,Nivea,,,Flipside,
 1,Grocery,,,"Bag, Container, Tupperware",
-0,Pest,"Spray, Lotion, Insect, Controller",,Machine,
+0,Pest,"Spray, Lotion, Insect",,"Machine, Controller",
+404,Pest,Controller,,Machine,
 1,Panchgavya Medicines,,,,
 0,ink,"Epson, canon, brother, hp, printer",,"Pink, Toothpaste","Shoes and footwear, Apparel and Accessories"
 1,Toner,,,Protoner,
 1,Parfum,,,,
 1,Toilette,,,"Seat, Book, Kit",
 1,Cologne,,,,
-1,Eau de,,,,
+1,Eau de,,,Bag,
 0,Spa,,"Beauty Products and Personal Care, Baby Care,Uncategorized",,Apparel and Accessories
 1,Aerosol,,,,
 2,Fire Stop,,,"Edition, English, Shoe, Saffire",
