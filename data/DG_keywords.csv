@@ -1,7 +1,7 @@
 Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,After Shave,,,,
 1,Balm,,,,
-1,Battery,,,Cover; Case; Handset; Headset; 2nd Gen; Train; Toy; Dog; Puppy; Monkey; Jump; Doctor; Mug; Blender,
+1,Battery,,,Cover; Case; Handset; Headset; 2nd Gen; Train; Toy; Dog; Puppy; Monkey; Jump; Doctor; Mug; Blender; Powerbank; Power Bank,
 1,Cleaner,,,Mop; Fiber; Fibre; Vacuum; Vaccum; Ear; Pressure; Tongue; Brush;Dust,
 0,Condition,,Beauty Products and Personal Care; Baby Care; Health and Wellness;Uncategorized,,
 1,Deo,,,Video; Rhodeo; Rodeo; Sheet; Pant,Movies; Music and Video Games; Electronics and Appliances; Camera and photos ; Apparel and Accessories
@@ -21,7 +21,7 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Parfum,,,,
 1,Perfum,,,,
 1,Polish,,,Polished; Jew; Glove,Apparel and Accessories
-1,Recharg,,,Clip; Bag; Light; LED; Hummer; Bike; Toy; Lamborghini; Trimmer; Racket; Bulb,Toys and Games
+1,Recharg,,,Clip; Bag; Light; LED; Hummer; Bike; Toy; Lamborghini; Trimmer; Racket; Bulb; Powerbank; Power bank,Toys and Games
 1,Serum,,,,
 1,Shampoo,,,Cap; Hat; Shield,
 0,Shav,Gel; Cream,,Cap; Shaver," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
