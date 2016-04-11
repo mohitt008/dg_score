@@ -63,7 +63,8 @@ class DGPredictor(object):
         Output: True/False
         """
         if len(haystack):
-            return self.category in haystack.split(", ")
+            categories = [cat.strip() for cat in haystack.split(";")]
+            return self.category in categories
         else:
             return False
 
@@ -76,7 +77,8 @@ class DGPredictor(object):
         """
         result = False
         if len(haystack):
-            for contain_word in haystack.split(", "):
+            keywords = [kw.strip() for kw in haystack.split(";")]
+            for contain_word in keywords:
                 if contain_word in self.product_name:
                     self.keyword = contain_word
                     result = True
@@ -148,7 +150,7 @@ class DGPredictor(object):
             dg = prohibited = True
         return (dg, prohibited)
 
-    def predict(self, wbn = None):
+    def predict(self, wbn=None):
         """
         Iterates over all DG/prohibited keywords defined in DG keywords file.
         Determines DG or prohibited value of a product name.
