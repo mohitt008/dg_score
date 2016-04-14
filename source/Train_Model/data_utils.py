@@ -3,6 +3,7 @@ This file contains useful data utility functions i.e. data read/write, data clea
 feature extraction etc.
 """
 import re
+import os
 import csv
 import json
 import math
@@ -11,6 +12,22 @@ import numpy as np
 from collections import Counter
 
 PADDING_WORD = "<PAD/>"
+plural_dict = {}
+if os.path.exists("../../data/word_list_verified.csv"):
+    with open("../../data/word_list_verified.csv", 'rb') as f:
+        reader = csv.reader(f)
+        for i, row in enumerate(reader):
+            if i > 0 and row[2] != '0':
+                plural_dict[row[0]] = row[1]
+    print "Plural Dictionary Built"
+else:
+    print "Important Warning: File for Plural dictionary not found"
+
+
+def get_plural_free_word(word):
+    if word.endswith('s'):
+        word = plural_dict.get(word, word)
+    return word
 
 
 def clean_str(input_string):
@@ -18,6 +35,7 @@ def clean_str(input_string):
     Alphabet characters are further converted to lower case.
 
     """
+    input_string = re.sub(r'\s*-\s*(?=[0-9]+\b)', '', input_string)
     input_string = re.sub(r"[^A-Za-z0-9.]", " ", input_string)
     return input_string.lower()
 
@@ -39,6 +57,7 @@ def read_data_and_labels(filename):
             y_text.append(row[1])
     x_text = [clean_str(sentence) for sentence in x_text]
     x_text = [sentence.split() for sentence in x_text]
+    x_text = [[get_plural_free_word(word) for word in sentence] for sentence in x_text]
     return [x_text, y_text]
 
 
@@ -267,6 +286,7 @@ def get_data_vector(sentence, vocabulary, sequence_length):
     sentence = clean_str(sentence)
     x_text = []
     for word in sentence.split():
+        word = get_plural_free_word(word)
         val = vocabulary.get(word)
         if val:
             x_text.append(val)

@@ -3,6 +3,7 @@ import os
 ROOT_PATH = os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                       os.path.pardir)), os.path.pardir))
 
+train_data_file_path = ROOT_PATH + "/data/train_data.csv"
 words_to_remove = \
     [
         'new', 'item new', "item"
@@ -74,7 +75,7 @@ vendor_category_file = ''
 
 cnn_params = {
     # Data Cleaning Parameters
-    'num_feature': 10000,  # Number of feature to be chosen after feature selection (default: None)
+    'num_feature': None,  # Number of feature to be chosen after feature selection (default: None)
     'min_word_count': 3,  # Minimum occurrence of a word in input data for the word to be considered
     'max_title_length': 100,  # Max length of input product title to be considered
 
@@ -83,11 +84,11 @@ cnn_params = {
     'filter_sizes': [2, 3, 4, 5],  # Filter sizes for CNN
     'num_filters': 128,  # Number of filters per filter size
     'dropout_keep_prob': 0.5,  # Dropout keep probability
-    'l2_reg_lambda': 0.0,  # L2 regularizaion lambda
+    'l2_reg_lambda': 0.05,  # L2 regularizaion lambda
 
     # Training parameters
-    'batch_size': 100,  # Batch Size
-    'num_epochs': 10,  # Number of training epochs
+    'batch_size': 500,  # Batch Size
+    'num_epochs': 100,  # Number of training epochs
 
     # Testing parameters
     'confidence_threshold': 0.7,  # Use CNN result only if confidence is above this value

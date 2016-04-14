@@ -14,7 +14,7 @@ sys.path.append(PARENT_DIR)
 
 import re
 #from Load_Data.get_products import get_categories, get_delhivery_products, get_vendor_category_products, get_delhivery_vendor_products
-from config.config_details import second_level_cat_names, words_to_remove, ROOT_PATH, cnn_params
+from config.config_details import second_level_cat_names, words_to_remove, ROOT_PATH, cnn_params, train_data_file_path
 #from utilities import get_category_tree
 
 import csv
@@ -234,10 +234,9 @@ def root_training_prcoess():
     print "root training"
 
     print "Training CNN"
-    train_file_path = ROOT_PATH + "/data/prdcat_16feb.csv"
     model_path = ROOT_PATH + "/data/Models/clf_cnn.ckpt"
     vocab_path = ROOT_PATH + "/data/Models/clf_cnn_vocab.txt"
-    x_tr_text, y_tr_text = data_utils.read_data_and_labels(train_file_path)
+    x_tr_text, y_tr_text = data_utils.read_data_and_labels(train_data_file_path)
     x_train, y_train, vocabulary, vocabulary_inv, vocabulary_y, vocabulary_inv_y, sequence_length = data_utils.load_train_data_for_cnn(
         x_tr_text, y_tr_text, num_feature=cnn_params['num_feature'],
         min_word_count=cnn_params['min_word_count'],
@@ -260,7 +259,7 @@ def root_training_prcoess():
     #     product_list.append((products,current_category_name))
 
     # Reading from csv
-    reader = csv.DictReader(open(ROOT_PATH + "/data/prdcat_16feb.csv"))
+    reader = csv.DictReader(open(train_data_file_path))
     for row in reader:
         if row['new_cat'] != 'Unclear':
             try:
@@ -382,7 +381,7 @@ def second_training_process():
         train_x = []
         train_y = []
         train_x_cnn = []
-        reader = csv.DictReader(open(ROOT_PATH + "/data/prdcat_16feb.csv"))
+        reader = csv.DictReader(open(train_data_file_path))
         for row in reader:
             if row['new_cat'] != 'Unclear' and row['new_cat'] == parent_category and row['new_subcat'] != 'null' and row['new_subcat'] != '':
                 try:
