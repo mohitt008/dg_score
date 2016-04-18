@@ -13,8 +13,10 @@ from collections import Counter
 
 PADDING_WORD = "<PAD/>"
 plural_dict = {}
-if os.path.exists("../../data/word_list_verified.csv"):
-    with open("../../data/word_list_verified.csv", 'rb') as f:
+ROOT_PATH = os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                      os.path.pardir)), os.path.pardir))
+if os.path.exists(ROOT_PATH + "/data/word_list_verified.csv"):
+    with open(ROOT_PATH + "/data/word_list_verified.csv", 'rb') as f:
         reader = csv.reader(f)
         for i, row in enumerate(reader):
             if i > 0 and row[2] != '0':
