@@ -1,10 +1,10 @@
 Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,After Shave,,,,
 1,Balm,,,,
-1,Battery,,,Cover; Case; Handset; Headset; 2nd Gen; Train; Toy; Dog; Puppy; Monkey; Jump; Doctor; Mug; Blender; Powerbank; Power Bank;Lava Iris; Asus; Samsung Galaxy; iPhone; Panasonic; Headphone; Watches; Trimmer;Micromax Ninja ,
-1,Cleaner,,,Mop; Fiber; Fibre; Vacuum; Vaccum; Ear; Pressure; Tongue; Brush;Dust,
+1,Battery,,,Cover; Case; Handset; Headset; 2nd Gen; Train; Toy; Dog; Puppy; Monkey; Jump; Doctor; Mug; Blender; Powerbank; Power Bank;Lava Iris; Asus; Samsung Galaxy; iPhone; Panasonic; Headphone; Watches; Trimmer;Micromax Ninja; Samsung; Motorola; Oppo; Intex; Nokia; Eureka; MotoG; Haier; Huawei; Sony; OnePlus; Acer; Gionee; Nexus; Spice; Lenovo; Vivo; Xolo; Philip; Seimen; Karbonn; Blackberry; Black berry,
+1,Cleaner,,,Mop; Fiber; Fibre; Vacuum; Vaccum; Ear; Pressure; Tongue; Brush; Dust; Pen,
 0,Condition,,Beauty Products and Personal Care; Baby Care; Health and Wellness;Uncategorized,,
-1,Deo,,,Video; Rhodeo; Rodeo; Sheet; Pant,"Movies,Music and Video Games; Electronics and Appliances; Camera and photos ; Apparel and Accessories"
+1,Deo,,,Video; Rhodeo; Rodeo; Sheet; Pant; English,"Movies,Music and Video Games; Electronics and Appliances; Camera and photos ; Apparel and Accessories; Books, Software and E-learning"
 0,Face,,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized,Bar; Helmet; Towel; Bag; Sock; Dress; Jacket; Legwarmer; Emotisorbs; Winking; Hoodie; Cap; Tissue; Elastic; Tape; Mini; Funny; Cute; Cartoon; Print; Animal; Cloth; Blanket; Tissue; Pollution; Bike; Sleeves; Boot; Chain; Steamer,"Apparel and Accessories; Home and Kitchen; Books, Software and E-learning"
 0,Facial,,Beauty Products and Personal Care; Health and Wellness; Baby Care; Uncategorized,Steamer; Bat; Towel; Hair Remo,
 1,EDT,,,RedTape; Top; Bowl; Shirt; Cotton; Bedtime; Staedtler; Pen,Shoes and footwear; Apparel and Accessories; Home and Kitchen; KitchenWare
@@ -28,15 +28,15 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 0,Shav,,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized,Cap; Shaver," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 0,Shower,Cream; Body; Gel,,Cap," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 0,Shower,,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized,Cap," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
-0,Skin,,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized,Bra; Socks; Tweeser; Spring; Shapewear; Top; Camisole; Bikini; Tweezer; I6; I5; Hipster; Short; Dermawear; Romper; Stocking;Bag; glove,Shoes and footwear;  Apparel and Accessories
-0,Skin,Medicine; Homeopathic,,Bra; Socks; Tweeser; Spring; Shapewear; Top; Camisole; Bikini; Tweezer; i6; i5; Hipster; Short; Dermawear; Romper; Stocking;Bag; glove,Shoes and footwear;  Apparel and Accessories
+0,Skin,,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized,Bra; Socks; Tweeser; Spring; Shapewear; Top; Camisole; Bikini; Tweezer; I6; I5; Hipster; Short; Dermawear; Romper; Stocking;Bag; glove; Legging,Shoes and footwear;  Apparel and Accessories
+0,Skin,Medicine; Homeopathic,,Bra; Socks; Tweeser; Spring; Shapewear; Top; Camisole; Bikini; Tweezer; I6; I5; Hipster; Short; Dermawear; Romper; Stocking;Bag; glove; Legging,Shoes and footwear;  Apparel and Accessories
 0,Spray,Spray; Lotion; ,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized;Automotive,Gun;," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 1,Sunscreen,,,,
 1,Temptation,,,,
 1,Vlcc,,,Holder,
 0,Wash,Face; Body,,Jean; Brush; Boot; Cloth; Handkerchief; Mat,Shoes and footwear; Apparel and Accessories
 0,Wash,,Beauty Products and Personal Care; Baby Care;Uncategorized,Jean; Brush; Boot; Cloth; Handkerchief; Mat,Shoes and footwear; Apparel and Accessories
-0,Cream,,Beauty Products and Personal Care; Baby Care; Health and Wellness;Uncategorized,Dhoti; Saree; Salwar; Kameez; Wedge; Heels; Do Bhai; Top; kurti; Clip; Belt; Tee; Short; Sweatshirt; Shawl; Bellies; Frock; Suit; Gown; Handbag; Headband; Legging; Spaghetti; Shirt; Curtain; Top; Sandal; Loafer; Flat; Cardigan; Ring; Hoodie; Romper; Cookie; Bowknot; Jacket; Maxi; Duppata; Clutch; Trouser; Sweater; Jegging; Belt; Seat; Jacket; Cap; Cute; Band; Hat; Dress; Shoe; Ballerina; Seat; Toy; Pasta; Towel; Walet; Earring; Bear; Teddy; Hair Band;Gloves,Shoes and footwear; Apparel and Accessories
+0,Cream,,Beauty Products and Personal Care; Baby Care; Health and Wellness;Uncategorized,Dhoti; Saree; Salwar; Kameez; Wedge; Heels; Do Bhai; Top; kurti; Clip; Belt; Tee; Short; Sweatshirt; Shawl; Bellies; Frock; Suit; Skirt; Trousers; Pants; Gown; Handbag; Headband; Legging; Spaghetti; Lehenga; Shirt; Curtain; Top; Sandal; Loafer; Flat; Cardigan; Ring; Hoodie; Romper; Cookie; Bowknot; Jacket; Maxi; Duppata; Clutch; Trouser; Sweater; Jegging; Belt; Seat; Jacket; Cap; Cute; Band; Hat; Dress; Shoe; Ballerina; Seat; Toy; Pasta; Towel; Walet; Earring; Bear; Teddy; Hair Band;Gloves,Shoes and footwear; Apparel and Accessories
 1,General Good,,,,
 1,Lighter,,,Pen; English;Shirt,Shoes and footwear; Apparel and Accessories
 1,Thinner,,,,
@@ -115,3 +115,7 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 0,Dashboard,Shiner; Ml,,,
 1,Anti Dandruff,Hair;,Beauty Products and Personal Care; Baby Care;Uncategorized;Health and Wellness,,
 1,Air Gun,,,,
+1,Mascara,,,,
+1,Lip Colour,,,,
+1,Lip Color,,,,
+1,Biotique,,,,
