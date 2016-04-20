@@ -29,6 +29,8 @@ def predict_category_tree_using_ensamble(product_name):
     score of CNN is lower than a threshold, output is given based on average 
     output probabilities of CNN and Naive Bayes algorithm.
 
+    IMPORTANT NOTE: One should uncomment loading of NB model in objects.py file before making use of this function
+
     """
     first_level_cnn, second_level_cnn, fl_scores_cnn, fl_confidence_score_cnn = predict_category_tree_using_cnn(
         product_name)
@@ -59,6 +61,11 @@ def predict_category_tree_using_ensamble(product_name):
 
 # Product name should be passed after converting to lowercase
 def predict_category_tree_using_nb(l_product_name):
+    """
+    IMPORTANT NOTE: One should uncomment loading of NB model in objects.py file before making use of this function
+
+    """
+
     vectorizer = cat_model.vectorizer
     clf_bayes = cat_model.clf_bayes
     clf_chi = cat_model.clf_chi

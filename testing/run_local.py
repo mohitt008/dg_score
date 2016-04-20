@@ -8,7 +8,7 @@ import csv
 #import StringIO
 
 PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname('__file__')))
-sys.path.append(PARENT_DIR+"/../source/")
+sys.path.append(PARENT_DIR + "/../source/")
 
 #from Predict_Category.objects import categoryModel
 #from Predict_Category.predict_category import predict_category_tree
@@ -18,13 +18,13 @@ from Predict_Category.predict_category import *
 #cat_model = categoryModel()
 f2 = open("output.csv", 'w')
 l = ['prd', 'cat', 'subcat', 'cat_confidence']
-writer = csv.DictWriter(f2, fieldnames = l)
+writer = csv.DictWriter(f2, fieldnames=l)
 writer.writeheader()
 
 
 def collect_results(res, prd):
-    #print "callback:", os.getpid()
-    #print "callback:", res, type(res)
+    # print "callback:", os.getpid()
+    # print "callback:", res, type(res)
     print res
     result = {}
     result['prd'] = prd
@@ -33,7 +33,7 @@ def collect_results(res, prd):
     result['cat_confidence'] = res[2]
     writer.writerow(result)
 
-if __name__=="__main__":
+if __name__ == "__main__":
     reader = csv.reader(open("input.csv"))
     # Ignore keys
     reader.next()
@@ -41,7 +41,7 @@ if __name__=="__main__":
     cnt = 0
 
     #pr = cProfile.Profile()
-    #pr.enable()
+    # pr.enable()
 
     # SK: TODO: cache (Redis) ...
     for row in reader:
@@ -55,19 +55,18 @@ if __name__=="__main__":
                           args=(prd, ),
                           callback=custom_callback)
             """
-            res = predict_category_tree_using_cnn(row[1])
+            res = predict_category_tree(row[1])
             collect_results(res, row[1])
 
             cnt += 1
-            #print cnt
+            # print cnt
             if cnt > 50:
                 break
         except Exception as e:
             print e
             # continue
             break
-    #p.close()
-    #p.join()
+    # p.close()
+    # p.join()
 
     f2.close()
-

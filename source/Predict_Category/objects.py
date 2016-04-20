@@ -38,19 +38,6 @@ class categoryModel(object):
 
         self.second_level_cat_names_set = set(second_level_cat_names)
 
-        self.vectorizer = joblib.load(MODELS_PATH + 'vectorizer.pkl',
-                                      mmap_mode='r')
-        self.clf_bayes = joblib.load(MODELS_PATH + 'clf_bayes.pkl',
-                                     mmap_mode='r')
-        self.clf_chi = joblib.load(MODELS_PATH + 'clf_chi.pkl',
-                                   mmap_mode='r')
-        self.clf_fp = joblib.load(MODELS_PATH + 'clf_fp.pkl',
-                                  mmap_mode='r')
-
-        self.second_level_vectorizer = {}
-        self.second_level_clf_bayes = {}
-        self.second_level_clf_fpr = {}
-        self.second_level_clf_rf = {}
         self.second_level_clf_cnn = {}
         self.second_level_clf_cnn_sess = {}
         self.second_level_clf_cnn_vocab_data = {}
@@ -77,7 +64,28 @@ class categoryModel(object):
                     self.second_level_clf_cnn[cat_name] = cnn
                     self.second_level_clf_cnn_sess[cat_name] = sess
                     self.second_level_clf_cnn_vocab_data[cat_name] = vocab_data
+        # Important note: Since only CNN is being used to predict category tree,
+        # we have commented line below as we don't need to load nb model. One
+        # should uncomment the line below if he/she need to use any of the
+        # predict_category_tree_using_ensamble or predict_category_tree_using_nb
+        # function in predict_category.py file
 
+        # self.load_nb_model()
+
+    def load_nb_model(self):
+        self.vectorizer = joblib.load(MODELS_PATH + 'vectorizer.pkl',
+                                      mmap_mode='r')
+        self.clf_bayes = joblib.load(MODELS_PATH + 'clf_bayes.pkl',
+                                     mmap_mode='r')
+        self.clf_chi = joblib.load(MODELS_PATH + 'clf_chi.pkl',
+                                   mmap_mode='r')
+        self.clf_fp = joblib.load(MODELS_PATH + 'clf_fp.pkl',
+                                  mmap_mode='r')
+        self.second_level_vectorizer = {}
+        self.second_level_clf_bayes = {}
+        self.second_level_clf_fpr = {}
+        self.second_level_clf_rf = {}
+        for cat_name in self.second_level_cat_names_set:
             self.second_level_vectorizer[cat_name] = joblib.load(
                 SUB_MODELS_PATH + '/Vectorizer_' + cat_name, mmap_mode='r')
 
