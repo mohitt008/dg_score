@@ -11,6 +11,20 @@ cat_model = categoryModel()
 
 def predict_category_tree(product_name):
     """This function predicts category tree for the given product name using the 
+    cnn algorithm.
+
+    Note: We experimented using cnn, nb and ensamble of cnn and nb. Using only cnn 
+    out of the 3 option proved to be best option for given dataset. Rest 2 options 
+    can be more explored later on different dataset.
+
+    """
+    first_level_cnn, second_level_cnn, fl_scores_cnn, fl_confidence_score_cnn = predict_category_tree_using_cnn(
+        product_name)
+    return first_level_cnn, second_level_cnn, fl_confidence_score_cnn
+
+
+def predict_category_tree_using_ensamble(product_name):
+    """This function predicts category tree for the given product name using the 
     ensamble of multiple algorithms. Preference is  given to CNN. If confidence 
     score of CNN is lower than a threshold, output is given based on average 
     output probabilities of CNN and Naive Bayes algorithm.
