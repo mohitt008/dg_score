@@ -9,7 +9,7 @@ from Train_Model.data_utils import get_data_vector, cnn_score_to_prob, probabili
 cat_model = categoryModel()
 
 
-def predict_category_tree(l_product_name):
+def predict_category_tree(product_name):
     """This function predicts category tree for the given product name using the 
     ensamble of multiple algorithms. Preference is  given to CNN. If confidence 
     score of CNN is lower than a threshold, output is given based on average 
@@ -17,11 +17,11 @@ def predict_category_tree(l_product_name):
 
     """
     first_level_cnn, second_level_cnn, fl_scores_cnn, fl_confidence_score_cnn = predict_category_tree_using_cnn(
-        l_product_name)
+        product_name)
     if fl_confidence_score_cnn >= cnn_params['confidence_threshold']:
         return first_level_cnn, second_level_cnn, fl_confidence_score_cnn
     first_level_nb, second_level_nb, fl_prob_nb, fl_confidence_score_nb = predict_category_tree_using_nb(
-        l_product_name.lower())
+        product_name.lower())
     fl_prob_cnn = cnn_score_to_prob(fl_scores_cnn)
     fl_prob_avg = {}
     max_prob = 0
@@ -38,7 +38,7 @@ def predict_category_tree(l_product_name):
     elif first_level == first_level_nb:
         second_level = second_level_nb
     else:
-        second_level = predict_subcategory_using_cnn(l_product_name, first_level)
+        second_level = predict_subcategory_using_cnn(product_name, first_level)
     first_level_confidence_score = probability_to_confidence_score(fl_prob_avg.values())
     return first_level, second_level, first_level_confidence_score
 
@@ -107,7 +107,7 @@ def predict_category_tree_using_nb(l_product_name):
     return first_level, second_level, first_level_prob, first_level_confidence_score
 
 
-def predict_category_tree_using_cnn(l_product_name):
+def predict_category_tree_using_cnn(product_name):
     """Predict Category tree for given product title using CNN. Output 
     second_level will be empty string if not applicable. Output 
     first_level_scores is a dictionary of scores corresponding to each label.
@@ -116,7 +116,7 @@ def predict_category_tree_using_cnn(l_product_name):
     first_level = ""
     second_level = ""
     vocab_data = cat_model.clf_cnn_vocab_data
-    x = get_data_vector(l_product_name, vocab_data['vocabulary_x'], vocab_data['sequence_length'])
+    x = get_data_vector(product_name, vocab_data['vocabulary_x'], vocab_data['sequence_length'])
     y_rand = np.zeros((1, len(vocab_data['vocabulary_inv_y'])))
     y_rand[0][0] = 1
     with cat_model.clf_cnn_sess.as_default():
@@ -133,12 +133,12 @@ def predict_category_tree_using_cnn(l_product_name):
                               for i, category in enumerate(vocab_data['vocabulary_inv_y'])}
         exp_scores = [2**score for score in scores]
         first_level_confidence_score = max(exp_scores) / sum(exp_scores)
-    second_level = predict_subcategory_using_cnn(l_product_name, first_level)
+    second_level = predict_subcategory_using_cnn(product_name, first_level)
 
     return first_level, second_level, first_level_scores, first_level_confidence_score
 
 
-def predict_subcategory_using_cnn(l_product_name, first_level, default_second_level=""):
+def predict_subcategory_using_cnn(product_name, first_level, default_second_level=""):
     """Given the product name and first level category name, this function 
     returns the second level sub-category predicted using CNN. If first_level 
     category is not among the categories for which second level category exist, 
@@ -149,7 +149,7 @@ def predict_subcategory_using_cnn(l_product_name, first_level, default_second_le
     if first_level in cat_model.second_level_cat_names_set:
         with cat_model.second_level_clf_cnn_sess[first_level].as_default():
             vocab_data = cat_model.second_level_clf_cnn_vocab_data[first_level]
-            x = get_data_vector(l_product_name, vocab_data[
+            x = get_data_vector(product_name, vocab_data[
                                 'vocabulary_x'], vocab_data['sequence_length'])
             y_rand = np.zeros((1, len(vocab_data['vocabulary_inv_y'])))
             y_rand[0][0] = 1

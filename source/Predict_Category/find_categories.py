@@ -11,7 +11,12 @@ def get_category_dg(product_name, wbn, dang_model, logger, username):
     try:
         l_product_name = product_name.lower()
 
-        first_level, second_level = predict_category_tree(l_product_name)
+        first_level, second_level, first_level_confidence_score = predict_category_tree(
+            l_product_name)
+        if not first_level:
+            first_level = 'Uncategorized'
+        if not second_level:
+            second_level = ''
 
         product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
         clean_product_name = " ".join(product_words)
@@ -23,6 +28,7 @@ def get_category_dg(product_name, wbn, dang_model, logger, username):
         result = {}
         result['cat'] = first_level
         result['scat'] = second_level
+        result['cat_confidence'] = first_level_confidence_score
         result['dg'] = dg_report['dangerous']
         result['prohibited'] = dg_report.get('prohibited', False)
         return result
@@ -32,8 +38,8 @@ def get_category_dg(product_name, wbn, dang_model, logger, username):
             'Exception {} occurred against product: {}'.format(
                 err, product_name))
         sentry_client.captureException(
-            message = "predict.py: Exception occured",
-            extra = {"error" : err, "product_name" : product_name})
+            message="predict.py: Exception occured",
+            extra={"error": err, "product_name": product_name})
 
 
 def process_product(product_name_dict, dang_model, logger, username):
@@ -47,11 +53,11 @@ def process_product(product_name_dict, dang_model, logger, username):
 
         product_name_clean = re.sub(ALPHA_NUM_REGEX, '', product_name)
         product_name_clean = product_name_clean.lower()
-        product_name_key = 'catfight:' +':' + product_name_clean
+        product_name_key = 'catfight:' + ':' + product_name_clean
         results_cache = r.get(product_name_key)
         wbn = product_name_dict.get('wbn', "")
         if not results_cache:
-            results = get_category_dg(product_name.encode('ascii','ignore'),
+            results = get_category_dg(product_name.encode('ascii', 'ignore'),
                                       wbn, dang_model, logger, username)
             if results:
                 r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
