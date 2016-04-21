@@ -44,7 +44,8 @@ class categoryModel(object):
 
         for cat_name in self.second_level_cat_names_set:
             vocab_data = json.load(open(SUB_MODELS_PATH + "/clf_cnn_" +
-                                        cat_name.replace(' ', '_') + "_vocab.txt"))
+                                        cat_name.replace(' ', '_') + \
+                                        "_vocab.txt"))
             with tf.Graph().as_default():
                 session_conf = tf.ConfigProto(
                     allow_soft_placement=cnn_params['allow_soft_placement'],
@@ -60,7 +61,8 @@ class categoryModel(object):
                         num_filters=cnn_params['num_filters'],
                         l2_reg_lambda=cnn_params['l2_reg_lambda'])
                     saver = tf.train.Saver()
-                    saver.restore(sess, SUB_MODELS_PATH + "/clf_cnn_" + cat_name.replace(' ', '_'))
+                    saver.restore(sess, SUB_MODELS_PATH + "/clf_cnn_" + \
+                                  cat_name.replace(' ', '_'))
                     self.second_level_clf_cnn[cat_name] = cnn
                     self.second_level_clf_cnn_sess[cat_name] = sess
                     self.second_level_clf_cnn_vocab_data[cat_name] = vocab_data

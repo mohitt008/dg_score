@@ -25,7 +25,7 @@ writer.writeheader()
 def collect_results(res, prd):
     # print "callback:", os.getpid()
     # print "callback:", res, type(res)
-    print res
+    # print res
     result = {}
     result['prd'] = prd
     result['cat'] = res[0]

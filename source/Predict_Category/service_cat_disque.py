@@ -1,8 +1,8 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import json
-from multiprocessing import Pool, cpu_count
-from functools import partial
+# from multiprocessing import Pool, cpu_count
+# from functools import partial
 
 from constants import CATFIGHT_LOGGING_PATH
 from find_categories import process_product
@@ -111,7 +111,9 @@ def get_products():
     into vendor and results, and calling get_category to generate products
     details for the job passed
     """
-    p = Pool(processes=cpu_count())
+
+    # SK: Disabled multiprocessing as it doesn't work properly with tf
+    # p = Pool(processes=cpu_count())
     while True:
         try:
             jobs = client.get_job([catfight_input])
@@ -123,6 +125,7 @@ def get_products():
                 username = job_data['username']
                 products = json.loads(job_data['payload'])
 
+                """
                 custom_callback = partial(add_results_to_disque,
                                           vendor = job_data['vendor'],
                                           username = username,
@@ -130,6 +133,10 @@ def get_products():
                 p.apply_async(get_category,
                               args = (products, job_id, username,),
                               callback = custom_callback)
+                """
+                res = get_category(products, job_id, username)
+                add_results_to_disque(res, job_data['vendor'],
+                                      username, job_id)
                 client.ack_job(job_id)
 
         except Exception as e:

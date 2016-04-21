@@ -11,8 +11,8 @@ def get_category_dg(product_name, wbn, dang_model, logger, username):
     try:
         l_product_name = product_name.lower()
 
-        first_level, second_level, first_level_confidence_score = predict_category_tree(
-            l_product_name)
+        first_level, second_level, first_level_confidence_score = \
+                predict_category_tree(l_product_name)
         if not first_level:
             first_level = 'Uncategorized'
         if not second_level:
