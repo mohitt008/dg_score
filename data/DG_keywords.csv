@@ -11,11 +11,11 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,EDP,,,PrettySecret; Speedpost; Speed;Cover,Shoes and footwear; Apparel and Accessories
 2,Extinguisher,,,,
 1,Fresh,,,Container; Foil; Air Loc; Styler; Striaghtner; Skirt; Cashew; Almond ; Pista; Tupperware; Saree; Blouse; English; Signoraware; Pack; Plastic; PrettySecret; Freshia; Sari; Box; Bottle; Towel; Mattress; Jar; Panty; Walnut; Raisin; Roasted; Salted; Juice; Kiwi; Fruit; lehenga;Diwan,"Shoes and footwear; Apparel and Accessories; Home and Kitchen Appliances;Watches,Eyewear and Jewellery;Home Decor and Furnishing"
-1,Gel,,,Silicon; Cover; Bag; Angel; Bar; Softgels; Soft; Geliyo; Pen; Asics; Freecultr; Earring; Helmet; Mousepad; Screen Guard;,"Sports and Outdoors; Shoes and footwear;Home Decor and Furnishing;Computers; Laptops and Accessories; Books, Software and E-learning;Apparel and Accessories"
+1,Gel,,,Silicon; Cover; Bag; Angel; Bar; Softgels; Soft; Geliyo; Pen; Asics; Freecultr; Earring; Helmet; Mousepad; Screen Guard;Straightener;,"Sports and Outdoors; Shoes and footwear;Home Decor and Furnishing;Computers; Laptops and Accessories; Books, Software and E-learning;Apparel and Accessories"
 1,Health,,,Slipper; Paper; Foil; Seat; Sole; belt; Sauna; Green tea; Stethoscope; glove; Mat;Trimmer,Shoes and footwear
 1,Lotion,,,,
 1,Juice,,,xtractorJuicer; Canvas; Micromax; Extractor; Juicer,Mobile Phone; Tablets and Accessories; Protein and Health Supplements
-1,Ml,,,Container;Jar; Bag; Jug; Casserole; Thermosteel; Milton; Tupperware; Storage; Dispenser; Amla; Watch; Shaker; Jar Set; Rimless; Asus; Flask; Seamless; Bottle; Ramleela; Camlin; Kurta; Mug; Steel; Hamlet; Headset; Xiaom; Bluetooth; Headphone; Earphone; Mlange; Kurti; Shirt; Saree; Earrings; (English); Basket; Plastic; Shoe; Pill Splitter; Boxer; Screen; Glass; Bowl; Card; Reader; Hindi; Kadhai; Book; Cover; Paper; Sheet; Applying Uml And Patterns; Snack Attack; Boot; Nikon; Camera; Steel; Milton;Cable,"Home and Kitchen; KitchenWare; Sports and Outdoors; Shoes and footwear; Apparel and Accessories; Books, Software and E-learning;Watches, Eyewear and Jewellery; Mobile Phone; Tablets and Accessories"
+1,Ml,,,Container;Jar; Bag; Jug; Casserole; Thermosteel; Milton; Tupperware; Storage; Dispenser; Amla; Watch; Shaker; Jar Set; Rimless; Asus; Flask; Seamless; Bottle; Ramleela; Camlin; Kurta; Mug; Steel; Hamlet; Headset; Xiaom; Bluetooth; Headphone; Earphone; Mlange; Kurti; Shirt; Saree; Earrings; (English); Basket; Plastic; Shoe; Pill Splitter; Boxer; Screen; Glass; Bowl; Card; Reader; Hindi; Kadhai; Book; Cover; Paper; Sheet; Applying Uml And Patterns; Snack Attack; Boot; Nikon; Camera; Steel; Milton;Cable;Straightener;,"Home and Kitchen; KitchenWare; Sports and Outdoors; Shoes and footwear; Apparel and Accessories; Books, Software and E-learning;Watches, Eyewear and Jewellery; Mobile Phone; Tablets and Accessories"
 1,Oil,,,Boiler; Dispenser; Pastel; Tupperware; Container; Voil; Foil; Coil; Trouser; Louis Philippe; English; Prepaid; Data Card; Watch; Shoe; Bag; Toiletry Kit; Bag; Spoil; Pen;Top;Paper,"Home and Kitchen; KitchenWare; Office Products; Shoes and footwear; Apparel and Accessories;Books, Software and E-learning"
 1,Paint,,,Painting; Painted; Marker; Stamp; Roller,Shoes and footwear; Apparel and Accessories
 1,Parfum,,,,
@@ -91,7 +91,7 @@ Default,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGORY
 1,Liquid,,,Acer; Hammer,"Tools and Hardware; Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 1,Cleanser,,,," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 1,Beauty Item,,,,
-1,Beauty,,,English; Bag; Straightener; Watch; Saree; INDIAN BEAUTY," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
+1,Beauty,,,English; Bag; Straightener; Watch; Saree; INDIAN BEAUTY;Nova 2 in 1 NHC amp," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 1,Syrup,,,,
 404,Capsules,,,,
 404,Nutrition,,Beauty Products and Personal Care; Baby Care;Uncategorized;Health and Wellness,,
