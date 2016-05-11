@@ -7,7 +7,6 @@ import copy
 from predict_category import predict_category_tree
 
 from dg_predictor import DGPredictor
-import shlex
 
 
 def predict_dg(product_name, category, logger, wbn = None):
