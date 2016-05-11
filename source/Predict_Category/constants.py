@@ -9,9 +9,6 @@ sys.path.append(PARENT_DIR_PATH)
 
 from config.config_details import ROOT_PATH
 
-CLEAN_PRODUCT_NAME_REGEX = re.compile(
-    '[0-9.]+(?=[a-zA-Z]{1}[0-9]+)|[0-9.]+[a-zA-Z}{1}|[0-9.]+|[a-zA-Z]+')
-
 VOLUME_ML_REGEX = re.compile('[0-9]+[\s]*ml')
 
 # Alpha-num. Remove all punctuation, spaces etc
