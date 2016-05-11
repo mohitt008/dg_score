@@ -98,7 +98,8 @@ class categoryModel(object):
                 self.second_level_clf_fpr[cat_name] = joblib.load(
                     SUB_MODELS_PATH + '/clf_fpr_' + cat_name, mmap_mode='r')
 
-
+# DG detection logic
+# https://docs.google.com/document/d/1dUEMZHwGC9WJxPlgNPNCiQzvIy5JyLvO_aui0d7tHMM/
 class dangerousModel(object):
 
     def __init__(self):
@@ -107,21 +108,66 @@ class dangerousModel(object):
         # Skip keys
         reader.next()
         self.dg_keywords = []
+        self.exact_names_list = []
+        self.client_list_dg = []
+        self.client_list_non_dg = []
+
         for row in reader:
             tmp = []
-            # dangerous/ Non dangerous
-            tmp.append(row[0].lower())
+            # dangerous / non dangerous
+            default_val = row[0].lower()
+            tmp.append(default_val)
+
+            # client
+            clients = row[1].lower()
+            tmp.append(clients)
+
             # keyword
-            tmp.append(row[1].lower())
+            keyword = row[2].lower()
+            tmp.append(keyword)
             # CONTAIN list
-            tmp.append(row[2].lower())
-            # CONTAIN category
             tmp.append(row[3].lower())
-            # EXCEPT list
+            # CONTAIN category
             tmp.append(row[4].lower())
-            # EXCEPT category
+            # EXCEPT list
             tmp.append(row[5].lower())
+            # EXCEPT category
+            tmp.append(row[6].lower())
 
             tup = tuple(tmp)
             self.dg_keywords.append(tup)
+
+            if default_val == "3" and not clients:
+                # product names marked as dg
+                # irrespective of clients i.e empty client
+                names = keyword.split(';')
+                for name in names:
+                    self.exact_names_list.append(name.lower().strip())
+
+            elif default_val == "0" and not keyword:
+                # All clients which have non dg products
+                # irrespective of keyword i.e empty keyword
+                client_list = clients.split(';')
+                for client in client_list:
+                    self.client_list_non_dg.append(client.lower().strip())
+
+            elif default_val == "1" and not keyword:
+                # All clients which have dg products
+                # irrespective of keyword i.e empty keyword
+                client_list = clients.split(';')
+                for client in client_list:
+                    self.client_list_dg.append(client.lower().strip())
+
         file_dg_csv.close()
+
+
+    def get_exact_names_list(self):
+        return self.exact_names_list
+
+
+    def get_client_list_non_dg(self):
+        return self.client_list_non_dg
+
+
+    def get_client_list_dg(self):
+        return self.client_list_dg

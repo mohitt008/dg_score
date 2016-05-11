@@ -40,7 +40,8 @@ class DGPredictor(object):
     pre-defined set of potentially dangerous/prohibited keywords and a set
     of rules.
     """
-    def __init__(self, product_name, category, logger=None):
+    def __init__(self, product_name, category, logger = None,
+                 wbn = None, client_name = None):
         """
         All inputs are expected in lower case for
         string/sub-string matching.
@@ -48,6 +49,8 @@ class DGPredictor(object):
         self.product_name = product_name
         self.category = category
         self.logger = logger
+        self.wbn = wbn
+        self.client_name = client_name
         self.keyword = ""
         self.found_keyword = ""
         self.contain_list = ""
@@ -92,8 +95,8 @@ class DGPredictor(object):
         in both contain list AND contain category. Otherwise, the result will
         be determined on OR value.
         """
-        contain_list = rule[2]
-        contain_category = rule[3]
+        contain_list = rule[3]
+        contain_category = rule[4]
         in_contain_list = self.__contains_keyword(contain_list)
         if in_contain_list:
             self.contain_list = self.keyword
@@ -116,8 +119,8 @@ class DGPredictor(object):
         If DG is true by default then final outcome is simply a OR value of
         search in except list as well as except category.
         """
-        except_list = rule[4]
-        except_category = rule[5]
+        except_list = rule[5]
+        except_category = rule[6]
         in_except_list = self.__contains_keyword(except_list)
         if in_except_list:
             self.except_list = self.keyword
@@ -134,8 +137,8 @@ class DGPredictor(object):
         to determine final DG result. If no, both DG and prohibited are True.
         """
         dg = prohibited = False
-        except_list = rule[4]
-        except_category = rule[5]
+        except_list = rule[5]
+        except_category = rule[6]
         in_except_list = self.__contains_keyword(except_list)
         if in_except_list:
             self.except_list = self.keyword
@@ -150,7 +153,7 @@ class DGPredictor(object):
             dg = prohibited = True
         return (dg, prohibited)
 
-    def predict(self, wbn=None):
+    def predict(self):
         """
         Iterates over all DG/prohibited keywords defined in DG keywords file.
         Determines DG or prohibited value of a product name.
@@ -158,48 +161,80 @@ class DGPredictor(object):
         True/False values.
         """
         dg = prohibited = False
+        exact_match = False
+        dg_client = False
 
-        for rule in dg_model.dg_keywords:
-            try:
-                default = int(rule[0])
-                keyword = str(rule[1])
-                if keyword in self.product_name:
-                    self.found_keyword = keyword
-                    if default == 0:
-                        dg = self.__check_dg_false(rule)
-                        # If a non-DG product becomes DG for any keyword, then
-                        # its a DG and break it right here.
-                        if dg:
-                            break
-                    elif default == 1:
-                        dg = self.__check_dg_true(rule)
-                    elif default == 2:
-                        (dg, prohibited) = self.__check_prohibited(rule)
-                    else:
-                        # Still check other rules, handle such cases at the
-                        # time of sanitization of DG keywords file.
+        if self.product_name in dg_model.get_exact_names_list():
+            # Check if exact product name is present in the config
+            # irrespective of client
+            dg = True
+            exact_match = True
+        elif self.client_name in dg_model.get_client_list_dg():
+            # Check if non dg client irrespective of keyword
+            dg = True
+            dg_client = True
+        elif self.client_name in dg_model.get_client_list_non_dg():
+            # Check if non dg client irrespective of keyword
+            dg = False
+            dg_client = False
+        else:
+            for rule in dg_model.dg_keywords:
+                try:
+                    default = int(rule[0])
+                    client = str(rule[1])
+                    keyword = str(rule[2])
+                    if not client:
                         pass
-            except Exception as e:
-                if self.logger:
-                    self.logger.error(
-                        'dg_predictor:Exception {} occurred against rule: {} \
-                        for product {}'.format(e, rule, self.product_name)
+                    elif client != self.client_name:
+                        continue
+                    if keyword in self.product_name:
+                        self.found_keyword = keyword
+                        if default == 0:
+                            dg = self.__check_dg_false(rule)
+                            # If a non-DG product becomes DG for any keyword, then
+                            # its a DG and break it right here.
+                            if dg:
+                                break
+                        elif default == 1:
+                            dg = self.__check_dg_true(rule)
+                        elif default == 2:
+                            (dg, prohibited) = self.__check_prohibited(rule)
+                        elif default == 3:
+                            if not client or client == self.client_name:
+                                if keyword == self.product_name:
+                                    dg = True
+                                    exact_match = True
+                                    break
+                        else:
+                            # Still check other rules, handle such cases at the
+                            # time of sanitization of DG keywords file.
+                            pass
+                except Exception as e:
+                    if self.logger:
+                        self.logger.error(
+                            'dg_predictor:Exception {} occurred against rule: {} \
+                            for product client {} {}'.format(
+                                e, rule, self.product_name, self.client_name)
+                        )
+                    sentry_client.captureException(
+                        message="dg_predictor:Exception occurred against rule",
+                        extra={
+                            "error": e,
+                            "rule": rule,
+                            "product_name": self.product_name,
+                            "client_name": self.client_name
+                        }
                     )
-                sentry_client.captureException(
-                    message="dg_predictor:Exception occurred against rule",
-                    extra={
-                        "error": e,
-                        "rule": rule,
-                        "product_name": self.product_name
-                    }
-                )
-                pass
+                    pass
 
         dg_report = {}
         dg_report['name'] = self.product_name
-        dg_report["wbn"] = wbn
+        dg_report['client'] = self.client_name
+        dg_report["wbn"] = self.wbn
         dg_report['keyword'] = self.found_keyword
         dg_report['dangerous'] = dg
+        dg_report['exact_match'] = exact_match
+        dg_report['dg_client'] = dg_client
         dg_report['prohibited'] = prohibited
         dg_report['contain_list'] = self.contain_list
         dg_report['contain_category'] = self.contain_category

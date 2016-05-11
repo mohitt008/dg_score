@@ -1,72 +1,47 @@
 import sys
 import os.path
 import csv
-# from multiprocessing import Pool, cpu_count
-# from functools import partial
-#import cProfile
-#import pstats
-#import StringIO
 
 PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname('__file__')))
 sys.path.append(PARENT_DIR + "/../source/")
 
-#from Predict_Category.objects import categoryModel
-#from Predict_Category.predict_category import predict_category_tree
 from Predict_Category.predict_category import *
+from Predict_Category.find_categories import predict_dg
 
-#output = []
-#cat_model = categoryModel()
 f2 = open("output.csv", 'w')
-l = ['prd', 'cat', 'subcat', 'cat_confidence']
+l = ['prd', 'cat', 'subcat', 'cat_confidence', 'dg']
 writer = csv.DictWriter(f2, fieldnames=l)
 writer.writeheader()
 
 
-def collect_results(res, prd):
-    # print "callback:", os.getpid()
-    # print "callback:", res, type(res)
-    # print res
+def collect_results(res, prd, client_name):
     result = {}
     result['prd'] = prd
     result['cat'] = res[0]
     result['subcat'] = res[1]
     result['cat_confidence'] = res[2]
+    dg_res = predict_dg(prd.lower(), res[0], None, None, client_name.lower())
+    result['dg'] = dg_res['dangerous']
     writer.writerow(result)
 
 if __name__ == "__main__":
-    reader = csv.reader(open("input.csv"))
+    reader = csv.reader(open("prd.csv"))
     # Ignore keys
     reader.next()
-    # p = Pool(processes = cpu_count() - 2)
     cnt = 0
 
-    #pr = cProfile.Profile()
-    # pr.enable()
-
-    # SK: TODO: cache (Redis) ...
     for row in reader:
         try:
-            """
-            SK: Disabled multiprocessing (issues with tensor flow)
-            prd = row[1].lower()
-            custom_callback = partial(collect_results,
-                                      prd = prd)
-            p.apply_async(predict_category_tree,
-                          args=(prd, ),
-                          callback=custom_callback)
-            """
-            res = predict_category_tree(row[1])
-            collect_results(res, row[1])
+           res = predict_category_tree(row[0])
+           collect_results(res, row[0], row[1])
 
-            cnt += 1
-            # print cnt
-            if cnt > 50:
-                break
+           cnt += 1
+           # print cnt
+           #if cnt > 50:
+               #break
         except Exception as e:
             print e
             # continue
             break
-    # p.close()
-    # p.join()
 
     f2.close()

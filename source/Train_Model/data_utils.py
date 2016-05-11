@@ -5,7 +5,6 @@ feature extraction etc.
 import re
 import os
 import csv
-import json
 import math
 import itertools
 import numpy as np
@@ -21,8 +20,8 @@ if os.path.exists(ROOT_PATH + "/data/word_list_verified.csv"):
         for i, row in enumerate(reader):
             if i > 0 and row[2] != '0':
                 plural_dict[row[0]] = row[1]
-    print "Plural Dictionary Built"
 else:
+    print "Plural Dictionary Built"
     print "Important Warning: File for Plural dictionary not found"
 
 
