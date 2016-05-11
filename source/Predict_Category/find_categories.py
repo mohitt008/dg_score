@@ -7,6 +7,7 @@ import copy
 from predict_category import predict_category_tree
 
 from dg_predictor import DGPredictor
+import shlex
 
 
 def predict_dg(product_name, category, logger, wbn = None):
@@ -31,7 +32,11 @@ def get_category_dg(product_name, wbn, dang_model, logger, username):
         if not second_level:
             second_level = ''
 
-        product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
+        product_words = []
+        try:
+            product_words = shlex.split(l_product_name)
+        except Exception, e:
+            product_words = l_product_name.split()
         clean_product_name = " ".join(product_words)
 
         dg_report = predict_dg(
@@ -81,8 +86,11 @@ def process_product(product_name_dict, dang_model, logger, username):
         else:
             results = json.loads(results_cache)
             l_product_name = product_name.lower()
-            product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX,
-                                       l_product_name)
+            product_words = []
+            try:
+                product_words = shlex.split(l_product_name)
+            except Exception, e:
+                product_words = l_product_name.split()
             clean_product_name = " ".join(product_words)
             first_level = results['cat']
 
