@@ -1,6 +1,6 @@
 
 import re
-from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY, CLEAN_PRODUCT_NAME_REGEX
+from constants import ALPHA_NUM_REGEX, CACHE_EXPIRY
 from settings import r, sentry_client
 import json
 import copy
@@ -31,11 +31,8 @@ def get_category_dg(product_name, wbn, dang_model, logger, username):
         if not second_level:
             second_level = ''
 
-        product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX, l_product_name)
-        clean_product_name = " ".join(product_words)
-
         dg_report = predict_dg(
-            clean_product_name,
+            l_product_name,
             first_level,
             logger,
             wbn
@@ -81,13 +78,10 @@ def process_product(product_name_dict, dang_model, logger, username):
         else:
             results = json.loads(results_cache)
             l_product_name = product_name.lower()
-            product_words = re.findall(CLEAN_PRODUCT_NAME_REGEX,
-                                       l_product_name)
-            clean_product_name = " ".join(product_words)
             first_level = results['cat']
 
             dg_report = predict_dg(
-                clean_product_name,
+                l_product_name,
                 first_level,
                 logger,
                 wbn
