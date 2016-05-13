@@ -9,18 +9,19 @@ from Predict_Category.predict_category import *
 from Predict_Category.find_categories import predict_dg
 
 f2 = open("output.csv", 'w')
-l = ['prd', 'cat', 'subcat', 'cat_confidence', 'dg']
+l = ['prd', 'client', 'cat', 'subcat', 'cat_confidence', 'dg']
 writer = csv.DictWriter(f2, fieldnames=l)
 writer.writeheader()
 
 
-def collect_results(res, prd, client_name):
+def collect_results(res, prd, client):
     result = {}
     result['prd'] = prd
+    result['client'] = client
     result['cat'] = res[0]
     result['subcat'] = res[1]
     result['cat_confidence'] = res[2]
-    dg_res = predict_dg(prd.lower(), res[0], None, None, client_name.lower())
+    dg_res = predict_dg(prd.lower(), res[0], None, None, client)
     result['dg'] = dg_res['dangerous']
     writer.writerow(result)
 
@@ -37,8 +38,8 @@ if __name__ == "__main__":
 
            cnt += 1
            # print cnt
-           #if cnt > 50:
-               #break
+           if cnt > 10000:
+               break
         except Exception as e:
             print e
             # continue
