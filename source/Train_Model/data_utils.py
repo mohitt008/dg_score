@@ -21,7 +21,6 @@ if os.path.exists(ROOT_PATH + "/data/word_list_verified.csv"):
             if i > 0 and row[2] != '0':
                 plural_dict[row[0]] = row[1]
 else:
-    print "Plural Dictionary Built"
     print "Important Warning: File for Plural dictionary not found"
 
 
