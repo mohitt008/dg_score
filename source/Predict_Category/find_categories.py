@@ -9,18 +9,22 @@ from predict_category import predict_category_tree
 from dg_predictor import DGPredictor
 
 
-def predict_dg(product_name, category, logger, wbn = None):
+def predict_dg(product_name, category, logger = None,
+               wbn = None, client_name = None):
     category = category.lower()
     predictor = DGPredictor(
         product_name,
         category,
-        logger
+        logger,
+        wbn,
+        client_name
     )
-    report = predictor.predict(wbn)
+    report = predictor.predict()
     return report
 
 
-def get_category_dg(product_name, wbn, dang_model, logger, username):
+def get_category_dg(product_name, wbn, client_name, dang_model,
+                    logger, username):
     try:
         l_product_name = product_name.lower()
 
@@ -35,7 +39,8 @@ def get_category_dg(product_name, wbn, dang_model, logger, username):
             l_product_name,
             first_level,
             logger,
-            wbn
+            wbn,
+            client_name
         )
 
         result = {}
@@ -69,9 +74,11 @@ def process_product(product_name_dict, dang_model, logger, username):
         product_name_key = 'catfight:' + ':' + product_name_clean
         results_cache = r.get(product_name_key)
         wbn = product_name_dict.get('wbn', "")
+        client_name = product_name_dict.get('client_name', '').lower()
         if not results_cache:
             results = get_category_dg(product_name.encode('ascii', 'ignore'),
-                                      wbn, dang_model, logger, username)
+                                      wbn, client_name, dang_model, logger,
+                                      username)
             if results:
                 r.setex(product_name_key, json.dumps(results), CACHE_EXPIRY)
                 results['cached'] = False
@@ -84,7 +91,8 @@ def process_product(product_name_dict, dang_model, logger, username):
                 l_product_name,
                 first_level,
                 logger,
-                wbn
+                wbn,
+                client_name
             )
 
             results['dg'] = dg_report['dangerous']

@@ -1,7 +1,6 @@
 import requests, json, csv, time
 import pytest
 
-from pydisque.client import Client
 from requests.auth import HTTPBasicAuth
 
 HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
@@ -30,7 +29,7 @@ def catfight_get_results(cid):
                             headers = HEADERS, verify = False)
     return r
 
-def test_server():
+def fest_server():
     data = {'wbn': '7678', 'prd': 'apple iphone 6s 8gb'}
     r = requests.post(CID_URL, data = json.dumps(data), headers = HEADERS,
                 auth = AUTH, verify = False)
@@ -46,7 +45,7 @@ def test_auth():
         print ("auth fail")
     assert r.status_code != 401
 
-def test_combined():
+def fest_combined():
     data = [{'wbn': '7678', 'prd': 'apple iphone 6s 8gb', 'type': 1}]
     r = requests.post(COMBINED_URL, data = json.dumps(data), headers = HEADERS,
                 auth = QA_AUTH, verify = False)
@@ -102,6 +101,7 @@ def test_csv():
             payload.append({"wbn":row[0], "prd":row[1]})
 
             r = catfight_get_cid(payload)
+            print r
             
             if r.status_code != 202:
                 print "input:http error: ", r.status_code
@@ -146,29 +146,3 @@ def test_csv():
     print len(error_input),len(error_results)
     f.close()
     f2.close()
-def fest_mp():
-
-    client = Client(["127.0.0.1:7711"])
-    client.connect()
-    f = open(INPUT_ADDRESS_FILE)
-    reader = csv.reader(f)
-    header = reader.next()
-    limit=0
-    payload = []
-    temp = []
-    for row in reader:
-        if limit < 100:
-	    payload = []
-            payload.append({"wbn":row[0], "prd":row[1],'type': 1})
-            limit= limit+1  
-	    r = catfight_get_cid(payload)
-	    if r.status_code != 202:
-		print "error"
-    #print "data"
-    start = time.time()
-    while(client.qlen('catfight_input')!=0):
-        continue
-    end_time = time.time()
-    print "execution time "
-    print end_time-start
-    assert r.status_code == 202
