@@ -153,7 +153,6 @@ class DGPredictor(object):
             dg = prohibited = True
         return (dg, prohibited)
 
-
     def check_dg_rules(self):
         dg = prohibited = False
         for rule in dg_model.dg_keywords:
@@ -194,7 +193,6 @@ class DGPredictor(object):
                     pass
         return dg, prohibited
 
-
     def predict(self):
         """
         Iterates over all DG/prohibited keywords defined in DG keywords file.
@@ -213,7 +211,7 @@ class DGPredictor(object):
            self.product_name in exact_names.get(self.client_name, []):
             # Check if exact product name for all clients
             dg = exact_match = True
-        elif client_dict_default.has_key(self.client_name):
+        elif self.client_name in client_dict_default:
             # Elif client has a default value (0 or 1)
             val = client_dict_default[self.client_name]
             if val == '0':

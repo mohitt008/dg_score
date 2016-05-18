@@ -1,3 +1,4 @@
+
 import sys
 import csv
 import json
@@ -66,11 +67,11 @@ class categoryModel(object):
                     self.second_level_clf_cnn[cat_name] = cnn
                     self.second_level_clf_cnn_sess[cat_name] = sess
                     self.second_level_clf_cnn_vocab_data[cat_name] = vocab_data
-        # Important note: Since only CNN is being used to predict category tree,
-        # we have commented line below as we don't need to load nb model. One
+        # Important note: Since only CNN is being used to predict category tree
+        # ,we have commented line below as we don't need to load nb model. One
         # should uncomment the line below if he/she need to use any of the
-        # predict_category_tree_using_ensamble or predict_category_tree_using_nb
-        # function in predict_category.py file
+        # predict_category_tree_using_ensamble or
+        # predict_category_tree_using_nb function in predict_category.py file
 
         # self.load_nb_model()
 
@@ -97,6 +98,7 @@ class categoryModel(object):
             if cat_name in self.second_level_cat_names_set:
                 self.second_level_clf_fpr[cat_name] = joblib.load(
                     SUB_MODELS_PATH + '/clf_fpr_' + cat_name, mmap_mode='r')
+
 
 # DG detection logic
 # https://docs.google.com/document/d/1dUEMZHwGC9WJxPlgNPNCiQzvIy5JyLvO_aui0d7tHMM/
@@ -163,10 +165,8 @@ class dangerousModel(object):
 
         file_dg_csv.close()
 
-
     def get_exact_names(self):
         return self.exact_names
-
 
     def get_client_dict_default(self):
         return self.client_dict_default_value
