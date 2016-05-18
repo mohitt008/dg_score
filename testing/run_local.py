@@ -41,7 +41,7 @@ if __name__ == "__main__":
            if cnt > 10000:
                break
         except Exception as e:
-            print e
+            print "Exception:", e
             # continue
             break
 

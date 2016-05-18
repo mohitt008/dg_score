@@ -108,9 +108,11 @@ class dangerousModel(object):
         # Skip keys
         reader.next()
         self.dg_keywords = []
-        self.exact_names_list = []
-        self.client_list_dg = []
-        self.client_list_non_dg = []
+        # Dict with client name as key and list of words as value
+        self.exact_names = {}
+
+        # Dict with client name as key and result as value
+        self.client_dict_default_value = {}
 
         for row in reader:
             tmp = []
@@ -135,39 +137,36 @@ class dangerousModel(object):
             tmp.append(row[6].lower())
 
             tup = tuple(tmp)
-            self.dg_keywords.append(tup)
 
-            if default_val == "3" and not clients:
-                # product names marked as dg
-                # irrespective of clients i.e empty client
+            if default_val == "3":
+                if not clients:
+                    # product names marked as dg
+                    # irrespective of clients i.e empty client
+                    key = "all_clients"
+                else:
+                    # SK: For value = 3, only 1 client should be present
+                    key = clients
+
+                val = []
                 names = keyword.split(';')
                 for name in names:
-                    self.exact_names_list.append(name.lower().strip())
+                    val.append(name.lower().strip())
+                self.exact_names[key] = val
 
-            elif default_val == "0" and not keyword:
-                # All clients which have non dg products
-                # irrespective of keyword i.e empty keyword
+            elif (default_val == '0' or default_val == '1') and not keyword:
+                # Clients which have a default value (dg or non dg)
                 client_list = clients.split(';')
                 for client in client_list:
-                    self.client_list_non_dg.append(client.lower().strip())
-
-            elif default_val == "1" and not keyword:
-                # All clients which have dg products
-                # irrespective of keyword i.e empty keyword
-                client_list = clients.split(';')
-                for client in client_list:
-                    self.client_list_dg.append(client.lower().strip())
+                    self.client_dict_default_value[client] = default_val
+            else:
+                self.dg_keywords.append(tup)
 
         file_dg_csv.close()
 
 
-    def get_exact_names_list(self):
-        return self.exact_names_list
+    def get_exact_names(self):
+        return self.exact_names
 
 
-    def get_client_list_non_dg(self):
-        return self.client_list_non_dg
-
-
-    def get_client_list_dg(self):
-        return self.client_list_dg
+    def get_client_dict_default(self):
+        return self.client_dict_default_value

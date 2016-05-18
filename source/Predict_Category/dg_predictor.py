@@ -153,6 +153,48 @@ class DGPredictor(object):
             dg = prohibited = True
         return (dg, prohibited)
 
+
+    def check_dg_rules(self):
+        dg = prohibited = False
+        for rule in dg_model.dg_keywords:
+            try:
+                default = int(rule[0])
+                client = str(rule[1])
+                keyword = str(rule[2])
+                if client != self.client_name:
+                    continue
+                if keyword in self.product_name:
+                    self.found_keyword = keyword
+                    if default == 0:
+                        dg = self.__check_dg_false(rule)
+                        # If a non-DG product becomes DG for any keyword, then
+                        # its a DG and break it right here.
+                        if dg:
+                            break
+                    elif default == 1:
+                        dg = self.__check_dg_true(rule)
+                    elif default == 2:
+                        (dg, prohibited) = self.__check_prohibited(rule)
+            except Exception as e:
+                if self.logger:
+                    self.logger.error(
+                        'dg_predictor:Exception {} occurred against rule: {} \
+                        for product client {} {}'.format(
+                            e, rule, self.product_name, self.client_name)
+                    )
+                    sentry_client.captureException(
+                        message="dg_predictor:Exception occurred against rule",
+                        extra={
+                            "error": e,
+                            "rule": rule,
+                            "product_name": self.product_name,
+                            "client_name": self.client_name
+                        }
+                    )
+                    pass
+        return dg, prohibited
+
+
     def predict(self):
         """
         Iterates over all DG/prohibited keywords defined in DG keywords file.
@@ -164,68 +206,22 @@ class DGPredictor(object):
         exact_match = False
         dg_client = False
 
-        if self.product_name in dg_model.get_exact_names_list():
-            # Check if exact product name is present in the config
-            # irrespective of client
-            dg = True
-            exact_match = True
-        elif self.client_name in dg_model.get_client_list_dg():
-            # Check if non dg client irrespective of keyword
-            dg = True
-            dg_client = True
-        elif self.client_name in dg_model.get_client_list_non_dg():
-            # Check if non dg client irrespective of keyword
-            dg = False
-            dg_client = False
+        exact_names = dg_model.get_exact_names()
+        client_dict_default = dg_model.get_client_dict_default()
+
+        if self.product_name in exact_names.get('all_clients', []) or \
+           self.product_name in exact_names.get(self.client_name, []):
+            # Check if exact product name for all clients
+            dg = exact_match = True
+        elif client_dict_default.has_key(self.client_name):
+            # Elif client has a default value (0 or 1)
+            val = client_dict_default[self.client_name]
+            if val == '0':
+                dg = dg_client = False
+            else:
+                dg = dg_client = True
         else:
-            for rule in dg_model.dg_keywords:
-                try:
-                    default = int(rule[0])
-                    client = str(rule[1])
-                    keyword = str(rule[2])
-                    if not client:
-                        pass
-                    elif client != self.client_name:
-                        continue
-                    if keyword in self.product_name:
-                        self.found_keyword = keyword
-                        if default == 0:
-                            dg = self.__check_dg_false(rule)
-                            # If a non-DG product becomes DG for any keyword, then
-                            # its a DG and break it right here.
-                            if dg:
-                                break
-                        elif default == 1:
-                            dg = self.__check_dg_true(rule)
-                        elif default == 2:
-                            (dg, prohibited) = self.__check_prohibited(rule)
-                        elif default == 3:
-                            if not client or client == self.client_name:
-                                if keyword == self.product_name:
-                                    dg = True
-                                    exact_match = True
-                                    break
-                        else:
-                            # Still check other rules, handle such cases at the
-                            # time of sanitization of DG keywords file.
-                            pass
-                except Exception as e:
-                    if self.logger:
-                        self.logger.error(
-                            'dg_predictor:Exception {} occurred against rule: {} \
-                            for product client {} {}'.format(
-                                e, rule, self.product_name, self.client_name)
-                        )
-                    sentry_client.captureException(
-                        message="dg_predictor:Exception occurred against rule",
-                        extra={
-                            "error": e,
-                            "rule": rule,
-                            "product_name": self.product_name,
-                            "client_name": self.client_name
-                        }
-                    )
-                    pass
+            dg, prohibited = self.check_dg_rules()
 
         dg_report = {}
         dg_report['name'] = self.product_name
