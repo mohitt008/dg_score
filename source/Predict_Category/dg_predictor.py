@@ -67,7 +67,7 @@ class DGPredictor(object):
         """
         if len(haystack):
             categories = [cat.strip() for cat in haystack.split(";")]
-            return self.category in categories
+            return self.category and self.category in categories
         else:
             return False
 
@@ -82,7 +82,7 @@ class DGPredictor(object):
         if len(haystack):
             keywords = [kw.strip() for kw in haystack.split(";")]
             for contain_word in keywords:
-                if contain_word in self.product_name:
+                if contain_word and contain_word in self.product_name:
                     self.keyword = contain_word
                     result = True
                     break
@@ -160,7 +160,9 @@ class DGPredictor(object):
                 default = int(rule[0])
                 client = str(rule[1])
                 keyword = str(rule[2])
-                if client != self.client_name:
+                if not client:
+                    pass
+                elif client != self.client_name:
                     continue
                 if keyword in self.product_name:
                     self.found_keyword = keyword
