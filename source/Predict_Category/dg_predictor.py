@@ -160,6 +160,7 @@ class DGPredictor(object):
                 default = int(rule[0])
                 client = str(rule[1])
                 keyword = str(rule[2])
+                # Skip if client is empty => rule applies to all clients.
                 if not client:
                     pass
                 elif client != self.client_name:
