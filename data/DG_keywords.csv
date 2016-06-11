@@ -79,7 +79,6 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 1,,Panchgavya Medicines,,,,
 0,,ink,Epson; canon; brother; hp; printer,,Pink; Toothpaste;Turtle projector;Pen,Shoes and footwear; Apparel and Accessories
 1,,Toner,,,Protoner,
-1,,Parfum,,,,
 1,,Toilette,,,Seat; Book; Kit,
 1,,Cologne,,,,
 1,,Eau de,,,Bag,
@@ -126,3 +125,4 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 1,,Pharmaceutical,,,,
 1,,Foam,,,Pillow,Shoes and footwear; Apparel and Accessories; Home and Kitchen; KitchenWare
 1,,Car Maintenance Combo,,,,
+0,Amazon,,,,,
