@@ -49,6 +49,7 @@ def get_category_dg(product_name, wbn, client_name, dang_model,
         result['cat_confidence'] = first_level_confidence_score
         result['dg'] = dg_report['dangerous']
         result['prohibited'] = dg_report.get('prohibited', False)
+        result['dg_score'] = dg_report.get('dg_score', 0)
         return result
 
     except Exception as err:
@@ -97,6 +98,7 @@ def process_product(product_name_dict, dang_model, logger, username):
 
             results['dg'] = dg_report['dangerous']
             results['prohibited'] = dg_report.get('prohibited', False)
+            results['dg_score'] = dg_report.get('dg_score', 0)
             results['cached'] = True
     else:
         results['invalid_product_name'] = True
@@ -109,6 +111,7 @@ def process_product(product_name_dict, dang_model, logger, username):
         results['scat'] = "Not Found"
         results['dg'] = True
         results['prohibited'] = False
+        results['dg_score'] = 0
     final_result['result'] = results
     return final_result
 

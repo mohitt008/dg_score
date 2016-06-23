@@ -155,6 +155,7 @@ class DGPredictor(object):
 
     def check_dg_rules(self):
         dg = prohibited = False
+        dg_score = 0
         for rule in dg_model.dg_keywords:
             try:
                 default = int(rule[0])
@@ -166,15 +167,18 @@ class DGPredictor(object):
                 elif client != self.client_name:
                     continue
                 if keyword in self.product_name:
-                    self.found_keyword = keyword
-                    if default == 0:
+                    if default in [0, 1, 2, 4, 5]:
+                        self.found_keyword = keyword
+                    if default == 0 or default == 4:
                         dg = self.__check_dg_false(rule)
                         # If a non-DG product becomes DG for any keyword, then
                         # its a DG and break it right here.
+                        if default == 4: dg_score = int(dg)
                         if dg:
                             break
-                    elif default == 1:
+                    elif default == 1 or default == 5:
                         dg = self.__check_dg_true(rule)
+                        if default == 5: dg_score = int(dg)
                     elif default == 2:
                         (dg, prohibited) = self.__check_prohibited(rule)
             except Exception as e:
@@ -194,7 +198,7 @@ class DGPredictor(object):
                         }
                     )
                     pass
-        return dg, prohibited
+        return dg, prohibited, dg_score
 
     def predict(self):
         """
@@ -204,6 +208,7 @@ class DGPredictor(object):
         True/False values.
         """
         dg = prohibited = False
+        dg_score = 0
         exact_match = False
         dg_client = False
 
@@ -222,7 +227,7 @@ class DGPredictor(object):
             else:
                 dg = dg_client = True
         else:
-            dg, prohibited = self.check_dg_rules()
+            dg, prohibited, dg_score = self.check_dg_rules()
 
         dg_report = {}
         dg_report['name'] = self.product_name
@@ -237,6 +242,7 @@ class DGPredictor(object):
         dg_report['contain_category'] = self.contain_category
         dg_report['except_list'] = self.except_list
         dg_report['except_category'] = self.except_category
+        dg_report['dg_score'] = dg_score
 
         if self.logger:
             self.logger.info('Check DG: Product Name: {} Report: {}'.format(

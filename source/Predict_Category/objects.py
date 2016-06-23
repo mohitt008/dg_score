@@ -2,6 +2,7 @@
 import sys
 import csv
 import json
+import operator
 import tensorflow as tf
 from sklearn.externals import joblib
 from constants import PARENT_DIR_PATH, MODELS_PATH, \
@@ -109,6 +110,7 @@ class dangerousModel(object):
         reader = csv.reader(file_dg_csv)
         # Skip keys
         reader.next()
+        sorted_list = sorted(reader, key=operator.itemgetter(0))
         self.dg_keywords = []
         # Dict with client name as key and list of words as value
         self.exact_names = {}
@@ -116,7 +118,7 @@ class dangerousModel(object):
         # Dict with client name as key and result as value
         self.client_dict_default_value = {}
 
-        for row in reader:
+        for row in sorted_list:
             tmp = []
             # dangerous / non dangerous
             default_val = row[0].lower()
