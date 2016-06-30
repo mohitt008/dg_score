@@ -45,6 +45,8 @@ if not r.ping():
     print "settings.py: Failed to connect to redis"
     sys.exit()
 
+redis_url = 'redis://{}:{}'.format(redis_config['host'], redis_config['port'])
+
 # Disque
 client = Client([config.DISQUE_IP])
 try:
