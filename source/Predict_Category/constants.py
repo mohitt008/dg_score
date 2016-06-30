@@ -32,7 +32,7 @@ SUB_MODELS_PATH = ROOT_PATH + '/data/Models/SubModels'
 DG_KEYWORDS_FILE = ROOT_PATH + "/data/DG_keywords.csv"
 
 # Celery Logging path
-CELERY_LOGGING_PATH = '/var/log/catfight_logs/celery.log'
+CELERY_LOGGING_PATH = '/var/log/cat_subcat_logs/celery.log'
 
 LOG_DB_NAME = 'logs'
 
