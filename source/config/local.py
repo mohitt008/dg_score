@@ -7,3 +7,5 @@ DISQUE_IP = '127.0.0.1:7711'
 # Redis
 REDIS_IP = 'localhost'
 
+# Mongo
+MONGO_IP = 'localhost'
