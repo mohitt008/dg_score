@@ -5,6 +5,8 @@ import ConfigParser
 import os
 from importlib import import_module
 from pydisque.client import Client
+from pymongo import MongoClient, errors
+
 
 # Add base path to import path
 BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
