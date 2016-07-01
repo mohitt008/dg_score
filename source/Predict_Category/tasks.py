@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 
 @celery.task
-def add_result_to_mongo(username, result, timestamp):
+def add_result_to_mongo(username, result, timestamp, dg_report):
     if not result:
         sentry_client.captureException(
             message='tasks.py: add_log_to_mongo: Empty Result'
@@ -31,6 +31,7 @@ def add_result_to_mongo(username, result, timestamp):
             logger.info('Received wbn {}'.format(wbn))
             result['date'] = timestamp.strftime('%Y-%m-%d')
             result['time'] = timestamp.strftime('%H:%M:%S,%f')
+            result['dg_check'] = dg_report
             mongo_update = log_db[mongo_collection].update(
                 {'_id': wbn}, result, upsert=True)
         else:

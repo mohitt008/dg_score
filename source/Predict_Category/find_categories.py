@@ -64,6 +64,7 @@ def get_category_dg(product_name, wbn, client_name, dang_model,
 def process_product(product_name_dict, dang_model, logger, username):
     results = {}
     results_cache = ''
+    dg_report = {}
 
     product_name = product_name_dict.get('prd', "")
     if product_name:
@@ -113,5 +114,5 @@ def process_product(product_name_dict, dang_model, logger, username):
         results['prohibited'] = False
         results['dg_score'] = 0
     final_result['result'] = results
-    return final_result
+    return final_result, dg_report
 
