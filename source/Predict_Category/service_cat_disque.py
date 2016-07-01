@@ -1,6 +1,11 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import json
+from datetime import datetime
+import sys
+import sys
+from copy import deepcopy
+
 # from multiprocessing import Pool, cpu_count
 # from functools import partial
 
@@ -8,7 +13,7 @@ from constants import CATFIGHT_LOGGING_PATH
 from find_categories import process_product
 from settings import client, sentry_client, catfight_input, catfight_output
 from objects import dangerousModel
-import sys
+from tasks import add_result_to_mongo
 
 logger = logging.getLogger('Catfight App')
 handler = RotatingFileHandler(CATFIGHT_LOGGING_PATH, maxBytes=200000000,
@@ -59,14 +64,23 @@ def get_category(list_product_names, job_id, username):
                                              dang_model,
                                              logger,
                                              username)
+                    timestamp = datetime.now()
                     output_list.append(result)
                 else:
                     if type(product_name_dict) is dict:
                         for key, value in product_name_dict.items():
                             error_response[key] = value
                             error_response["error"] = "BAD REQUEST"
+                    timestamp = datetime.now()
+                    result = error_response
                     output_list.append(error_response)
+                add_result_to_mongo.delay(username, result, timestamp)
             except Exception as err:
+                timestamp = datetime.now()
+                result = {}
+                result = deepcopy(address_dict)
+                result['error'] = err
+                add_result_to_mongo.delay(username, result, timestamp)
                 logger.error(
                     'get_category:Exception {} occurred against input: {} \
                     for job_id {} for username {}'.

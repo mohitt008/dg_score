@@ -30,3 +30,15 @@ SUB_MODELS_PATH = ROOT_PATH + '/data/Models/SubModels'
 
 # DG KEYwords FILE PATH
 DG_KEYWORDS_FILE = ROOT_PATH + "/data/DG_keywords.csv"
+
+# Celery Logging path
+CELERY_LOGGING_PATH = '/var/log/cat_subcat_logs/celery.log'
+
+LOG_DB_NAME = 'logs'
+
+# Assume 1ms maximum mongo server selection delay
+MAX_SEV_SEL_DELAY = 1
+
+REPLICA_SET = 'rs0'
+
+CATFIGHT_COLLECTION = 'catfight'

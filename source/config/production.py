@@ -7,3 +7,5 @@ DISQUE_IP = '10.0.4.232:7711'
 # Redis
 REDIS_IP = 'data-prod-redis-001.iqi3ba.0001.apse1.cache.amazonaws.com'
 
+# Mongo
+MONGO_IP = '10.0.6.227'
