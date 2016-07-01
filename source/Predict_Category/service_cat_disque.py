@@ -52,6 +52,7 @@ def validate_product_args(record):
 
 def get_category(list_product_names, job_id, username):
     output_list = []
+    dg_report = {}
     logger.info("Request received {0} for username {1}".format(
         list_product_names, username))
     if list_product_names:
@@ -60,7 +61,7 @@ def get_category(list_product_names, job_id, username):
                 valid_record, error_response = validate_product_args(
                     product_name_dict)
                 if valid_record:
-                    result = process_product(product_name_dict,
+                    result, dg_report = process_product(product_name_dict,
                                              dang_model,
                                              logger,
                                              username)
@@ -74,13 +75,13 @@ def get_category(list_product_names, job_id, username):
                     timestamp = datetime.now()
                     result = error_response
                     output_list.append(error_response)
-                add_result_to_mongo.delay(username, result, timestamp)
+                add_result_to_mongo.delay(username, result, timestamp, dg_report)
             except Exception as err:
                 timestamp = datetime.now()
                 result = {}
                 result = deepcopy(address_dict)
                 result['error'] = err
-                add_result_to_mongo.delay(username, result, timestamp)
+                add_result_to_mongo.delay(username, result, timestamp, dg_report)
                 logger.error(
                     'get_category:Exception {} occurred against input: {} \
                     for job_id {} for username {}'.
