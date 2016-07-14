@@ -24,17 +24,18 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 0,,Johnson,,Beauty Products and Personal Care; Baby Care;Uncategorized;Health and Wellness,Strips," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 0,,Powder,,Beauty Products and Personal Care; Baby Care;Uncategorized;Health and Wellness,Nutrition,
 0,,Hugo,Boss night,,,
-0,,Pill,,Health and Wellness,Pillow,
+0,,Pill,,Health and Wellness,Pillow;Box;Container,
 0,,Power,,Health and Wellness,,
 0,,fa,,Deodrants and Fragrances,Shoe; Sneaker,
 0,Amazon,,,,,
 1,Strategiherbal,,,,,
+1,,Air,Gun,,,
 1,,Air-Gun,,,,
 1,,AirGun,,,,
 1,,AIR GUN,,,,
 1,,After Shave,,,,
 1,,Balm,,,,
-1,,Battery,,,Cover; Case; Handset; Headset; 2nd Gen; Train; Toy; Dog; Puppy; Monkey; Jump; Doctor; Mug; Blender; Powerbank; Power Bank;Lava Iris; Asus; Samsung Galaxy; iPhone; Panasonic; Headphone; Watches; Trimmer;Micromax; Samsung; Motorola; Oppo; Intex; Nokia; Eureka; MotoG; Haier; Huawei; Sony; OnePlus; Acer; Gionee; Nexus; Spice; Lenovo; Vivo; Xolo; Philip; Seimen; Karbonn; Blackberry; Black berry;Plane;Clock,toys and games
+1,,Battery,,,Cover; Case; Handset; Headset; 2nd Gen; Train; Toy; Dog; Puppy; Monkey; Jump; Doctor; Mug; Blender; Powerbank; Power Bank;Lava Iris; Asus; Samsung Galaxy; iPhone; Panasonic; Headphone; Watches; Trimmer;Micromax; Samsung; Motorola; Oppo; Intex; Nokia; Eureka; MotoG; Haier; Huawei; Sony; OnePlus; Acer; Gionee; Nexus; Spice; Lenovo; Vivo; Xolo; Philip; Seimen; Karbonn; Blackberry; Black berry;Plane;Clock;Toothbrush,toys and games
 1,,Cleaner,,,Mop; Fiber; Fibre; Vacuum; Vaccum; Ear; Pressure; Tongue; Brush; Dust; Pen,
 1,,Deo,,,Video; Rhodeo; Rodeo; Sheet; Pant; English,"Movies,Music and Video Games; Electronics and Appliances; Camera and photos ; Apparel and Accessories; Books, Software and E-learning"
 1,,EDT,,,RedTape; Top; Bowl; Shirt; Cotton; Bedtime; Staedtler; Pen,Shoes and footwear; Apparel and Accessories; Home and Kitchen; KitchenWare
@@ -50,7 +51,7 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 1,,Parfum,,,,
 1,,Perfum,,,,
 1,,Polish,,,Polished; Jew; Glove;Machine,Apparel and Accessories
-1,,Recharg,,,Clip; Bag; Light; LED; Hummer; Bike; Toy; Lamborghini; Trimmer; Racket; Bulb; Powerbank; Power bank;Trimmer;Torch;Nova,Toys and Games
+1,,Recharg,,,Clip; Bag; Light; LED; Hummer; Bike; Toy; Lamborghini; Trimmer; Racket; Bulb; Powerbank; Power bank;Trimmer;Torch;Nova;Novel 4 Blade Rechargable Fan,Toys and Games
 1,,Temptation,,,,
 1,,General Good,,,,
 1,,Lighter,,,Pen; English;Shirt,Shoes and footwear; Apparel and Accessories
@@ -85,7 +86,7 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 1,,Toilette,,,Seat; Book; Kit,
 1,,Eau de,,,Bag,
 1,,Exting,,,,
-1,,Liquid,,,Acer; Hammer;Dispenser;Pen;Frame,"Tools and Hardware; Shoes and footwear; Apparel and Accessories; Books, Software and E-learning;Watches, eyewear and jewellery"
+1,,Liquid,,,Hammer;Pen;Frame,Apparel and Accessories;
 1,,Beauty Item,,,,
 1,,Beauty,,,English; Bag; Straightener; Watch; Saree; INDIAN BEAUTY;Nova;Massager," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 1,,Lubricant,,,,
