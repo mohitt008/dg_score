@@ -27,8 +27,9 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 0,,Pill,,Health and Wellness,Pillow;Box;Container,
 0,,Power,,Health and Wellness,,
 0,,fa,,Deodrants and Fragrances,Shoe; Sneaker,
-0,Amazon,,,,,
+1,Amazon,AMAZON package ,,,,
 1,Strategiherbal,,,,,
+1,NATURESMANIA - DFS,NATURESMANIA,,,,
 1,,Air,Gun,,,
 1,,Air-Gun,,,,
 1,,AirGun,,,,
@@ -46,7 +47,7 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 1,,Lotion,,,,
 1,,Juice,,,Canvas; Micromax; Extractor; Juicer;Yepme,Mobile Phone; Tablets and Accessories; Protein and Health Supplements
 1,,Ml,,,Container;Jar; Bag; Jug; Casserole; Thermosteel; Milton; Tupperware; Storage; Dispenser; Amla; Watch; Shaker; Jar Set; Rimless; Asus; Flask; Seamless; Bottle; Ramleela; Camlin; Kurta; Mug; Steel; Hamlet; Headset; Xiaom; Bluetooth; Headphone; Earphone; Mlange; Kurti; Shirt; Saree; Earrings; (English); Basket; Plastic; Shoe; Pill Splitter; Boxer; Screen; Glass; Bowl; Card; Reader; Hindi; Kadhai; Book; Cover; Paper; Sheet; Applying Uml And Patterns; Snack Attack; Boot; Nikon; Camera; Steel; Milton;Cable;Straightener;Lenovo,"Home and Kitchen; KitchenWare; Sports and Outdoors; Shoes and footwear; Apparel and Accessories; Books, Software and E-learning;Watches, Eyewear and Jewellery; Mobile Phone; Tablets and Accessories"
-1,,Oil,,,Boiler; Dispenser; Pastel; Tupperware; Container; Voil; Foil; Coil; Trouser; Louis Philippe; English; Prepaid; Data Card; Watch; Shoe; Bag; Toiletry Kit; Bag; Spoil; Pen;Top;Paper;Turtle projector;Asus;Tempered,"Home and Kitchen; KitchenWare; Office Products; Shoes and footwear; Apparel and Accessories;Books, Software and E-learning"
+1,,Oil,,,Boiler; Dispenser; Pastel; Tupperware; Container; Voil; Foil; Coil; Trouser; Louis Philippe; English; Prepaid; Data Card; Watch; Shoe; Bag; Toiletry Kit; Bag; Spoil; Pen;Top;Paper;Turtle projector;Asus;Tempered,Home and Kitchen; KitchenWare; Office Products; Shoes and footwear; Apparel and Accessories
 1,,Paint,,,Painting; Painted; Marker; Stamp; Roller,Shoes and footwear; Apparel and Accessories
 1,,Parfum,,,,
 1,,Perfum,,,,
@@ -100,6 +101,7 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 1,,Lip Colour,,,,
 1,,Lip Color,,,,
 1,Parcelled,Car Accessories,,,,
+1,DFS - AVN Business Solutions,Food,,,,
 1,,Automobile Accessories,,,,
 1,,Hamsyl,,,,
 1,,Pharmaceutical,,,,
