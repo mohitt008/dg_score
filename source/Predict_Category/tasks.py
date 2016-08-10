@@ -32,7 +32,8 @@ def add_result_to_mongo(username, result, timestamp, dg_report):
             result['date'] = timestamp.strftime('%Y-%m-%d')
             result['time'] = timestamp.strftime('%H:%M:%S,%f')
             result['dg_check'] = dg_report
-            logger.info('Added wbn {} to mongo'.format(wbn))
+            logger.info('Added wbn {} to mongo collection {}'.format(
+                wbn, mongo_collection))
             log_db[mongo_collection].update(
                 {'_id': wbn}, result, upsert=True)
         else:
