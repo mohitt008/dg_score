@@ -6,9 +6,10 @@ from constants import CATFIGHT_COLLECTION, CELERY_LOGGING_PATH
 from settings import sentry_client, log_db, redis_url
 
 
+# TODO: logger doesn't work
 celery = Celery('tasks', broker=redis_url, CELERY_ACKS_LATE=True)
 logger = get_task_logger('CeleryTasks')
-handler = logging.handlers.RotatingFileHandler(CELERY_LOGGING_PATH, maxBytes=200000000,
+handler = logging.handlers.RotatingFileHandler(CELERY_LOGGING_PATH, maxBytes=2000000,
                                                backupCount=5)
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
 handler.setFormatter(formatter)

@@ -3,13 +3,12 @@ from logging.handlers import RotatingFileHandler
 import json
 from datetime import datetime
 import sys
-import sys
 from copy import deepcopy
 
 # from multiprocessing import Pool, cpu_count
 # from functools import partial
 
-from constants import CATFIGHT_LOGGING_PATH
+from constants import CATFIGHT_LOGGING_PATH, CELERY_QUEUE
 from find_categories import process_product
 from settings import client, sentry_client, catfight_input, catfight_output
 from objects import dangerousModel
@@ -75,11 +74,13 @@ def get_category(list_product_names, job_id, username):
                     timestamp = datetime.now()
                     result = error_response
                     output_list.append(error_response)
-                add_result_to_mongo.delay(username, result, timestamp, dg_report)
+                add_result_to_mongo.apply_async(
+                    (username, result, timestamp, dg_report),
+                    queue = CELERY_QUEUE)
             except Exception as err:
                 timestamp = datetime.now()
                 result = {}
-                result = deepcopy(address_dict)
+                result = deepcopy(product_name_dict)
                 result['error'] = err
                 add_result_to_mongo.delay(username, result, timestamp, dg_report)
                 logger.error(

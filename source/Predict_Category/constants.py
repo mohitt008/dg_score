@@ -42,3 +42,5 @@ MAX_SEV_SEL_DELAY = 1
 REPLICA_SET = 'rs0'
 
 CATFIGHT_COLLECTION = 'catfight'
+
+CELERY_QUEUE = "catfight_tasks"
