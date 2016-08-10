@@ -33,7 +33,8 @@ def add_result_to_mongo(username, result, timestamp, dg_report):
             result['date'] = timestamp.strftime('%Y-%m-%d')
             result['time'] = timestamp.strftime('%H:%M:%S,%f')
             result['dg_check'] = dg_report
-            mongo_update = log_db[mongo_collection].update(
+            logger.info('Added wbn {} to mongo'.format(wbn))
+            log_db[mongo_collection].update(
                 {'_id': wbn}, result, upsert=True)
         else:
             # VV: What if we need to capture an event which is not an exception
