@@ -1,7 +1,8 @@
 import logging
+import datetime
+
 from celery import Celery
 from celery.utils.log import get_task_logger
-import datetime
 
 from constants import CATFIGHT_COLLECTION, CELERY_LOGGING_PATH
 from settings import sentry_client, log_db, redis_url
