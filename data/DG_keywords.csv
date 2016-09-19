@@ -2,7 +2,7 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 0,DFS - GEEKRETAIL,,,,,
 0,ARVINDINTERNET,,,,,
 0,,Condition,,Beauty Products and Personal Care; Baby Care; Health and Wellness;Uncategorized,,
-0,,Face,,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized,Bar; Helmet; Towel; Bag; Sock; Dress; Jacket; Legwarmer; Emotisorbs; Winking; Hoodie; Cap; Tissue; Elastic; Tape; Mini; Funny; Cute; Cartoon; Print; Animal; Cloth; Blanket; Tissue; Pollution; Bike; Sleeves; Boot; Chain; Steamer;Surface,"Apparel and Accessories; Home and Kitchen; Books, Software and E-learning"
+0,,Face,,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized,Bar; Helmet; Towel; Bag; Sock; Dress; Jacket; Legwarmer; Emotisorbs; Winking; Hoodie; Cap; Tissue; Elastic; Tape; Mini; Funny; Cute; Cartoon; Print; Animal; Cloth; Blanket; Tissue; Pollution; Bike; Sleeves; Boot; Chain; Steamer;Surface; Pillow,"Apparel and Accessories; Home and Kitchen; Books, Software and E-learning"
 0,,Facial,,Beauty Products and Personal Care; Health and Wellness; Baby Care; Uncategorized;Massager,Steamer; Bat; Towel; Hair Remo;Threader,
 0,,Shav,Gel; Cream,,Cap; Shaver;Trimmer," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 0,,Shav,,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized,Cap; Shaver;Trimmer," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
@@ -11,8 +11,8 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 0,,Skin,,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized,Bra; Socks; Tweeser; Spring; Shapewear; Top; Camisole; Bikini; Tweezer; I6; I5; Hipster; Short; Dermawear; Romper; Stocking;Bag; glove; Legging; Nova; Trimmer,Shoes and footwear;  Apparel and Accessories
 0,,Skin,Medicine; Homeopathic,,Bra; Socks; Tweeser; Spring; Shapewear; Top; Camisole; Bikini; Tweezer; I6; I5; Hipster; Short; Dermawear; Romper; Stocking;Bag; glove; Legging; Nova; Trimmer,Shoes and footwear;  Apparel and Accessories
 0,,Spray,Spray; Lotion,Beauty Products and Personal Care; Health and Wellness; Baby Care;Uncategorized;Automotive,Gun;Brush," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
-0,,Wash,Face; Body,,Jean; Brush; Boot; Cloth; Handkerchief; Mat;Yepme; Cap; Hat; Pendant; Epillator; Trimmer,Shoes and footwear; Apparel and Accessories
-0,,Wash,,Beauty Products and Personal Care; Baby Care;Uncategorized,Jean; Brush; Boot; Cloth; Handkerchief; Mat;Yepme; Cap; Hat; Pendant; Epillator; Trimmer,Shoes and footwear; Apparel and Accessories
+0,,Wash,Face; Body,,Jean; Brush; Boot; Cloth; Handkerchief; Mat;Yepme; Cap; Hat; Pendant; Epillator; Trimmer; Nappy; Pad,Shoes and footwear; Apparel and Accessories
+0,,Wash,,Beauty Products and Personal Care; Baby Care;Uncategorized,Jean; Brush; Boot; Cloth; Handkerchief; Mat;Yepme; Cap; Hat; Pendant; Epillator; Trimmer; Nappy; Pad,Shoes and footwear; Apparel and Accessories
 0,,Cream,,Beauty Products and Personal Care; Baby Care; Health and Wellness;Uncategorized,Dhoti; Saree; Salwar; Kameez; Wedge; Heels; Do Bhai; Top; kurti; Clip; Belt; Tee; Short; Sweatshirt; Shawl; Bellies; Frock; Suit; Skirt; Trousers; Pants; Gown; Handbag; Headband; Legging; Spaghetti; Lehenga; Shirt; Curtain; Top; Sandal; Loafer; Flat; Cardigan; Ring; Hoodie; Romper; Cookie; Bowknot; Jacket; Maxi; Duppata; Clutch; Trouser; Sweater; Jegging; Belt; Seat; Jacket; Cap; Cute; Band; Hat; Dress; Shoe; Ballerina; Seat; Toy; Pasta; Towel; Walet; Earring; Bear; Teddy; Hair Band;Gloves; Baggit; Pencil,Shoes and footwear; Apparel and Accessories
 0,,Mask,Kit,,Bike; Cloth; Mat; 3M; Eye; Pillow;Drake Sleeping," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 0,,Mask,,Beauty Products and Personal Care; Baby Care;Uncategorized,Bike; Cloth; Mat; 3M; Eye; Pillow;Drake Sleeping," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
@@ -20,7 +20,7 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 0,,Sample,,Home and Kitchen Appliances; Stationary and Office Products; Automotive; Tools and Hardware; Sports and Outdoors; Other Office Products;Uncategorized,,
 0,,Kart,Rocket,,,
 0,,Pest,Spray; Lotion; Insect,,Machine; Controller,
-0,,ink,Epson; canon; brother; hp; printer,,Pink; Toothpaste;Turtle projector;Pen,Shoes and footwear; Apparel and Accessories
+0,,ink,Epson; canon; brother; hp; printer,,Pink; Toothpaste;Turtle projector;Pen; Clutches,Shoes and footwear; Apparel and Accessories
 0,,Johnson,,Beauty Products and Personal Care; Baby Care;Uncategorized;Health and Wellness,Strips," Shoes and footwear; Apparel and Accessories; Books, Software and E-learning"
 0,,Powder,,Beauty Products and Personal Care; Baby Care;Uncategorized;Health and Wellness,Nutrition,
 0,,Hugo,Boss night,,,
@@ -28,40 +28,40 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 0,,fa,,Deodrants and Fragrances,Shoe; Sneaker,
 1,Strategiherbal,,,,,
 1,NATURESMANIA - DFS,NATURESMANIA,,,,
-1,,Note7,Galaxy; Samsung,,Case; Cover; Flip; Glass; Guard; Lenovo; Tempered; Xiaomi; Back; Book; Headphone; Earphone; Shirt,
-1,,Note 7,Galaxy; Samsung,,Case; Cover; Flip; Glass; Guard; Lenovo; Tempered; Xiaomi; Back; Book; Headphone; Earphone; Shirt,
+1,,Note7,Galaxy; Samsung,,Case; Cover; Flip; Glass; Guard; Lenovo; Tempered; Xiaomi; Back; Book; Headphone; Earphone; Shirt; Redmi;Xiaomi,
+1,,Note 7,Galaxy; Samsung,,Case; Cover; Flip; Glass; Guard; Lenovo; Tempered; Xiaomi; Back; Book; Headphone; Earphone; Shirt; Redmi;Xiaomi,
 1,,Air-Gun,,,,
 1,,AirGun,,,,
 1,,Milk,,"Books, Software and E-learning;Beauty Products and Personal Care;Baby Care;Uncategorized;Health and Wellness",Mixer; Container; HTC; Beater; Blender; Pan,"Mobile Phone, Tablets and Accessories; Handbags, Bags and Luggage; Apparel and Accessories"
 1,,After Shave,,,,
 1,,Balm,,,,
-1,,Battery,,,Cover; Case; Handset; Headset; 2nd Gen; Train; Toy; Dog; Puppy; Monkey; Jump; Doctor; Mug; Blender; Powerbank; Power Bank;Lava Iris; Asus; Samsung Galaxy; iPhone; Panasonic; Headphone; Watches; Trimmer;Micromax; Samsung; Motorola; Oppo; Intex; Nokia; Eureka; MotoG; Haier; Huawei; Sony; OnePlus; Acer; Gionee; Nexus; Spice; Lenovo; Vivo; Xolo; Philip; Seimen; Karbonn; Blackberry; Black berry;Plane;Clock;Toothbrush; Speaker,toys and games
+1,,Battery,,,Cover; Case; Handset; Headset; 2nd Gen; Train; Toy; Dog; Puppy; Monkey; Jump; Doctor; Mug; Blender; Powerbank; Power Bank;Lava Iris; Asus; Samsung Galaxy; iPhone; Panasonic; Headphone; Watches; Trimmer;Micromax; Samsung; Motorola; Oppo; Intex; Nokia; Eureka; MotoG; Haier; Huawei; Sony; OnePlus; Acer; Gionee; Nexus; Spice; Lenovo; Vivo; Xolo; Philip; Seimen; Karbonn; Blackberry; Black berry;Plane;Clock;Toothbrush; Speaker; Stick,toys and games
 1,,Cleaner,,,Mop; Fiber; Fibre; Vacuum; Vaccum; Ear; Pressure; Tongue; Brush; Dust; Pen,
 1,,Deo,,,Video; Rhodeo; Rodeo; Sheet; Pant; English; Bag,"Movies,Music and Video Games; Electronics and Appliances; Camera and photos ; Apparel and Accessories; Books, Software and E-learning"
 1,,EDT,,,RedTape; Top; Bowl; Shirt; Cotton; Bedtime; Staedtler; Pen,Shoes and footwear; Apparel and Accessories; Home and Kitchen; KitchenWare
 1,,EDP,,,PrettySecret; Speedpost; Speed;Cover;Puma,Shoes and footwear; Apparel and Accessories;Sports and outdoors
-1,,Fresh,,,Container; Foil; Air Loc; Styler; Striaghtner; Skirt; Cashew; Almond ; Pista; Tupperware; Saree; Blouse; English; Signoraware; Pack; Plastic; PrettySecret; Freshia; Sari; Box; Bottle; Towel; Mattress; Jar; Panty; Walnut; Raisin; Roasted; Salted; Juice; Kiwi; Fruit; lehenga;Diwan;Necklace;Earrings;Strawberry;hair styling kit; Adidas; Stickers; Case; Reebok; Box; Pillow; Bedsheet; Eye Mask; Fresh Wrap; Shoe; Cusion; Cover,"Shoes and footwear; Apparel and Accessories; Home and Kitchen Appliances;Watches,Eyewear and Jewellery;Home Decor and Furnishing"
+1,,Fresh,,,Container; Foil; Air Loc; Styler; Striaghtner; Skirt; Cashew; Almond ; Pista; Tupperware; Saree; Blouse; English; Signoraware; Pack; Plastic; PrettySecret; Freshia; Sari; Box; Bottle; Towel; Mattress; Jar; Panty; Walnut; Raisin; Roasted; Salted; Juice; Kiwi; Fruit; lehenga;Diwan;Necklace;Earrings;Strawberry;hair styling kit; Adidas; Stickers; Case; Reebok; Box; Pillow; Bedsheet; Eye Mask; Fresh Wrap; Shoe; Cusion; Cover; Curtain,"Shoes and footwear; Apparel and Accessories; Home and Kitchen Appliances;Watches,Eyewear and Jewellery;Home Decor and Furnishing"
 1,,Gel,,,Silicon; Cover; Bag; Angel; Bar; Softgels; Soft; Geliyo; Pen; Asics; Freecultr; Earring; Helmet; Mousepad; Screen Guard;Straightener,"Sports and Outdoors; Shoes and footwear;Home Decor and Furnishing;Computers; Laptops and Accessories; Books, Software and E-learning;Apparel and Accessories"
-1,,Health,,,Slipper; Paper; Foil; Seat; Sole; belt; Sauna; Green tea; Stethoscope; glove; Mat;Trimmer;Weigh;Naturel's;Ashwagandha;Bag;Maker;Sprout;Mosquito;Net;Vaporizer; Band; Fitrist; Horlicks; Bracelets; Showpiece; Guide; (English); Box; Watch; Pillow,"Shoes and footwear; Books, Software and E-learning; Watches, Eyewear and Jewellery; Tools and Hardware; Sports and Outdoors"
+1,,Health,,,Slipper; Paper; Foil; Seat; Sole; belt; Sauna; Green tea; Stethoscope; glove; Mat;Trimmer;Weigh;Naturel's;Ashwagandha;Bag;Maker;Sprout;Mosquito;Net;Vaporizer; Band; Fitrist; Horlicks; Bracelets; Showpiece; Guide; (English); Box; Watch; Pillow; Mug;Steel;Tongue,"Shoes and footwear; Books, Software and E-learning; Watches, Eyewear and Jewellery; Tools and Hardware; Sports and Outdoors"
 1,,Lotion,,,,
 1,,Juice,,,Canvas; Micromax; Extractor; Juicer;Yepme,Mobile Phone; Tablets and Accessories; Protein and Health Supplements
-1,,Ml,,,Container;Jar; Bag; Jug; Casserole; Thermosteel; Milton; Tupperware; Storage; Dispenser; Amla; Watch; Shaker; Jar Set; Rimless; Asus; Flask; Seamless; Bottle; Ramleela; Camlin; Kurta; Mug; Steel; Hamlet; Headset; Xiaom; Bluetooth; Headphone; Earphone; Mlange; Kurti; Shirt; Saree; Earrings; (English); Basket; Plastic; Shoe; Pill Splitter; Boxer; Screen; Glass; Bowl; Card; Reader; Hindi; Kadhai; Book; Cover; Paper; Sheet; Applying Uml And Patterns; Snack Attack; Boot; Nikon; Camera; Steel; keychain; Mixer; Milton;Cable;Straightener;Lenovo; Serveware; Numlock; Zenphone; Box; Pcs; Keychain,"Home and Kitchen; KitchenWare; Sports and Outdoors; Shoes and footwear; Apparel and Accessories; Watches, Eyewear and Jewellery; Mobile Phone, Tablets and Accessories;"
+1,,Ml,,,Container;Jar; Bag; Jug; Casserole; Thermosteel; Milton; Tupperware; Storage; Dispenser; Amla; Watch; Shaker; Jar Set; Rimless; Asus; Flask; Seamless; Bottle; Ramleela; Camlin; Kurta; Mug; Steel; Hamlet; Headset; Xiaom; Bluetooth; Headphone; Earphone; Mlange; Kurti; Shirt; Saree; Earrings; (English); Basket; Plastic; Shoe; Pill Splitter; Boxer; Screen; Glass; Bowl; Card; Reader; Hindi; Kadhai; Book; Cover; Paper; Sheet; Applying Uml And Patterns; Snack Attack; Boot; Nikon; Camera; Steel; keychain; Mixer; Theory;Milton;Cable;Straightener;Lenovo; Serveware; Numlock; Zenphone; Box; Pcs; Keychain,"Home and Kitchen; KitchenWare; Sports and Outdoors; Shoes and footwear; Apparel and Accessories; Watches, Eyewear and Jewellery; Mobile Phone, Tablets and Accessories;"
 1,,Oil,,,Boiler; Dispenser; Pastel; Tupperware; Container; Voil; Foil; Coil; Trouser; Louis Philippe; English; Prepaid; Data Card; Watch; Shoe; Bag; Toiletry Kit; Bag; Spoil; Pen;Top;Paper;Turtle projector;Asus;Tempered; Toilet; Seat; Book; Laptop; Kit; Pouch,Home and Kitchen; KitchenWare; Office Products; Shoes and footwear; Apparel and Accessories
 1,,Paint,,,Painting; Painted; Marker; Stamp; Roller,Shoes and footwear; Apparel and Accessories
 1,,Parfum,,,,
 1,,Perfum,,,,
 1,,Polish,,,Polished; Jew; Glove;Machine,Apparel and Accessories
-1,,Recharg,,,Clip; Bag; Light; LED; Hummer; Bike; Toy; Lamborghini; Trimmer; Racket; Bulb; Powerbank; Power bank;Trimmer;Torch;Nova;Novel 4 Blade Rechargable Fan,Toys and Games
+1,,Recharg,,,Clip; Bag; Light; LED; Hummer; Bike; Toy; Lamborghini; Trimmer; Racket; Bulb; Powerbank; Power bank;Trimmer;Torch;Nova;Novel 4 Blade Rechargable Fan; Fan; Blade,Toys and Games
 1,,Temptation,,,,
 1,,General Good,,,,
 1,,Lighter,,,Pen; English;Shirt,Shoes and footwear; Apparel and Accessories
 1,,Thinner,,,,
-1,,Tonic,,,Tonica; Watch; Stonic;Tectonic,
+1,,Tonic,,,Tonica; Watch; Stonic;Tectonic; Clutch,
 1,,Squash,,,Ball; Racket; Dress; Short; Shirt; Shoe,Shoes and footwear; Apparel and Accessories
 1,,Scrub,,,Pad;Green;Brush,
 1,,Organic Product,,,,
 1,,Puree,,,Saree,Apparel and accessories
-1,,Cosmetics,,,Bag,
+1,,Cosmetics,,,Bag; Box; Case,
 1,,Happily Unmarried,,,,
 1,,Moistur,,,,
 1,,Inverter,,,,
@@ -71,7 +71,6 @@ Default,Client,KEYWORDS,CONTAIN_LIST,CONTAIN_CATEGORY,EXCEPT_LIST,EXCEPT_CATEGOR
 1,,Hair Colour,,,,
 1,,Hair Color,,,,
 1,,Luminous UPS,,,,
-1,,Elixir,,,,
 1,,Agarbatti,,,Holder; Stand,
 1,,Enamel,,,Metal; Alloy; Jewel; Jewl; Pendant; Voylla; Cookware;Bangle,
 1,,Make-up,,,Mirror; Brush; Case; Vanity; Cover;Bag,
