@@ -1,3 +1,20 @@
+<<<<<<< HEAD
 .DS_Store
 .project
 *.pyc
+=======
+*.pyc
+*.ipynb
+*.json
+.idea/*
+cataloguing_ui/__pycache__/*
+cataloguing_ui/.idea/*
+cataloguing_ui/config.py
+*.css~
+*.py~
+cataloguing_ui/flask_oauth2_login/__pycache__/*
+data/Models/*
+*.bz2
+testing/output.csv
+
+>>>>>>> a381f50910ee97fc60938c6ed6685eca67a0a525
